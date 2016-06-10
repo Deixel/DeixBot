@@ -41,7 +41,7 @@ mybot.on("message", function(message) {
 
 function playbackFinished()
 {
-	mybot.leaveVoiceChannel(mybot.voiceChannel);
+	mybot.leaveVoiceChannel(myUser.voiceChannel);
 }
 
 mybot.on("ready", function()
