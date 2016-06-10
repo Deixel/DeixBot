@@ -18,6 +18,13 @@ mybot.on("message", function(message) {
 		var msg =  "Hello " + message.author;
 		mybot.sendMessage(message.channel, msg);
 	}
+	if(message.content === "!join")
+	{
+		mybot.joinVoiceChannel(message.author.voiceChannel, function()
+		{
+			setTimeout(function(){mybot.leaveVoiceChannel(myUser.voiceChannel)}, 5000);
+		});
+	}
 });
 mybot.on("ready", function()
 {
