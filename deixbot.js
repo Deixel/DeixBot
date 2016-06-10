@@ -22,11 +22,7 @@ mybot.on("message", function(message) {
 	{
 		mybot.joinVoiceChannel(message.author.voiceChannel, function(voiceConnection)
 		{
-			voiceConnection.playFile("./sound.mp3");
-			voiceConnection.playingIntent.once("end", function()
-			{
-				mybot.leaveVoiceChannel(myUser.voiceChannel)
-			});
+			voiceConnection.playFile("sound.mp3");
 		});
 	}
 });
