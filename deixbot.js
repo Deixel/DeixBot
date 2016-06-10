@@ -26,18 +26,11 @@ mybot.on("message", function(message) {
 			{
 				console.log(error);
 			}
-			voiceConnection.playFile("sound.mp3", function(error, intent)
-			{
-				if(error)
-				{
-					console.log(error);
-				}
-			});
 		});
 	}
 	if(message.content === "!play")
 	{
-		mybot.voiceConnection.playFile('./sound.mp3', function(error)
+		mybot.voiceConnection.playFile("sound.mp3", function(error, intent)
 		{
 			if(error)
 			{
