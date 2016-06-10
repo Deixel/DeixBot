@@ -20,9 +20,13 @@ mybot.on("message", function(message) {
 	}
 	if(message.content === "!join")
 	{
-		mybot.joinVoiceChannel(message.author.voiceChannel, function()
+		mybot.joinVoiceChannel(message.author.voiceChannel, function(voiceConnection)
 		{
-			setTimeout(function(){mybot.leaveVoiceChannel(myUser.voiceChannel)}, 5000);
+			voiceConnection.playFile("./sound.mp3");
+			voiceConnection.playingIntent.once("end", function()
+			{
+				mybot.leaveVoiceChannel(myUser.voiceChannel)
+			});
 		});
 	}
 });
