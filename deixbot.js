@@ -11,10 +11,7 @@ mybot.on("message", function(message) {
 	if(message.content === "!help")
 	{
 		var msg = "You need help " + message.author;
-		var general = mybot.channels.get("name", "general");
-//		var general = mybot.servers.random().defaultChannel;
-//		mybot.sendMessage(message.channel, msg);
-		mybot.sendMessage(general, msg);
+		mybot.sendMessage(message.channel, msg);
 	}
 	if(message.content.toLowerCase().indexOf("hello") > -1 && message.isMentioned(myUser))
 	{
@@ -46,13 +43,6 @@ process.on("SIGINT", function()
 			}
 		});
 	}
-
-
-//	var general = mybot.servers.get("name", "DeixCraft Test").defaultChannel;
-//	mybot.sendMessage(general, "Peace out!", function()
-//	{
-//		mybot.logout();
-//	});
 });
 
 
