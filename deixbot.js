@@ -7,11 +7,13 @@ var botUser;
 
 client.on("message", function(message) {
 	if(message.content.toLowerCase().indexOf("hello") > -1 && message.isMentioned(botUser)) {
-		var msg =  "Hello " + message.author;
-		client.sendMessage(message.channel, 'Hello ' + message.author);
+		return client.sendMessage(message.channel, 'Hello ' + message.author);
+	}
+	else if(message.content.toLowerCase().indexOf("who gta") > -1) {
+		return message.reply("oooh oooh me! I'll play!")
 	}
 
-	if(message.content.charAt(0) == config.cmdprefix) {
+	else if(message.content.charAt(0) == config.cmdprefix) {
 		switch(message.content.substring(1)){
 			case 'ping':
 				client.reply(message, "pong");
@@ -20,14 +22,18 @@ client.on("message", function(message) {
 				client.sendMessage(message.channel, "You need help " + message.author);
 				break;
 			case 'bh':
-				playBennyHill(message.author.voiceChannel);
+				playBennyHill(message);
+				break;
+			case 'blame':
+				client.sendMessage(message.channel("I blame Yury"));
 				break;
 		}
 	}
 });
 
 //Hilarity ensues
-function playBennyHill(voiceChannel) {
+function playBennyHill(message) {
+	var voiceChannel = message.author.voiceChannel;
 	if(voiceChannel != null) {
 		client.joinVoiceChannel(voiceChannel, function(error, voiceConnection){
 			if(error) {
@@ -45,6 +51,9 @@ function playBennyHill(voiceChannel) {
 				});
 			});
 		});
+	}
+	else {
+		client.sendMessage(message.channel, "*starts humming*");
 	}
 }
 
