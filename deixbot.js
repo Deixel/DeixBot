@@ -31,6 +31,10 @@ mybot.on("message", function(message) {
 			});
 		});
 	}
+	if(message.content === "!play")
+	{
+		mybot.voiceConnection.playFile('./sound.mp3');
+	}
 });
 mybot.on("ready", function()
 {
