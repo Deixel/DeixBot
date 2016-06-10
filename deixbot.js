@@ -25,20 +25,25 @@ mybot.on("message", function(message) {
 			if(error)
 			{
 				console.log(error);
+				return;
 			}
-		});
-	}
-	if(message.content === "!play")
-	{
-		mybot.voiceConnection.playFile("sound.mp3", function(error, intent)
-		{
-			if(error)
+			mybot.voiceConnection.playFile("sound.mp3", function(error, intent)
 			{
-				console.log(error);
-			}
+				if(error)
+				{
+					console.log(error);
+				}
+				intent.once("end", playbackFinished());
+			});
 		});
 	}
 });
+
+function playbackFinished()
+{
+	mybot.leaveVoiceChannel(mybot.voiceChannel);
+}
+
 mybot.on("ready", function()
 {
 	mybot.setPlayingGame("with your emotions");
