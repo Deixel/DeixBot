@@ -23,6 +23,7 @@ client.on("message", function(message) {
 				break;
 			case 'bh':
 				playBennyHill(message);
+				client.deleteMessage(message);
 				break;
 			case 'blame':
 				client.sendMessage(message.channel, "I blame Yury");
