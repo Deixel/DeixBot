@@ -41,7 +41,7 @@ mybot.on("message", function(message) {
 
 function playbackFinished()
 {
-	mybot.leaveVoiceChannel(myUser.voiceChannel);
+	setTimeout(mybot.leaveVoiceChannel(myUser.voiceChannel), 5000);
 }
 
 mybot.on("ready", function()
