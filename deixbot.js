@@ -28,6 +28,10 @@ client.on("message", function(message) {
 			case 'blame':
 				client.sendMessage(message.channel, "I blame Yury");
 				break;
+			case 'ge':
+				var item = message.content.substring(indexOf(" "));
+				client.sendMessage(message.channel, "http://services.runescape.com/m=itemdb_rs/results?query=" + item);
+				break;
 		}
 	}
 });
