@@ -28,22 +28,24 @@ client.on("message", function(message) {
 
 //Hilarity ensues
 function playBennyHill(voiceChannel) {
-	client.joinVoiceChannel(voiceChannel, function(error, voiceConnection){
-		if(error) {
-			return console.error(error);
-		}
-		voiceConnection.playFile("sound.mp3", function(error, intent) {
+	if(voiceChannel != null) {
+		client.joinVoiceChannel(voiceChannel, function(error, voiceConnection){
 			if(error) {
 				return console.error(error);
 			}
-			intent.on("error", function(error) {
-				return console.error(error);
-			});
-			intent.once("end", function() {
-				client.leaveVoiceChannel(voiceConnection);
+			voiceConnection.playFile("sound.mp3", function(error, intent) {
+				if(error) {
+					return console.error(error);
+				}
+				intent.on("error", function(error) {
+					return console.error(error);
+				});
+				intent.once("end", function() {
+					client.leaveVoiceChannel(voiceConnection);
+				});
 			});
 		});
-	});
+	}
 }
 
 //Called once the bot is logged in and ready to use.
