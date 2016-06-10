@@ -4,11 +4,11 @@ var config = require("./config");
 var mybot = new Discord.Client();
 var myUser;
 mybot.on("message", function(message) {
-	if(message.content === "ping")
+	if(message.content == "ping")
 	{
 		mybot.reply(message, "pong");
 	}
-	if(message.content === "!help")
+	if(message.content == "!help")
 	{
 		var msg = "You need help " + message.author;
 		mybot.sendMessage(message.channel, msg);
@@ -18,22 +18,21 @@ mybot.on("message", function(message) {
 		var msg =  "Hello " + message.author;
 		mybot.sendMessage(message.channel, msg);
 	}
-	if(message.content === "!join")
+	if(message.content == "!join")
 	{
 		mybot.joinVoiceChannel(message.author.voiceChannel, function(error, voiceConnection)
 		{
 			if(error)
 			{
-				console.log(error);
-				return;
+				console.error(error);
 			}
 			mybot.voiceConnection.playFile("sound.mp3", function(error, intent)
 			{
 				if(error)
 				{
-					console.log(error);
+					console.error(error);
 				}
-				intent.once("end", playbackFinished());
+				intent.once("end", playbackFinished);
 			});
 		});
 	}
