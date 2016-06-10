@@ -39,7 +39,7 @@ function playBennyHill(message) {
 			if(error) {
 				return console.error(error);
 			}
-			voiceConnection.playFile("sound.mp3", function(error, intent) {
+			voiceConnection.playFile(config.bennyHill, function(error, intent) {
 				if(error) {
 					return console.error(error);
 				}
@@ -59,7 +59,7 @@ function playBennyHill(message) {
 
 //Called once the bot is logged in and ready to use.
 client.on("ready", function() {
-	client.setPlayingGame("with your emotions");
+	client.setPlayingGame(config.playing);
 	botUser = client.users.get("username", "DeixBot");
 	for (var i = 0; i < client.servers.length; i++) {
 		var server = client.servers[i];
