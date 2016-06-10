@@ -25,7 +25,7 @@ client.on("message", function(message) {
 				playBennyHill(message);
 				break;
 			case 'blame':
-				client.sendMessage(message.channel, "I blame Yury"));
+				client.sendMessage(message.channel, "I blame Yury");
 				break;
 		}
 	}
