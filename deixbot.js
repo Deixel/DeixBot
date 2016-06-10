@@ -22,7 +22,13 @@ mybot.on("message", function(message) {
 	{
 		mybot.joinVoiceChannel(message.author.voiceChannel, function(voiceConnection)
 		{
-			voiceConnection.playFile("sound.mp3");
+			voiceConnection.playFile("sound.mp3", function(error, intent)
+			{
+				intent.on("error", function(error)
+				{
+					console.log(error);
+				});
+			});
 		});
 	}
 });
