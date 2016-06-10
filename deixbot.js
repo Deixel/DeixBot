@@ -20,20 +20,26 @@ mybot.on("message", function(message) {
 	}
 	if(message.content === "!join")
 	{
-		mybot.joinVoiceChannel(message.author.voiceChannel, function(voiceConnection)
+		mybot.joinVoiceChannel(message.author.voiceChannel, function(error, voiceConnection)
 		{
 			voiceConnection.playFile("sound.mp3", function(error, intent)
 			{
-				intent.on("error", function(error)
+				if(error)
 				{
 					console.log(error);
-				});
+				}
 			});
 		});
 	}
 	if(message.content === "!play")
 	{
-		mybot.voiceConnection.playFile('./sound.mp3');
+		mybot.voiceConnection.playFile('./sound.mp3', function(error)
+		{
+			if(error)
+			{
+				console.log(error);
+			}
+		});
 	}
 });
 mybot.on("ready", function()
