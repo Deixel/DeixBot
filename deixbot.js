@@ -20,18 +20,12 @@ mybot.on("message", function(message) {
 	}
 	if(message.content === "!join")
 	{
-		mybot.joinVoiceChannel(message.author.voiceChannel, function(voiceConnection)
+		mybot.joinVoiceChannel(message.author.voiceChannel, function()
 		{
-			voiceConnection.playFile("./sound.mp3");
+			setTimeout(function(){mybot.leaveVoiceChannel(myUser.voiceChannel)}, 5000);
 		});
 	}
 });
-
-mybot.voiceConnection.playingIntent.on("end", function()
-{
-	mybot.leaveVoiceChannel(myUser.voiceChannel)
-});
-
 mybot.on("ready", function()
 {
 	mybot.setPlayingGame("with your emotions");
