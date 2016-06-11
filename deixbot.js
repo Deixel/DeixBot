@@ -14,7 +14,10 @@ client.on("message", function(message) {
 	}
 
 	else if(message.content.charAt(0) == config.cmdprefix) {
-		switch(message.content.substring(1)){
+		var spacePos = message.content.indexOf(" ");
+		var cmd = spacePos > -1 ? message.content.substring(1, spacePos) : message.content.substring(1);
+
+		switch(cmd){
 			case 'ping':
 				client.reply(message, "pong");
 				break;
@@ -29,7 +32,7 @@ client.on("message", function(message) {
 				client.sendMessage(message.channel, "I blame Yury");
 				break;
 			case 'ge':
-				var item = message.content.substring(indexOf(" "));
+				var item = message.content.substring(indexOf(" ")+1);
 				client.sendMessage(message.channel, "http://services.runescape.com/m=itemdb_rs/results?query=" + item);
 				break;
 		}
