@@ -15,7 +15,19 @@ client.on("message", function(message) {
 
 	else if(message.content.charAt(0) == config.cmdprefix) {
 		var spacePos = message.content.indexOf(" ");
-		var cmd = spacePos > -1 ? message.content.substring(1, spacePos) : message.content.substring(1);
+		//var cmd = spacePos > -1 ? message.content.substring(1, spacePos) : message.content.substring(1);
+
+		var cmdArray = message.content.substring(1).split(" ");
+		var cmd = cmdArray[0];
+
+		var params;
+
+		if(cmdArray.length > 1) {
+			params = new Array(cmdArray.length-1);
+			for(var i = 1; i < cmdArray.length; i++) {
+				params[i-1] = cmdArray[i];
+			}
+		}
 
 		switch(cmd){
 			case 'ping':
@@ -36,6 +48,17 @@ client.on("message", function(message) {
 				var fixedItem = item.replace(/ /g, "+");
 				client.sendMessage(message.channel, "http://services.runescape.com/m=itemdb_rs/results?query=" + fixedItem);
 				break;
+			case 'config':
+				var server = message.server;
+				if(client.memberHasRole(message.author, server.roles.get("name", "Admin"))) {
+					config[params[0]] = params[1];
+					message.reply("Updated config");
+				}
+				else {
+					message.reply("*sticks fingers in ears* lalala I'm not listening!");
+				}
+
+
 		}
 	}
 });
