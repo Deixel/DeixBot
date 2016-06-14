@@ -64,7 +64,7 @@ client.on("message", function(message) {
 			case 'hs':
 				var player = message.content.substring(spacePos+1);
 				var fixedPlayer = item.replace(/ /g, "_");
-				client.sendMessage(message.channel, "http://services.runescape.com/m=hiscore/compare?user1=" + fixedPlayer ));
+				client.sendMessage(message.channel, "http://services.runescape.com/m=hiscore/compare?user1=" + fixedPlayer );
 				break;
 		}
 	}
