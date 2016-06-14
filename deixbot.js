@@ -69,23 +69,24 @@ function playBennyHill(message) {
 client.on("ready", function() {
 	client.setPlayingGame(config.playing);
 	botUser = client.users.get("username", "DeixBot");
-	for (var i = 0; i < client.servers.length; i++) {
+	/*for (var i = 0; i < client.servers.length; i++) {
 		var server = client.servers[i];
 		var msg = "S'up " + server.name + "!";
 		client.sendMessage(server.defaultChannel, msg);
-	}
+	}*/
 });
 
 //Handle a CTRL+C to actually shutdown somewhat cleanly
 process.on("SIGINT", function() {
-	for (var i = 0; i < client.servers.length; i++){
+	client.logout();
+	/*for (var i = 0; i < client.servers.length; i++){
 		var server = client.servers[i];
 		client.sendMessage(server.defaultChannel, "Peace out!", function(i){
 			if(i + 1 == client.servers.length){
 				client.logout();
 			}
 		});
-	}
+	}*/
 });
 
 client.loginWithToken(config.discord.key);
