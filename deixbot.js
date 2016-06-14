@@ -57,8 +57,10 @@ client.on("message", function(message) {
 				else {
 					message.reply("*sticks fingers in ears* lalala I'm not listening!");
 				}
-
-
+				break;
+			case 'botissues':
+				client.sendMessage(message.channel, "https://github.com/Deixel/DeixBot/issues");
+				break;
 		}
 	}
 });
