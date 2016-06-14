@@ -33,7 +33,8 @@ client.on("message", function(message) {
 				break;
 			case 'ge':
 				var item = message.content.substring(spacePos+1);
-				client.sendMessage(message.channel, "http://services.runescape.com/m=itemdb_rs/results?query=" + item);
+				var fixedItem = item.replace(/ /g, "+");
+				client.sendMessage(message.channel, "http://services.runescape.com/m=itemdb_rs/results?query=" + fixedItem);
 				break;
 		}
 	}
