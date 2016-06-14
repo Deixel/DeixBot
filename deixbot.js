@@ -1,7 +1,7 @@
 var Discord = require("discord.js");
 var config = require("./config");
 
-var client = new Discord.Client(autoReconnect=true);
+var client = new Discord.Client(autoReconnect:true);
 var botUser;
 
 
