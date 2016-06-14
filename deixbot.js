@@ -61,6 +61,11 @@ client.on("message", function(message) {
 			case 'botissues':
 				client.sendMessage(message.channel, "https://github.com/Deixel/DeixBot/issues");
 				break;
+			case 'hs':
+				var player = message.content.substring(spacePos+1);
+				var fixedPlayer = item.replace(/ /g, "_");
+				client.sendMessage(message.channel, "http://services.runescape.com/m=hiscore/compare?user1=" + fixedPlayer ));
+				break;
 		}
 	}
 });
