@@ -1,0 +1,21 @@
+{
+  "name": "deixbot",
+  "version": "1.0.0",
+  "description": "A Discord Bot built using NodeJS and Discord.js",
+  "main": "deixbot.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Deixel/DeixBot.git"
+  },
+  "author": "Deixel",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Deixel/DeixBot/issues"
+  },
+  "homepage": "https://github.com/Deixel/DeixBot#readme"
+}
