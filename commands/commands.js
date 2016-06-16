@@ -115,11 +115,11 @@ new Command("botissues",
 new Command("help",
 	"Lists all the commands.",
 	function(message) {
-		var helpStr = "";
+		var helpStr = "```";
 		for(var cmd in commands) {
-			console.log(cmd);
 			helpStr = helpStr.concat(commands[cmd].cmd, ": ", commands[cmd].description, "\n");
 		}
+		helpStr = helpStr.concat("```");
 		client.sendMessage(message.channel, helpStr);
 	}
 );
