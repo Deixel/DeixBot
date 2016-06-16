@@ -43,3 +43,12 @@ new Command(
 			client.sendMessage(message.channel, "http://services.runescape.com/m=itemdb_rs/results?query=" + item);
 		}
 );
+
+new Command(
+		"hs",
+		"Search the RuneScape High Scores for a player",
+		function(message) {
+			var player = getParams(message.content).join().replace(/,/h, "_");
+			client.sendMessage(message.channel, "http://services.runescape.com/m=hiscore/compare?user1=" + player);
+		}
+);
