@@ -5,14 +5,15 @@ action - what the command does
 */
 
 var commands = {};
-exports.commands = commands;
+exports.get = function(cmd) {
+	return commands[cmd];
+}
 
 function Command(cmd, descr, action) {
 	this.cmd = cmd;
 	this.description = descr;
 	this.action = action;
-	commands.push(this);
-	console.log(cmd, descr, action)
+	commands[cmd]=this;
 }
 
 function getParams(content) {
@@ -28,27 +29,92 @@ new Command(
 );
 
 new Command(
-		"blame",
-		"Assigns blame appropriately",
-		function(message) {
-			client.sendMessage(message.channel, "I blame Yury");
-		}
+	"blame",
+	"Assigns blame appropriately",
+	function(message) {
+		client.sendMessage(message.channel, "I blame Yury");
+	}
 );
 
 new Command(
-		"ge",
-		"Search the RuneScape Grand Exchange for an item",
-		function(message) {
-			var item = getParams(message.content).join().replace(/,/g, "+");
-			client.sendMessage(message.channel, "http://services.runescape.com/m=itemdb_rs/results?query=" + item);
-		}
+	"ge",
+	"Search the RuneScape Grand Exchange for an item",
+	function(message) {
+		var item = getParams(message.content).join().replace(/,/g, "+");
+		client.sendMessage(message.channel, "http://services.runescape.com/m=itemdb_rs/results?query=" + item);
+	}
 );
 
 new Command(
-		"hs",
-		"Search the RuneScape High Scores for a player",
-		function(message) {
-			var player = getParams(message.content).join().replace(/,/h, "_");
-			client.sendMessage(message.channel, "http://services.runescape.com/m=hiscore/compare?user1=" + player);
+	"hs",
+	"Search the RuneScape High Scores for a player",
+	function(message) {
+		var player = getParams(message.content).join().replace(/,/h, "_");
+		client.sendMessage(message.channel, "http://services.runescape.com/m=hiscore/compare?user1=" + player);
+	}
+);
+
+new Command(
+	"bh",
+	"Hilarity ensues",
+	function(message) {
+		var voiceChannel = message.author.voiceChannel;
+		if(voiceChannel != null) {
+			client.joinVoiceChannel(voiceChannel, function(error, voiceConnection){
+				if(error) {
+					return console.error(error);
+				}
+				voiceConnection.playFile(config.bennyHill, function(error, intent) {
+					if(error) {
+						return console.error(error);
+					}
+					intent.on("error", function(error) {
+						return console.error(error);
+					});
+					intent.once("end", function() {
+						client.leaveVoiceChannel(voiceConnection);
+					});
+				});
+			});
 		}
+		else {
+			client.sendMessage(message.channel, "*starts humming*");
+		}
+		client.deleteMessage(message);
+	}
+);
+
+new Command(
+	"config",
+	"Admin can configure bot settings.",
+	function(message) {
+		if(message.channel.permissionsOf(message.author).hasPermission("administrator")) {
+			var params = getParams(message.content);
+			config[params[0]] = params[1];
+			message.reply("Updated config");
+		}
+		else {
+			message.reply("*sticks fingers in ears* lalala I'm not listening!");
+		}
+	}
+);
+
+new Command(
+	"botissues",
+	"Got an idea or found a bug? Here's the link to submit them.",
+	function(message) {
+		client.sendMessage(message.channel, "https://github.com/Deixel/DeixBot/issues");
+	}
+);
+
+new Command(
+	"help",
+	"Lists all the commands.",
+	function(message) {
+		var helpStr = "";
+		for(var cmd in commands) {
+			helpStr.concat(helpStr, commands[cmd].cmd, ": ", commands[cmd].description, "\n");
+		}
+		client.sendMessage(message.channel, helpStr);
+	}
 );
