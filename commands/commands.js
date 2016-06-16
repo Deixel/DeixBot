@@ -22,7 +22,9 @@ function Command(cmd, descr, action) {
 }
 
 function getParams(content) {
-	return content.split(" ").shift();
+	var params = content.split(" ");
+	params.shift();
+	return params;
 }
 
 new Command("ping",
