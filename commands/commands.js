@@ -17,10 +17,11 @@ exports.setUp = function(cl, co) {
 	config = co;
 }
 
-function Command(cmd, descr, action) {
+function Command(cmd, descr, action, hidden = false) {
 	this.cmd = cmd;
 	this.description = descr;
 	this.action = action;
+	this.hidden = hidden;
 	commands[cmd]=this;
 }
 
@@ -88,7 +89,8 @@ new Command("bh",
 			client.sendMessage(message.channel, "*starts humming*");
 		}
 		client.deleteMessage(message);
-	}
+	},
+	true
 );
 
 new Command("config",
@@ -102,7 +104,8 @@ new Command("config",
 		else {
 			message.reply("*sticks fingers in ears* lalala I'm not listening!");
 		}
-	}
+	},
+	true
 );
 
 new Command("botissues",
@@ -117,7 +120,9 @@ new Command("help",
 	function(message) {
 		var helpStr = "```";
 		for(var cmd in commands) {
-			helpStr = helpStr.concat(commands[cmd].cmd, ": ", commands[cmd].description, "\n");
+			if(!commands[cmd].hidden) {
+				helpStr = helpStr.concat(commands[cmd].cmd, ": ", commands[cmd].description, "\n");
+			}
 		}
 		helpStr = helpStr.concat("```");
 		client.sendMessage(message.channel, helpStr);
