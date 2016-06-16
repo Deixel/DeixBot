@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "A Discord Bot built using NodeJS and Discord.js",
   "main": "deixbot.js",
-  "dependencies": {},
+  "dependencies": {
+    "discord.js": "^8.0.0"
+  },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
