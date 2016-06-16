@@ -50,7 +50,7 @@ client.on("message", function(message) {
 				break;
 			case 'config':
 				var server = message.server;
-				if(client.memberHasRole(message.author, server.roles.get("name", "Admin"))) {
+				if(message.channel.permissionsOf(message.author).hasPermission("administrator")) {
 					config[params[0]] = params[1];
 					message.reply("Updated config");
 				}
