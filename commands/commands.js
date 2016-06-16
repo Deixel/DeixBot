@@ -6,12 +6,15 @@ action - what the command does
 
 var commands = {};
 var client;
+var config;
+
 exports.get = function(cmd) {
 	return commands[cmd];
 }
 
-exports.setClient = function(cl) {
+exports.setUp = function(cl, co) {
 	client = cl;
+	config = co;
 }
 
 function Command(cmd, descr, action) {
