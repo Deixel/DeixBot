@@ -114,7 +114,8 @@ new Command("help",
 	function(message) {
 		var helpStr = "";
 		for(var cmd in commands) {
-			helpStr.concat(helpStr, commands[cmd].cmd, ": ", commands[cmd].description, "\n");
+			console.log(cmd);
+			helpStr = helpStr.concat(commands[cmd].cmd, ": ", commands[cmd].description, "\n");
 		}
 		client.sendMessage(message.channel, helpStr);
 	}
