@@ -34,7 +34,7 @@ client.on("message", function(message) {
 //Called once the bot is logged in and ready to use.
 client.on("ready", function() {
 	var rand = Math.flood(Math.random() * config.playing.length);
-	client.setPlayingGame(config.playing[rand]));
+	client.setPlayingGame(config.playing[rand]);
 	botUser = client.users.get("username", "DeixBot");
 	cmds.setUp(client, config);
 	/*for (var i = 0; i < client.servers.length; i++) {
