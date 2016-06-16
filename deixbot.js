@@ -35,6 +35,7 @@ client.on("message", function(message) {
 client.on("ready", function() {
 	client.setPlayingGame(config.playing);
 	botUser = client.users.get("username", "DeixBot");
+	cmds.setClient(client);
 	/*for (var i = 0; i < client.servers.length; i++) {
 		var server = client.servers[i];
 		var msg = "S'up " + server.name + "!";

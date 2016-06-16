@@ -5,8 +5,13 @@ action - what the command does
 */
 
 var commands = {};
+var client;
 exports.get = function(cmd) {
 	return commands[cmd];
+}
+
+exports.setClient = function(cl) {
+	client = cl;
 }
 
 function Command(cmd, descr, action) {
@@ -20,24 +25,21 @@ function getParams(content) {
 	return content.split(" ").shift();
 }
 
-new Command(
-	"ping",
+new Command("ping",
 	"It's like ping-pong, but with words.",
 	function(message) {
 		client.reply(message, "pong");
 	}
 );
 
-new Command(
-	"blame",
+new Command("blame",
 	"Assigns blame appropriately",
 	function(message) {
 		client.sendMessage(message.channel, "I blame Yury");
 	}
 );
 
-new Command(
-	"ge",
+new Command("ge",
 	"Search the RuneScape Grand Exchange for an item",
 	function(message) {
 		var item = getParams(message.content).join().replace(/,/g, "+");
@@ -45,8 +47,7 @@ new Command(
 	}
 );
 
-new Command(
-	"hs",
+new Command("hs",
 	"Search the RuneScape High Scores for a player",
 	function(message) {
 		var player = getParams(message.content).join().replace(/,/h, "_");
@@ -54,8 +55,7 @@ new Command(
 	}
 );
 
-new Command(
-	"bh",
+new Command("bh",
 	"Hilarity ensues",
 	function(message) {
 		var voiceChannel = message.author.voiceChannel;
@@ -84,8 +84,7 @@ new Command(
 	}
 );
 
-new Command(
-	"config",
+new Command("config",
 	"Admin can configure bot settings.",
 	function(message) {
 		if(message.channel.permissionsOf(message.author).hasPermission("administrator")) {
@@ -99,16 +98,14 @@ new Command(
 	}
 );
 
-new Command(
-	"botissues",
+new Command("botissues",
 	"Got an idea or found a bug? Here's the link to submit them.",
 	function(message) {
 		client.sendMessage(message.channel, "https://github.com/Deixel/DeixBot/issues");
 	}
 );
 
-new Command(
-	"help",
+new Command("help",
 	"Lists all the commands.",
 	function(message) {
 		var helpStr = "";
