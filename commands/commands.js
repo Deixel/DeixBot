@@ -54,7 +54,7 @@ new Command("hs",
 	"Search the RuneScape High Scores for a player",
 	function(message) {
 		var p = getParams(message.content);
-		var player = p.join().replace(/,/h, "_");
+		var player = p.join().replace(/,/g, "_");
 		client.sendMessage(message.channel, "http://services.runescape.com/m=hiscore/compare?user1=" + player);
 	}
 );
