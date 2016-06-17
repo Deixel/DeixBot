@@ -91,6 +91,7 @@ new Command("bh",
 
 								client.leaveVoiceChannel(voiceConnection);
 							});
+						});
 					});
 				});
 			});
