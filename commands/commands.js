@@ -72,7 +72,7 @@ new Command("bh",
 				if(error) {
 					return console.error(error);
 				}
-				voiceConnection.playFile(config.bennyHill, function(error, intent) {
+				voiceConnection.playFile(config.bennyHill, {volume: 0.5} function(error, intent) {
 					if(error) {
 						return console.error(error);
 					}
@@ -80,7 +80,17 @@ new Command("bh",
 						return console.error(error);
 					});
 					intent.once("end", function() {
-						client.leaveVoiceChannel(voiceConnection);
+						voiceConnection.playFile(config.bennyHill, {volume: 0.5} function(error, intent) {
+							if(error) {
+								return console.error(error);
+							}
+							intent.on("error", function(error) {
+								return console.error(error);
+							});
+							intent.once("end", function() {
+
+								client.leaveVoiceChannel(voiceConnection);
+							});
 					});
 				});
 			});
