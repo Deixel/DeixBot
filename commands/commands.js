@@ -126,6 +126,13 @@ new Command("botissues",
 	}
 );
 
+new Command("gtadown",
+	"Rockstar sucks.",
+	function(message) {
+		client.sendMessage(message.channel, "http://downdetector.co.uk/problems/gta5");
+	}
+);
+
 new Command("help",
 	"Lists all the commands.",
 	function(message) {
