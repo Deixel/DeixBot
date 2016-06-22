@@ -33,8 +33,8 @@ client.on("message", function(message) {
 
 //Called once the bot is logged in and ready to use.
 client.on("ready", function() {
-	var rand = Math.floor(Math.random() * config.playing.length);
-	client.setPlayingGame(config.playing[rand]);
+	updatePlaying();
+	setInterval(updatePlaying, 600000);
 	botUser = client.users.get("username", "DeixBot");
 	cmds.setUp(client, config);
 	/*for (var i = 0; i < client.servers.length; i++) {
@@ -43,6 +43,11 @@ client.on("ready", function() {
 		client.sendMessage(server.defaultChannel, msg);
 	}*/
 });
+
+function updatePlaying() {
+	var rand = Math.floor(Math.random() * config.playing.length);
+	client.setPlayingGame(config.playing[rand]);
+}
 
 //Handle a CTRL+C to actually shutdown somewhat cleanly
 process.on("SIGINT", function() {
