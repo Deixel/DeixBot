@@ -35,7 +35,7 @@ client.on("message", function(message) {
 client.on("ready", function() {
 	updatePlaying();
 	setInterval(updatePlaying, 600000);
-	botUser = client.users.get("username", "DeixBot");
+	botUser = client.users.get("id", config.discord.id);
 	cmds.setUp(client, config);
 	/*for (var i = 0; i < client.servers.length; i++) {
 		var server = client.servers[i];
