@@ -138,11 +138,8 @@ new Command("report",
 	function(message) {
 		var params = getParams(message.content);
 		if(params.length > 1) {
-			var hax0r = params[0];
-			var reason =  "";
-			for(var i = 1;i < params.length; i++) {
-				reason = reason.concat(params[i] + " ");
-			}
+			var hax0r = params.shift();
+			var reason =  params.join(' ');
 			var report = message.author + " has reported " + hax0r + ". Reason: " + reason;
 			client.sendMessage(message.channel, report);
 			client.deleteMessage(message);
@@ -152,6 +149,15 @@ new Command("report",
 			client.deleteMessage(message);
 		}
 	}
+);
+
+new Command("say",
+	"Words and words and words",
+	function(message) {
+		var params = getParams(message.content);
+		client.sendMessage(message.channel, params.join(' '));
+	},
+	true
 );
 
 new Command("help",
