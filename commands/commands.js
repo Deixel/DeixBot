@@ -137,7 +137,7 @@ new Command("report",
 	"Report them hax0rz",
 	function(message) {
 		var params = getParams(message.content);
-		if(params.length < 0) {
+		if(params.length > 0) {
 			var hax0r = params[0];
 			var reason =  "";
 			for(var i = 1;i < params.length; i++) {
