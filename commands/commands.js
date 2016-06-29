@@ -133,6 +133,22 @@ new Command("gtadown",
 	}
 );
 
+new Command("report",
+	"Report them hax0rz",
+	function(message) {
+		var params = getParams(message.content);
+		if(params.length < 0) {
+			var hax0r = params[0];
+			var reason =  "";
+			for(var i = 1;i < params.length; i++) {
+				reason = reason.concat(params[1]);
+			}
+			var report = message.author + " has reported " + hax0r + " for " + reason;
+			client.sendMessage(message.channel, report);
+			client.deleteMessage(message);
+		}
+	}
+
 new Command("help",
 	"Lists all the commands.",
 	function(message) {
