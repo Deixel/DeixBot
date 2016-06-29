@@ -148,7 +148,8 @@ new Command("report",
 			client.deleteMessage(message);
 		}
 		else {
-			client.sendMessage("message.channel", message.author + " doesn't know how reporting works!")
+			client.sendMessage(message.channel, message.author + " doesn't know how reporting works!")
+			client.deleteMessage(message);
 		}
 	}
 );
