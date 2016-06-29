@@ -51,7 +51,12 @@ function updatePlaying() {
 
 //Handle a CTRL+C to actually shutdown somewhat cleanly
 process.on("SIGINT", function() {
-	client.logout();
+	client.logout(function() {
+		if(error) {
+			console.error(error);
+		}
+		process.exit(0);
+	});
 	/*for (var i = 0; i < client.servers.length; i++){
 		var server = client.servers[i];
 		client.sendMessage(server.defaultChannel, "Peace out!", function(i){
