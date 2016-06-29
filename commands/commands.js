@@ -141,7 +141,7 @@ new Command("report",
 			var hax0r = params[0];
 			var reason =  "";
 			for(var i = 1;i < params.length; i++) {
-				reason = reason.concat(params[i]);
+				reason = reason.concat(params[i] + " ");
 			}
 			var report = message.author + " has reported " + hax0r + " for " + reason;
 			client.sendMessage(message.channel, report);
