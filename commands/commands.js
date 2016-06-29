@@ -49,7 +49,7 @@ new Command("ge",
 	"Search the RuneScape Grand Exchange for an item",
 	function(message) {
 		var p = getParams(message.content);
-		var item = p.join().replace(/,/g, "+");
+		var item = p.join('+');
 		client.sendMessage(message.channel, "http://services.runescape.com/m=itemdb_rs/results?query=" + item);
 	}
 );
@@ -58,7 +58,7 @@ new Command("hs",
 	"Search the RuneScape High Scores for a player",
 	function(message) {
 		var p = getParams(message.content);
-		var player = p.join().replace(/,/g, "_");
+		var player = p.join('_');
 		client.sendMessage(message.channel, "http://services.runescape.com/m=hiscore/compare?user1=" + player);
 	}
 );
@@ -156,6 +156,7 @@ new Command("say",
 	function(message) {
 		var params = getParams(message.content);
 		client.sendMessage(message.channel, params.join(' '));
+		client.deleteMessage(message);
 	},
 	true
 );
