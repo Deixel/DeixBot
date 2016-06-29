@@ -137,15 +137,18 @@ new Command("report",
 	"Report them hax0rz",
 	function(message) {
 		var params = getParams(message.content);
-		if(params.length > 0) {
-			var hax0r = params[0];
+		if(params.length > 1) {
+			var hax0r = message.mentions[0];
 			var reason =  "";
 			for(var i = 1;i < params.length; i++) {
 				reason = reason.concat(params[i] + " ");
 			}
-			var report = message.author + " has reported " + hax0r + " for " + reason;
+			var report = message.author + " has reported " + hax0r + ". Reason: " + reason;
 			client.sendMessage(message.channel, report);
 			client.deleteMessage(message);
+		}
+		else {
+			client.sendMessage("message.channel", message.author + " doesn't know how reporting works!")
 		}
 	}
 );
