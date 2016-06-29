@@ -148,6 +148,7 @@ new Command("report",
 			client.deleteMessage(message);
 		}
 	}
+);
 
 new Command("help",
 	"Lists all the commands.",
