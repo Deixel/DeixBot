@@ -41,7 +41,14 @@ new Command("ping",
 new Command("blame",
 	"Assigns blame appropriately",
 	function(message) {
-		client.sendMessage(message.channel, "I blame Yury");
+		var params = getParams(message.content);
+		if(params.length > 0) {
+			client.sendMessage(message.channel, "I blame " + params.join(' '));
+		}
+		else {
+			client.sendMessage(message.channel, "I blame Yury");
+		}
+		client.deleteMessage(message);
 	}
 );
 
