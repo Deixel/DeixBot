@@ -40,7 +40,6 @@ client.on("message", function(message) {
 	}
 });
 
-
 //Called once the bot is logged in and ready to use.
 client.on("ready", function() {
 	connection.connect();
@@ -52,10 +51,10 @@ client.on("ready", function() {
 		for(var i = 0; i < rows.length; i++){
 			playingWith[i] = rows[i].playingString;
 		}
-		console.log("Loaded " + rows.length + " playing strings from db.")
+		console.log("Loaded " + rows.length + " playing strings from db.");
+		updatePlaying();
+		setInterval(updatePlaying, 600000);
 	});
-	updatePlaying();
-	setInterval(updatePlaying, 600000);
 	botUser = client.users.get("id", config.discord.id);
 	cmds.setUp(client, config);
 });
