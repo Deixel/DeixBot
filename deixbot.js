@@ -48,9 +48,8 @@ client.on("ready", function() {
 		if(err) {
 			console.error(err);
 		}
-		for(var i = 0; i < rows; i ++) {
-			playingWith[i] = rows[i];
-			console.log(rows[i]);
+		for(var i = 0; i < rows.length; i++){
+			console.log(rows[i].playingString);
 		}
 	});
 
