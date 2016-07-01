@@ -44,16 +44,16 @@ client.on("message", function(message) {
 //Called once the bot is logged in and ready to use.
 client.on("ready", function() {
 	connection.connect();
+	console.log("Established connection to database.")
 	connection.query('SELECT playingString FROM playing', function(err, rows, fields) {
 		if(err) {
 			console.error(err);
 		}
 		for(var i = 0; i < rows.length; i++){
-			console.log(rows[i].playingString);
+			playingWith[i] = rows[i].playingString;
 		}
+		console.log("Loaded " + rows.length + " playing strings from db.")
 	});
-
-
 	updatePlaying();
 	setInterval(updatePlaying, 600000);
 	botUser = client.users.get("id", config.discord.id);
@@ -61,8 +61,8 @@ client.on("ready", function() {
 });
 
 function updatePlaying() {
-	var rand = Math.floor(Math.random() * config.playing.length);
-	client.setPlayingGame(config.playing[rand]);
+	var rand = Math.floor(Math.random() * playingWith.length);
+	client.setPlayingGame(playingWith[rand]);
 }
 
 //Handle a CTRL+C to actually shutdown somewhat cleanly
