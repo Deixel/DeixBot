@@ -2,14 +2,15 @@ var Discord = require("discord.js");
 var config = require("./config");
 var cmds = require("./commands/commands")
 var mysql = require('mysql');
-
 var connection = mysql.createConnection({
 	host: config.mysql.host,
 	user: config.mysql.user,
 	password: config.mysql.pass,
 	database: config.mysql.db
 });
-connection.connect();
+
+var playingWith = [];
+
 
 var client = new Discord.Client({autoReconnect: true});
 var botUser;
@@ -42,15 +43,22 @@ client.on("message", function(message) {
 
 //Called once the bot is logged in and ready to use.
 client.on("ready", function() {
+	connection.connect();
+	connection.query('SELECT playingString FROM playing', function(err, rows, fields) {
+		if(err) {
+			console.error(err);
+		}
+		for(var i = 0; i < rows; i ++) {
+			playingWith[i] = rows[i];
+			console.log(rows[i]);
+		}
+	});
+
+
 	updatePlaying();
 	setInterval(updatePlaying, 600000);
 	botUser = client.users.get("id", config.discord.id);
 	cmds.setUp(client, config);
-	/*for (var i = 0; i < client.servers.length; i++) {
-		var server = client.servers[i];
-		var msg = "S'up " + server.name + "!";
-		client.sendMessage(server.defaultChannel, msg);
-	}*/
 });
 
 function updatePlaying() {
@@ -66,14 +74,6 @@ process.on("SIGINT", function() {
 		}
 		process.exit(0);
 	});
-	/*for (var i = 0; i < client.servers.length; i++){
-		var server = client.servers[i];
-		client.sendMessage(server.defaultChannel, "Peace out!", function(i){
-			if(i + 1 == client.servers.length){
-				client.logout();
-			}
-		});
-	}*/
 });
 
 client.loginWithToken(config.discord.key);
