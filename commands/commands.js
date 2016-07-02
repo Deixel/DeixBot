@@ -78,15 +78,15 @@ new Command("sb",
 		var voiceChannel = message.author.voiceChannel;
 		if(voiceChannel != null) {
 			var params = getParams(message.content);
-			if(params.length > 1 ) {
+			if(params.length > 0 ) {
 				if(params[0] == "list") {
-					connection.query("SELECT alias FROM soundboard", function(err, rows) {
+					connection.query("SELECT alias, description FROM soundboard", function(err, rows) {
 						if(err) {
 							console.error(err);
 						}
 						var sbList = "```";
 						for(var i = 0; i < rows.length; i++) {
-							sbList = sbList.concat(rows[i].alias + "\n");
+							sbList = sbList.concat(rows[i].alias + ": " + rows[i].description + "\n");
 						}
 						client.sendMessage(message.channel, sbList + "```");
 					});
