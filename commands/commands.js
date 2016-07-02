@@ -86,6 +86,25 @@ function listSoundboard(cb) {
 	});
 }
 
+function playSoundboard(voiceConnection, filePath, iterations = 1) {
+	voiceConnection.playFile(filePath, {volume: config.vol}, function(err, intent) {
+		if(err){
+			console.error(err);
+		}
+		intent.on("error", function(err) {
+			console.error(err);
+		});
+		intent.once("end", function() {
+			if(iterations <= 1) {
+				client.leaveVoiceChannel(voiceConnection);
+			}
+			else {
+				playSoundboard(voiceConnection, filePath, iterations-1);
+			}
+		});
+	});
+}
+
 new Command("sb",
 	"Play something from the soundboard",
 	function(message) {
@@ -116,17 +135,7 @@ new Command("sb",
 						if(err) {
 							console.error(err);
 						}
-						voiceConnection.playFile(filePath, {volume: config.vol}, function(error, intent) {
-							if(err) {
-								console.error(err);
-							}
-							intent.on("error", function(err) {
-								console.error(err);
-							});
-							intent.once("end", function() {
-								client.leaveVoiceChannel(voiceConnection);
-							});
-						});
+						params.length == 2 ? playSoundboard(voiceConnection, filePath) : playSoundboard(voiceConnection, filePath, params[1]);
 					});
 				}
 			});
