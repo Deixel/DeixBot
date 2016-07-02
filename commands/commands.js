@@ -81,7 +81,8 @@ function listSoundboard() {
 		for(var i = 0; i < rows.length; i++) {
 			sbList = sbList.concat(rows[i].alias + ": " + rows[i].description + "\n");
 		}
-		return sbList + "```";
+		sbList = sbList.concat("```");
+		return sbList;
 	});
 }
 
@@ -91,6 +92,7 @@ new Command("sb",
 		var voiceChannel = message.author.voiceChannel;
 		var params = getParams(message.content);
 		if(params.length == 0 || (params.length > 0 && params[0] == "list")) {
+			console.log("Listing soundboard");
 			client.sendMessage(message.channel, listSoundboard());
 		}
 		else if(voiceChannel != null) {
