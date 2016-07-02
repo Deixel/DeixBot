@@ -93,7 +93,8 @@ new Command("sb",
 		var voiceChannel = message.author.voiceChannel;
 		var params = getParams(message.content);
 		if(params.length == 0 || (params.length > 0 && params[0] == "list")) {
-			client.sendMessage(message.channel, listSoundboard());
+			var sbList = listSoundboard();
+			client.sendMessage(message.channel, sbList);
 		}
 		else if(voiceChannel != null) {
 			connection.query("SELECT path FROM soundboard WHERE alias = ?", [params[0]], function(err, rows) {
