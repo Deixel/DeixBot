@@ -103,7 +103,9 @@ new Command("sb",
 				}
 				if(rows.length == 0) {
 					client.sendMessage(message.channel, "I have no idea what that is, " + message.author);
-					client.sendMessage(message.channel, listSoundboard());
+					listSoundboard(function(sbList) {
+						client.sendMessage(message.channel, sbList);
+					});
 				}
 				else if (rows.length > 1) {
 					console.warn("Soundboard alias " + params[0] + "returned multiple paths");
