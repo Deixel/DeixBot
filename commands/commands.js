@@ -7,14 +7,16 @@ action - what the command does
 var commands = {};
 var client;
 var config;
+var connection;
 
 exports.get = function(cmd) {
 	return commands[cmd];
 };
 
-exports.setUp = function(cl, co) {
+exports.setUp = function(cl, co, con) {
 	client = cl;
 	config = co;
+	connection = con;
 };
 
 function Command(cmd, descr, action, hidden = false) {
@@ -70,46 +72,104 @@ new Command("hs",
 	}
 );
 
-new Command("bh",
-	"Hilarity ensues",
+new Command("sb",
+	"Play something from the soundboard",
 	function(message) {
 		var voiceChannel = message.author.voiceChannel;
 		if(voiceChannel != null) {
-			client.joinVoiceChannel(voiceChannel, function(error, voiceConnection){
-				if(error) {
-					return console.error(error);
+			var params = getParams(message.content);
+			if(params.length > 1 ) {
+				if(params[0] == "list") {
+					connection.query("SELECT alias FROM soundboard", function(err, rows) {
+						if(err) {
+							console.error(err);
+						}
+						var sbList = "```";
+						for(var i = 0; i < rows.length; i++) {
+							sbList = sbList.concat(rows[i].alias + "\n");
+						}
+						client.sendMessage(message.channel, sbList + "```");
+					});
 				}
-				voiceConnection.playFile(config.bennyHill, {volume: config.bhvol}, function(error, intent) {
-					if(error) {
-						return console.error(error);
-					}
-					intent.on("error", function(error) {
-						return console.error(error);
-					});
-					intent.once("end", function() {
-						voiceConnection.playFile(/*config.bennyHill*/"./bennyHill.mp3", {volume: config.vol}, function(error, intent) {
-							if(error) {
-								return console.error(error);
-							}
-							intent.on("error", function(error) {
-								return console.error(error);
+				else {
+					connection.query("SELECT path FROM soundboard WHERE alias = ?", [params[0]], function(err, rows) {
+						if(err) {
+							console.error(err);
+						}
+						if(rows.length == 0) {
+							client.sendMessage(message.channel, "I have no idea what that is, " + message.author);
+						}
+						else if (rows.length > 1) {
+							console.warn("Soundboard alias " + params[0] + "returned multiple paths");
+						}
+						else {
+							var filePath = rows[0].path;
+							client.joinVoiceChannel(voiceChannel, function(err, voiceConnection) {
+								if(err) {
+									console.error(err);
+								}
+								voiceConnection.playFile(filePath, {volume: config.vol}, function(error, intent) {
+									if(err) {
+										console.error(err);
+									}
+									intent.on("error", function(err) {
+										console.error(err);
+									});
+									intent.once("end", function() {
+										client.leaveVoiceChannel(voiceConnection);
+									});
+								});
 							});
-							intent.once("end", function() {
-
-								client.leaveVoiceChannel(voiceConnection);
-							});
-						});
+						}
 					});
-				});
-			});
+				}
+			}
 		}
 		else {
 			client.sendMessage(message.channel, "*starts humming*");
 		}
-		client.deleteMessage(message);
-	},
-	true
+	}
 );
+
+// new Command("bh",
+// 	"Hilarity ensues",
+// 	function(message) {
+// 		var voiceChannel = message.author.voiceChannel;
+// 		if(voiceChannel != null) {
+// 			client.joinVoiceChannel(voiceChannel, function(error, voiceConnection){
+// 				if(error) {
+// 					return console.error(error);
+// 				}
+// 				voiceConnection.playFile(config.bennyHill, {volume: config.bhvol}, function(error, intent) {
+// 					if(error) {
+// 						return console.error(error);
+// 					}
+// 					intent.on("error", function(error) {
+// 						return console.error(error);
+// 					});
+// 					intent.once("end", function() {
+// 						voiceConnection.playFile(/*config.bennyHill*/"./bennyHill.mp3", {volume: config.vol}, function(error, intent) {
+// 							if(error) {
+// 								return console.error(error);
+// 							}
+// 							intent.on("error", function(error) {
+// 								return console.error(error);
+// 							});
+// 							intent.once("end", function() {
+// 								client.leaveVoiceChannel(voiceConnection);
+// 							});
+// 						});
+// 					});
+// 				});
+// 			});
+// 		}
+// 		else {
+// 			client.sendMessage(message.channel, "*starts humming*");
+// 		}
+// 		client.deleteMessage(message);
+// 	},
+// 	true
+// );
 
 new Command("config",
 	"Admin can configure bot settings.",

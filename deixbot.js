@@ -62,7 +62,7 @@ client.on("ready", function() {
 			console.log("Set '"+ rows[i].configName + "' to '" + rows[i].configValue + "'.");
 		}
 	});
-	cmds.setUp(client, config);
+	cmds.setUp(client, config, connection);
 });
 
 function updatePlaying() {
