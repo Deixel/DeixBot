@@ -72,7 +72,7 @@ new Command("hs",
 	}
 );
 
-function listSoundboard() {
+function listSoundboard(cb) {
 	connection.query("SELECT alias, description FROM soundboard", function(err, rows) {
 		if(err) {
 			return console.error(err);
@@ -82,8 +82,7 @@ function listSoundboard() {
 			sbList = sbList.concat(rows[i].alias + ": " + rows[i].description + "\n");
 		}
 		sbList = sbList.concat("```");
-		console.log(sbList);
-		return sbList;
+		cb(sbList);
 	});
 }
 
@@ -93,8 +92,9 @@ new Command("sb",
 		var voiceChannel = message.author.voiceChannel;
 		var params = getParams(message.content);
 		if(params.length == 0 || (params.length > 0 && params[0] == "list")) {
-			var sbList = listSoundboard();
-			client.sendMessage(message.channel, sbList);
+			listSoundboard(function(sbList){
+				client.sendMessage(message.channel, sbList);
+			});
 		}
 		else if(voiceChannel != null) {
 			connection.query("SELECT path FROM soundboard WHERE alias = ?", [params[0]], function(err, rows) {
