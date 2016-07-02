@@ -1,23 +1,24 @@
 var Discord = require("discord.js");
-var config = require("./config");
+var configFile = require("./config");
 var cmds = require("./commands/commands")
 var mysql = require('mysql');
 var connection = mysql.createConnection({
-	host: config.mysql.host,
-	user: config.mysql.user,
-	password: config.mysql.pass,
-	database: config.mysql.db
+	host: configFile.mysql.host,
+	user: configFile.mysql.user,
+	password: configFile.mysql.pass,
+	database: configFile.mysql.db
 });
+
+var config = {};
 
 var playingWith = [];
 
 
 var client = new Discord.Client({autoReconnect: true});
-var botUser;
 
 
 client.on("message", function(message) {
-	if(message.content.toLowerCase().indexOf("hello") > -1 && message.isMentioned(botUser)) {
+	if(message.content.toLowerCase().indexOf("hello") > -1 && message.isMentioned(client.user)) {
 		return client.sendMessage(message.channel, 'Hello ' + message.author);
 	}
 	else if(message.content.toLowerCase().indexOf("who gta") > -1) {
@@ -48,14 +49,23 @@ client.on("ready", function() {
 		if(err) {
 			console.error(err);
 		}
-		for(var i = 0; i < rows.length; i++){
+		for(var i = 0; i < rows.length; i++) {
 			playingWith[i] = rows[i].playingString;
 		}
 		console.log("Loaded " + rows.length + " playing strings from db.");
 		updatePlaying();
 		setInterval(updatePlaying, 600000);
 	});
-	botUser = client.users.get("id", config.discord.id);
+
+	connection.query("SELECT configName, configValue FROM configs ORDER BY configID ASC", function(err, rows, fields) {
+		if(err) {
+			console.error(err);
+		}
+		for(var i = ;i < rows.length; i++) {
+			config[rows[i].configName] = rows[i].configValue;
+			console.log("Set '"+ rows[i].configName + "' to '" + rows[i].configValue + "'.");
+		}
+	});
 	cmds.setUp(client, config);
 });
 
@@ -74,4 +84,4 @@ process.on("SIGINT", function() {
 	});
 });
 
-client.loginWithToken(config.discord.key);
+client.loginWithToken(configFile.apikey);
