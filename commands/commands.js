@@ -80,13 +80,13 @@ new Command("sb",
 		if(params.length == 0 || (params.length > 0 && params[0] == "list")) {
 			connection.query("SELECT alias, description FROM soundboard", function(err, rows) {
 				if(err) {
-					console.error(err);
+					return console.error(err);
 				}
 				var sbList = "```";
 				for(var i = 0; i < rows.length; i++) {
 					sbList = sbList.concat(rows[i].alias + ": " + rows[i].description + "\n");
 				}
-				client.sendMessage(message.channel, sbList + "```");
+				return client.sendMessage(message.channel, sbList + "```");
 			});
 		}
 		if(voiceChannel != null) {
