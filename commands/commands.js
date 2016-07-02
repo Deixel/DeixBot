@@ -10,12 +10,12 @@ var config;
 
 exports.get = function(cmd) {
 	return commands[cmd];
-}
+};
 
 exports.setUp = function(cl, co) {
 	client = cl;
 	config = co;
-}
+};
 
 function Command(cmd, descr, action, hidden = false) {
 	this.cmd = cmd;
@@ -43,7 +43,7 @@ new Command("blame",
 	function(message) {
 		var params = getParams(message.content);
 		if(params.length > 0) {
-			client.sendMessage(message.channel, "I blame " + params.join(' '));
+			client.sendMessage(message.channel, "I blame " + params.join(" "));
 		}
 		else {
 			client.sendMessage(message.channel, "I blame Yury");
@@ -56,7 +56,7 @@ new Command("ge",
 	"Search the RuneScape Grand Exchange for an item",
 	function(message) {
 		var p = getParams(message.content);
-		var item = p.join('+');
+		var item = p.join("+");
 		client.sendMessage(message.channel, "http://services.runescape.com/m=itemdb_rs/results?query=" + item);
 	}
 );
@@ -65,7 +65,7 @@ new Command("hs",
 	"Search the RuneScape High Scores for a player",
 	function(message) {
 		var p = getParams(message.content);
-		var player = p.join('_');
+		var player = p.join("_");
 		client.sendMessage(message.channel, "http://services.runescape.com/m=hiscore/compare?user1=" + player);
 	}
 );
@@ -87,7 +87,7 @@ new Command("bh",
 						return console.error(error);
 					});
 					intent.once("end", function() {
-						voiceConnection.playFile(config.bennyHill, {volume: config.bhvol}, function(error, intent) {
+						voiceConnection.playFile(/*config.bennyHill*/"./bennyHill.mp3", {volume: config.vol}, function(error, intent) {
 							if(error) {
 								return console.error(error);
 							}
@@ -146,13 +146,13 @@ new Command("report",
 		var params = getParams(message.content);
 		if(params.length > 1) {
 			var hax0r = params.shift();
-			var reason =  params.join(' ');
+			var reason =  params.join(" ");
 			var report = message.author + " has reported " + hax0r + ". Reason: " + reason;
 			client.sendMessage(message.channel, report);
 			client.deleteMessage(message);
 		}
 		else {
-			client.sendMessage(message.channel, message.author + " doesn't know how reporting works!")
+			client.sendMessage(message.channel, message.author + " doesn't know how reporting works!");
 			client.deleteMessage(message);
 		}
 	}
@@ -162,7 +162,7 @@ new Command("say",
 	"Words and words and words",
 	function(message) {
 		var params = getParams(message.content);
-		client.sendMessage(message.channel, params.join(' '));
+		client.sendMessage(message.channel, params.join(" "));
 		client.deleteMessage(message);
 	},
 	true
