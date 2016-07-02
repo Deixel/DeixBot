@@ -5,9 +5,11 @@
   "main": "deixbot.js",
   "dependencies": {
     "discord.js": ">=8.0.0",
-	"mysql": "2.5.4"
+    "mysql": "2.5.4"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint": "^3.0.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
