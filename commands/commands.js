@@ -72,56 +72,59 @@ new Command("hs",
 	}
 );
 
+function listSoundboard() {
+	connection.query("SELECT alias, description FROM soundboard", function(err, rows) {
+		if(err) {
+			return console.error(err);
+		}
+		var sbList = "```";
+		for(var i = 0; i < rows.length; i++) {
+			sbList = sbList.concat(rows[i].alias + ": " + rows[i].description + "\n");
+		}
+		return sbList + "```";
+	});
+}
+
 new Command("sb",
 	"Play something from the soundboard",
 	function(message) {
 		var voiceChannel = message.author.voiceChannel;
 		var params = getParams(message.content);
 		if(params.length == 0 || (params.length > 0 && params[0] == "list")) {
-			connection.query("SELECT alias, description FROM soundboard", function(err, rows) {
-				if(err) {
-					return console.error(err);
-				}
-				var sbList = "```";
-				for(var i = 0; i < rows.length; i++) {
-					sbList = sbList.concat(rows[i].alias + ": " + rows[i].description + "\n");
-				}
-				return client.sendMessage(message.channel, sbList + "```");
-			});
+			client.sendMessage(message.channel, listSoundboard());
 		}
 		else if(voiceChannel != null) {
-			if(params.length > 0) {
-				connection.query("SELECT path FROM soundboard WHERE alias = ?", [params[0]], function(err, rows) {
-					if(err) {
-						console.error(err);
-					}
-					if(rows.length == 0) {
-						client.sendMessage(message.channel, "I have no idea what that is, " + message.author);
-					}
-					else if (rows.length > 1) {
-						console.warn("Soundboard alias " + params[0] + "returned multiple paths");
-					}
-					else {
-						var filePath = rows[0].path;
-						client.joinVoiceChannel(voiceChannel, function(err, voiceConnection) {
+			connection.query("SELECT path FROM soundboard WHERE alias = ?", [params[0]], function(err, rows) {
+				if(err) {
+					console.error(err);
+				}
+				if(rows.length == 0) {
+					client.sendMessage(message.channel, "I have no idea what that is, " + message.author);
+					client.sendMessage(message.channel, listSoundboard());
+				}
+				else if (rows.length > 1) {
+					console.warn("Soundboard alias " + params[0] + "returned multiple paths");
+				}
+				else {
+					var filePath = rows[0].path;
+					client.joinVoiceChannel(voiceChannel, function(err, voiceConnection) {
+						if(err) {
+							console.error(err);
+						}
+						voiceConnection.playFile(filePath, {volume: config.vol}, function(error, intent) {
 							if(err) {
 								console.error(err);
 							}
-							voiceConnection.playFile(filePath, {volume: config.vol}, function(error, intent) {
-								if(err) {
-									console.error(err);
-								}
-								intent.on("error", function(err) {
-									console.error(err);
-								});
-								intent.once("end", function() {
-									client.leaveVoiceChannel(voiceConnection);
-								});
+							intent.on("error", function(err) {
+								console.error(err);
+							});
+							intent.once("end", function() {
+								client.leaveVoiceChannel(voiceConnection);
 							});
 						});
-					}
-				});
-			}
+					});
+				}
+			});
 		}
 		else {
 			client.sendMessage(message.channel, "*starts humming*");
