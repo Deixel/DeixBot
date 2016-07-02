@@ -87,7 +87,6 @@ function listSoundboard(cb) {
 }
 
 function playSoundboard(voiceConnection, filePath, iterations = 1) {
-	console.log("Playing " + filePath + " for " + iterations + " runs.");
 	voiceConnection.playFile(filePath, {volume: config.vol}, function(err, intent) {
 		if(err){
 			console.error(err);
@@ -146,46 +145,6 @@ new Command("sb",
 		}
 	}
 );
-
-// new Command("bh",
-// 	"Hilarity ensues",
-// 	function(message) {
-// 		var voiceChannel = message.author.voiceChannel;
-// 		if(voiceChannel != null) {
-// 			client.joinVoiceChannel(voiceChannel, function(error, voiceConnection){
-// 				if(error) {
-// 					return console.error(error);
-// 				}
-// 				voiceConnection.playFile(config.bennyHill, {volume: config.bhvol}, function(error, intent) {
-// 					if(error) {
-// 						return console.error(error);
-// 					}
-// 					intent.on("error", function(error) {
-// 						return console.error(error);
-// 					});
-// 					intent.once("end", function() {
-// 						voiceConnection.playFile(/*config.bennyHill*/"./bennyHill.mp3", {volume: config.vol}, function(error, intent) {
-// 							if(error) {
-// 								return console.error(error);
-// 							}
-// 							intent.on("error", function(error) {
-// 								return console.error(error);
-// 							});
-// 							intent.once("end", function() {
-// 								client.leaveVoiceChannel(voiceConnection);
-// 							});
-// 						});
-// 					});
-// 				});
-// 			});
-// 		}
-// 		else {
-// 			client.sendMessage(message.channel, "*starts humming*");
-// 		}
-// 		client.deleteMessage(message);
-// 	},
-// 	true
-// );
 
 new Command("config",
 	"Admin can configure bot settings.",
