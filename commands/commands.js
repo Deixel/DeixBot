@@ -89,7 +89,7 @@ new Command("sb",
 				return client.sendMessage(message.channel, sbList + "```");
 			});
 		}
-		if(voiceChannel != null) {
+		else if(voiceChannel != null) {
 			if(params.length > 0) {
 				connection.query("SELECT path FROM soundboard WHERE alias = ?", [params[0]], function(err, rows) {
 					if(err) {
