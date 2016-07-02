@@ -1,6 +1,6 @@
 {
     "env": {
-        "browser": true,
+        "node": true,
         "es6": true
     },
     "extends": "eslint:recommended",
@@ -14,7 +14,7 @@
         ],
         "linebreak-style": [
             "error",
-            "unix"
+            "windows"
         ],
         "quotes": [
             "error",
@@ -23,6 +23,7 @@
         "semi": [
             "error",
             "always"
-        ]
+        ],
+		"no-console": 0
     }
 }
