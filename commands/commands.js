@@ -87,6 +87,7 @@ function listSoundboard(cb) {
 }
 
 function playSoundboard(voiceConnection, filePath, iterations = 1) {
+	console.log("Playing " + filePath + " for " + iterations + " runs.");
 	voiceConnection.playFile(filePath, {volume: config.vol}, function(err, intent) {
 		if(err){
 			console.error(err);
