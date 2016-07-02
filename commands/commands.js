@@ -135,7 +135,7 @@ new Command("sb",
 						if(err) {
 							console.error(err);
 						}
-						params.length == 2 ? playSoundboard(voiceConnection, filePath) : playSoundboard(voiceConnection, filePath, params[1]);
+						params.length == 2 ? playSoundboard(voiceConnection, filePath) : playSoundboard(voiceConnection, filePath, parseInt(params[1]));
 					});
 				}
 			});
