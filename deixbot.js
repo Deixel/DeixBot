@@ -1,22 +1,29 @@
 var Discord = require("discord.js");
-var config = require("./config");
-var cmds = require("./commands/commands")
+var configFile = require("./config");
+var cmds = require("./commands/commands");
+var mysql = require("mysql");
+var connection = mysql.createConnection({
+	host: configFile.mysql.host,
+	user: configFile.mysql.user,
+	password: configFile.mysql.pass,
+	database: configFile.mysql.db
+});
+
+var config = {};
+
+var playingWith = [];
 
 var client = new Discord.Client({autoReconnect: true});
-var botUser;
-
 
 client.on("message", function(message) {
-	if(message.content.toLowerCase().indexOf("hello") > -1 && message.isMentioned(botUser)) {
-		return client.sendMessage(message.channel, 'Hello ' + message.author);
+	if(message.content.toLowerCase().indexOf("hello") > -1 && message.isMentioned(client.user)) {
+		return client.sendMessage(message.channel, "Hello " + message.author);
 	}
 	else if(message.content.toLowerCase().indexOf("who gta") > -1) {
-		return message.reply("oooh oooh me! I'll play!")
+		return message.reply("oooh oooh me! I'll play!");
 	}
 
 	else if(message.content.charAt(0) == config.cmdprefix) {
-		var spacePos = message.content.indexOf(" ");
-		//var cmd = spacePos > -1 ? message.content.substring(1, spacePos) : message.content.substring(1);
 
 		var cmdArray = message.content.substring(1).split(" ");
 		var cmdStr = cmdArray[0];
@@ -30,41 +37,51 @@ client.on("message", function(message) {
 	}
 });
 
-
 //Called once the bot is logged in and ready to use.
 client.on("ready", function() {
-	updatePlaying();
-	setInterval(updatePlaying, 600000);
-	botUser = client.users.get("id", config.discord.id);
-	cmds.setUp(client, config);
-	/*for (var i = 0; i < client.servers.length; i++) {
-		var server = client.servers[i];
-		var msg = "S'up " + server.name + "!";
-		client.sendMessage(server.defaultChannel, msg);
-	}*/
+	connection.connect();
+	console.log("Established connection to database.");
+	connection.query("SELECT playingString FROM playing", function(err, rows) {
+		if(err) {
+			console.error(err);
+		}
+		for(var i = 0; i < rows.length; i++) {
+			playingWith[i] = rows[i].playingString;
+		}
+		console.log("Loaded " + rows.length + " playing strings from db.");
+		updatePlaying();
+		setInterval(updatePlaying, 600000);
+	});
+
+	connection.query("SELECT configName, configValue FROM configs ORDER BY configID ASC", function(err, rows) {
+		if(err) {
+			console.error(err);
+		}
+		for(var i = 0;i < rows.length; i++) {
+			config[rows[i].configName] = rows[i].configValue;
+			console.log("Set '"+ rows[i].configName + "' to '" + rows[i].configValue + "'.");
+		}
+	});
+	cmds.setUp(client, config, connection);
 });
 
 function updatePlaying() {
-	var rand = Math.floor(Math.random() * config.playing.length);
-	client.setPlayingGame(config.playing[rand]);
+	var rand = Math.floor(Math.random() * playingWith.length);
+	client.setPlayingGame(playingWith[rand]);
 }
 
 //Handle a CTRL+C to actually shutdown somewhat cleanly
 process.on("SIGINT", function() {
-	client.logout(function() {
+	client.logout(function(error) {
 		if(error) {
 			console.error(error);
 		}
 		process.exit(0);
 	});
-	/*for (var i = 0; i < client.servers.length; i++){
-		var server = client.servers[i];
-		client.sendMessage(server.defaultChannel, "Peace out!", function(i){
-			if(i + 1 == client.servers.length){
-				client.logout();
-			}
-		});
-	}*/
 });
 
-client.loginWithToken(config.discord.key);
+client.loginWithToken(configFile.apikey, function(err){
+	if(err) {
+		console.error(err);
+	}
+});

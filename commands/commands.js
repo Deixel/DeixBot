@@ -7,15 +7,17 @@ action - what the command does
 var commands = {};
 var client;
 var config;
+var connection;
 
 exports.get = function(cmd) {
 	return commands[cmd];
-}
+};
 
-exports.setUp = function(cl, co) {
+exports.setUp = function(cl, co, con) {
 	client = cl;
 	config = co;
-}
+	connection = con;
+};
 
 function Command(cmd, descr, action, hidden = false) {
 	this.cmd = cmd;
@@ -43,7 +45,7 @@ new Command("blame",
 	function(message) {
 		var params = getParams(message.content);
 		if(params.length > 0) {
-			client.sendMessage(message.channel, "I blame " + params.join(' '));
+			client.sendMessage(message.channel, "I blame " + params.join(" "));
 		}
 		else {
 			client.sendMessage(message.channel, "I blame Yury");
@@ -56,7 +58,7 @@ new Command("ge",
 	"Search the RuneScape Grand Exchange for an item",
 	function(message) {
 		var p = getParams(message.content);
-		var item = p.join('+');
+		var item = p.join("+");
 		client.sendMessage(message.channel, "http://services.runescape.com/m=itemdb_rs/results?query=" + item);
 	}
 );
@@ -65,50 +67,83 @@ new Command("hs",
 	"Search the RuneScape High Scores for a player",
 	function(message) {
 		var p = getParams(message.content);
-		var player = p.join('_');
+		var player = p.join("_");
 		client.sendMessage(message.channel, "http://services.runescape.com/m=hiscore/compare?user1=" + player);
 	}
 );
 
-new Command("bh",
-	"Hilarity ensues",
+function listSoundboard(cb) {
+	connection.query("SELECT alias, description FROM soundboard", function(err, rows) {
+		if(err) {
+			return console.error(err);
+		}
+		var sbList = "```";
+		for(var i = 0; i < rows.length; i++) {
+			sbList = sbList.concat(rows[i].alias + ": " + rows[i].description + "\n");
+		}
+		sbList = sbList.concat("```");
+		cb(sbList);
+	});
+}
+
+function playSoundboard(voiceConnection, filePath, iterations = 1) {
+	voiceConnection.playFile(filePath, {volume: config.vol}, function(err, intent) {
+		if(err){
+			console.error(err);
+		}
+		intent.on("error", function(err) {
+			console.error(err);
+		});
+		intent.once("end", function() {
+			if(iterations <= 1) {
+				client.leaveVoiceChannel(voiceConnection);
+			}
+			else {
+				playSoundboard(voiceConnection, filePath, iterations-1);
+			}
+		});
+	});
+}
+
+new Command("sb",
+	"Play something from the soundboard",
 	function(message) {
 		var voiceChannel = message.author.voiceChannel;
-		if(voiceChannel != null) {
-			client.joinVoiceChannel(voiceChannel, function(error, voiceConnection){
-				if(error) {
-					return console.error(error);
+		var params = getParams(message.content);
+		if(params.length == 0 || (params.length > 0 && params[0] == "list")) {
+			listSoundboard(function(sbList){
+				client.sendMessage(message.channel, sbList);
+			});
+		}
+		else if(voiceChannel != null) {
+			connection.query("SELECT path FROM soundboard WHERE alias = ?", [params[0]], function(err, rows) {
+				if(err) {
+					console.error(err);
 				}
-				voiceConnection.playFile(config.bennyHill, {volume: config.bhvol}, function(error, intent) {
-					if(error) {
-						return console.error(error);
-					}
-					intent.on("error", function(error) {
-						return console.error(error);
+				if(rows.length == 0) {
+					client.sendMessage(message.channel, "I have no idea what that is, " + message.author);
+					listSoundboard(function(sbList) {
+						client.sendMessage(message.channel, sbList);
 					});
-					intent.once("end", function() {
-						voiceConnection.playFile(config.bennyHill, {volume: config.bhvol}, function(error, intent) {
-							if(error) {
-								return console.error(error);
-							}
-							intent.on("error", function(error) {
-								return console.error(error);
-							});
-							intent.once("end", function() {
-
-								client.leaveVoiceChannel(voiceConnection);
-							});
-						});
+				}
+				else if (rows.length > 1) {
+					console.warn("Soundboard alias " + params[0] + "returned multiple paths");
+				}
+				else {
+					var filePath = rows[0].path;
+					client.joinVoiceChannel(voiceChannel, function(err, voiceConnection) {
+						if(err) {
+							console.error(err);
+						}
+						params.length == 2 ? playSoundboard(voiceConnection, filePath, parseInt(params[1])) : playSoundboard(voiceConnection, filePath);
 					});
-				});
+				}
 			});
 		}
 		else {
 			client.sendMessage(message.channel, "*starts humming*");
 		}
-		client.deleteMessage(message);
-	},
-	true
+	}
 );
 
 new Command("config",
@@ -146,13 +181,13 @@ new Command("report",
 		var params = getParams(message.content);
 		if(params.length > 1) {
 			var hax0r = params.shift();
-			var reason =  params.join(' ');
+			var reason =  params.join(" ");
 			var report = message.author + " has reported " + hax0r + ". Reason: " + reason;
 			client.sendMessage(message.channel, report);
 			client.deleteMessage(message);
 		}
 		else {
-			client.sendMessage(message.channel, message.author + " doesn't know how reporting works!")
+			client.sendMessage(message.channel, message.author + " doesn't know how reporting works!");
 			client.deleteMessage(message);
 		}
 	}
@@ -162,7 +197,7 @@ new Command("say",
 	"Words and words and words",
 	function(message) {
 		var params = getParams(message.content);
-		client.sendMessage(message.channel, params.join(' '));
+		client.sendMessage(message.channel, params.join(" "));
 		client.deleteMessage(message);
 	},
 	true
