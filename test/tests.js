@@ -10,23 +10,24 @@ describe("Commands", function() {
 
 		it("should return a command if command exists", function() {
 			var pingCmd =  cmds.get("ping");
+			assert.isObject(pingCmd);
 			assert.property(pingCmd, "cmd");
 			assert.property(pingCmd, "description");
-			assert.property(pingCmd, "action");
+			assert.isFunction(pingCmd.action);
 			assert.property(pingCmd, "hidden");
 		});
 		it("should return the correct command.", function() {
 			var blameCmd = cmds.get("blame");
-			assert.equal(blameCmd.description, "Assigns blame appropriately");
-			assert.notEqual(blameCmd.description, "It's like ping-pong, but with words.");
+			assert.propertyVal(blameCmd, "description", "Assigns blame appropriately");
+			assert.proertyNotVal(blameCmd, "description", "It's like ping-pong, but with words.");
 		});
 		it("hidden commands should have a hidden property", function() {
 			var configCmd = cmds.get("config");
-			assert.equal(configCmd.hidden, true);
+			assert.isTrue(configCmd.hidden);
 		});
 		it("visible commands should not have a hidden property", function() {
 			var geCmd = cmds.get("ge");
-			assert.equal(geCmd.hidden, false);
+			assert.isFalse(geCmd.hidden);
 		});
 	});
 });
