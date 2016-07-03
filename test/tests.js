@@ -1,8 +1,35 @@
 var assert =  require("chai").assert;
 var cmds = require("../commands/commands");
 
+function Message(id, channel, author, contents) {
+	this.id = id;
+	this.channel = channel;
+	this.author = author;
+	this.contents = contents;
+}
+
+function Client() {
+	var replies = [];
+	var messages = [];
+	this.sendMessage = function(channel, message) {
+		messages[messages.length] = message;
+	};
+	this.reply = function(message, reply) {
+		replies[replies.length] = reply;
+	};
+}
+
+var config = {};
+config.cmdprefix = "!";
+config.col = "0.25";
+
+
 
 describe("Commands", function() {
+	var client = new Client();
+	before(function() {
+		cmds.setUp(client, config, null);
+	});
 	describe("get()", function() {
 		it("should return null if command doesn't exist", function() {
 			assert.equal(null, cmds.get("test"));
@@ -31,8 +58,11 @@ describe("Commands", function() {
 		});
 	});
 	describe("ping", function() {
-		it("should fail", function() {
-			assert.fail(true, false);
+		var pingCmd = cmds.get("ping");
+		it("should reply with 'pong'", function() {
+			var pingMsg = new Message(1, "general", "Deixel", "!ping");
+			pingCmd.action(pingMsg);
+			assert.equal(client.replies[client.replies.length-1], "pong");
 		});
 	});
 	describe("blame", function() {
