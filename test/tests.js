@@ -31,33 +31,53 @@ describe("Commands", function() {
 		});
 	});
 	describe("ping", function() {
-		assert.fail(true, false);
+		it("should fail", function() {
+			assert.fail(true, false);
+		});
 	});
 	describe("blame", function() {
-		assert.fail(true, false);
+		it("should fail", function() {
+			assert.fail(true, false);
+		});
 	});
 	describe("ge", function() {
-		assert.fail(true, false);
+		it("should fail", function() {
+			assert.fail(true, false);
+		});
 	});
 	describe("hs", function() {
-		assert.fail(true, false);
+		it("should fail", function() {
+			assert.fail(true, false);
+		});
 	});
 	describe("sb", function() {
-		assert.fail(true, false);
+		it("should fail", function() {
+			assert.fail(true, false);
+		});
 	});
 	describe("config", function() {
-		assert.fail(true, false);
+		it("should fail", function() {
+			assert.fail(true, false);
+		});
 	});
 	describe("botissues", function() {
-		assert.fail(true, false);
+		it("should fail", function() {
+			assert.fail(true, false);
+		});
 	});
 	describe("report", function() {
-		assert.fail(true, false);
+		it("should fail", function() {
+			assert.fail(true, false);
+		});
 	});
 	describe("say", function() {
-		assert.fail(true, false);
+		it("should fail", function() {
+			assert.fail(true, false);
+		});
 	});
 	describe("help", function() {
-		assert.fail(true, false);
+		it("should fail", function() {
+			assert.fail(true, false);
+		});
 	});
 });
