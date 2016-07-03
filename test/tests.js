@@ -5,7 +5,7 @@ function Message(id, channel, author, contents) {
 	this.id = id;
 	this.channel = channel;
 	this.author = author;
-	this.contents = contents;
+	this.content = contents;
 }
 
 function Client() {
