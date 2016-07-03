@@ -10,7 +10,7 @@ describe("Command", function() {
 		it("should return a command if command exists", function() {
 			var pingCmd =  cmds.get("ping");
 			assert.property(pingCmd, "description");
-			assert.equals(pingCmd.description, "It's like ping-pong, but with words.");
+			assert.equal(pingCmd.description, "It's like ping-pong, but with words.");
 		});
 	});
 });
