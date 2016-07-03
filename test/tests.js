@@ -8,10 +8,8 @@ describe("Command", function() {
 			assert.equal(null, cmds.get("test"));
 		});
 		it("should return a command if command exists", function() {
-			var pingCmd = new cmds.Command("ping","It's like ping-pong, but with words.", function(message) {
-				client.reply(message, "pong");
-			});
-			assert.equal(cmds.get("ping"), pingCmd);
+			var pingCmd =  cmds.get("ping");
+			assert.property(pingCmd, "description");
 		});
 	});
 });
