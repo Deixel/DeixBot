@@ -17,6 +17,9 @@ function Client() {
 	this.reply = function(message, reply) {
 		this.replies[this.replies.length] = reply;
 	};
+	this.deleteMessage = function(message) {
+		
+	};
 }
 
 var config = {};
