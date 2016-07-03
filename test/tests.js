@@ -23,8 +23,6 @@ var config = {};
 config.cmdprefix = "!";
 config.col = "0.25";
 
-
-
 describe("Commands", function() {
 	var client = new Client();
 	before(function() {
@@ -66,8 +64,16 @@ describe("Commands", function() {
 		});
 	});
 	describe("blame", function() {
-		it("should fail", function() {
-			assert.fail(true, false);
+		var blameCmd = cmds.get("blame");
+		it("should blame Yury when no parameters are set", function() {
+			var blameMsg = new Message(1, "general", "Deixel", "!blame");
+			blameCmd.action(blameMsg);
+			assert.equal(client.messages[client.messages.length-1], "I blame Yury");
+		});
+		it("should blame a specified string if given", function() {
+			var blameMsg = new Message(1, "general", "Deixel", "!blame potato");
+			blameCmd.action(blameMsg);
+			assert.equal(client.messages[client.messages.length-1], "I blame potato");
 		});
 	});
 	describe("ge", function() {
