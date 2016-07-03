@@ -9,13 +9,13 @@ function Message(id, channel, author, contents) {
 }
 
 function Client() {
-	var replies = [];
-	var messages = [];
+	this.replies = [];
+	this.messages = [];
 	this.sendMessage = function(channel, message) {
-		messages[messages.length] = message;
+		this.messages[this.messages.length] = message;
 	};
 	this.reply = function(message, reply) {
-		replies[replies.length] = reply;
+		this.replies[this.replies.length] = reply;
 	};
 }
 
