@@ -19,7 +19,7 @@ describe("Commands", function() {
 		it("should return the correct command.", function() {
 			var blameCmd = cmds.get("blame");
 			assert.propertyVal(blameCmd, "description", "Assigns blame appropriately");
-			assert.proertyNotVal(blameCmd, "description", "It's like ping-pong, but with words.");
+			assert.propertyNotVal(blameCmd, "description", "It's like ping-pong, but with words.");
 		});
 		it("hidden commands should have a hidden property", function() {
 			var configCmd = cmds.get("config");
