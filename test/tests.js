@@ -18,7 +18,7 @@ function Client() {
 		this.replies[this.replies.length] = reply;
 	};
 	this.deleteMessage = function(message) {
-		
+		//Do nothing
 	};
 }
 
@@ -80,8 +80,16 @@ describe("Commands", function() {
 		});
 	});
 	describe("ge", function() {
-		it("should fail", function() {
-			assert.fail(true, false);
+		var geCmd = cmds.get("ge");
+		it("should reply with an error if no item is specified", function() {
+			var geMsg = new Message(1, "general", "Deixel", "!ge");
+			geCmd.action(geMsg);
+			assert.equal(client.replies[client.replies.length-1], "You need to specify an item");
+		});
+		it("should send a message with the right link if an item is specified", function() {
+			var geMsg = new Message(1, "general", "Deixel", "!ge frost dragon");
+			geCmd.action(geMsg);
+			assert.equal(client.messages[client.messages.length-1], "http://services.runescape.com/m=itemdb_rs/results?query=frost+dragon");
 		});
 	});
 	describe("hs", function() {
