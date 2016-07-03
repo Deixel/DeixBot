@@ -30,4 +30,34 @@ describe("Commands", function() {
 			assert.isFalse(geCmd.hidden);
 		});
 	});
+	describe("ping", function() {
+		assert.fail();
+	});
+	describe("blame", function() {
+		assert.fail();
+	});
+	describe("ge", function() {
+		assert.fail();
+	});
+	describe("hs", function() {
+		assert.fail();
+	});
+	describe("sb", function() {
+		assert.fail();
+	});
+	describe("config", function() {
+		assert.fail();
+	});
+	describe("botissues", function() {
+		assert.fail();
+	});
+	describe("report", function() {
+		assert.fail();
+	});
+	describe("say", function() {
+		assert.fail();
+	});
+	describe("help", function() {
+		assert.fail();
+	});
 });
