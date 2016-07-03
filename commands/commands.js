@@ -73,8 +73,14 @@ new Command("hs",
 	"Search the RuneScape High Scores for a player",
 	function(message) {
 		var p = getParams(message.content);
-		var player = p.join("_");
-		client.sendMessage(message.channel, "http://services.runescape.com/m=hiscore/compare?user1=" + player);
+		if(p.length > 0) {
+			var player = p.join("_");
+			client.sendMessage(message.channel, "http://services.runescape.com/m=hiscore/compare?user1=" + player);
+		}
+		else {
+			client.reply(message, "You need to specify a player")
+		}
+
 	}
 );
 

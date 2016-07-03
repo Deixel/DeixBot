@@ -93,8 +93,16 @@ describe("Commands", function() {
 		});
 	});
 	describe("hs", function() {
-		it("should fail", function() {
-			assert.fail(true, false);
+		var hsCmd = cmds.get("hs");
+		it("should reply with an error if no player is specified", function() {
+			var hsMsg = new Message(1, "general", "Deixel", "!hs");
+			hsCmd.action(hsMsg);
+			assert.equal(client.replies[client.replies.length-1], "You need to specify a player");
+		});
+		it("should send a message when the right link if a player is specified", function() {
+			var hsMsg = new Message(1, "general", "Deixel", "!hs schnee");
+			hsCmd.action(hsMsg);
+			assert.equal(client.messages[client.messages.length-1], "http://services.runescape.com/m=hiscore/compare?user1=schnee");
 		});
 	});
 	describe("sb", function() {
