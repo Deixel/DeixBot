@@ -1,13 +1,6 @@
 var assert =  require("chai").assert;
 var cmds = require("../commands/commands");
 
-function Command(cmd, descr, action, hidden = false) {
-	this.cmd = cmd;
-	this.description = descr;
-	this.action = action;
-	this.hidden = hidden;
-	//commands[cmd]=this;
-}
 
 describe("Command", function() {
 	describe("#get()", function() {
@@ -15,7 +8,10 @@ describe("Command", function() {
 			assert.equal(null, cmds.get("test"));
 		});
 		it("should return a command if command exists", function() {
-			assert.typeOf(cmds.get("ping"), Command);
+			var pingCmd = new cmds.Command("ping","It's like ping-pong, but with words.", function(message) {
+				client.reply(message, "pong");
+			});
+			assert.equal(cmds.get("ping"), pingCmd);
 		});
 	});
 });

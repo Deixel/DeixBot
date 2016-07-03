@@ -27,6 +27,8 @@ function Command(cmd, descr, action, hidden = false) {
 	commands[cmd]=this;
 }
 
+exports.Command = new Command();
+
 function getParams(content) {
 	var params = content.split(" ");
 	params.shift();
