@@ -58,8 +58,14 @@ new Command("ge",
 	"Search the RuneScape Grand Exchange for an item",
 	function(message) {
 		var p = getParams(message.content);
-		var item = p.join("+");
-		client.sendMessage(message.channel, "http://services.runescape.com/m=itemdb_rs/results?query=" + item);
+		if(p.length > 0) {
+			var item = p.join("+");
+			client.sendMessage(message.channel, "http://services.runescape.com/m=itemdb_rs/results?query=" + item);
+		}
+		else {
+			client.reply(message, "You need to specify an item");
+		}
+
 	}
 );
 
