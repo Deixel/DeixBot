@@ -152,22 +152,6 @@ describe("Commands", function() {
 			assert.equal(config.cmdprefix, "|");
 		});
 	});
-	describe("botissues", function() {
-		var botissuesCmd = cmds.get("botissues");
-		it("should send a message with a link to github", function() {
-			var botissuesMsg = new Message(1, "general", "Deixel", "!botissues");
-			botissuesCmd.action(botissuesMsg);
-			assert.equal(client.messages[client.messages.length-1], "https://github.com/Deixel/DeixBot/issues");
-		});
-	});
-	describe("gtadown", function() {
-		var gtadownCmd = cmds.get("gtadown");
-		it("should send a message with a link to downdetector", function() {
-			var gtadownMsg = new Message(1, "general", "Deixel", "!gtadown");
-			gtadownCmd.action(gtadownMsg);
-			assert.equal(client.messages[client.messages.length-1], "http://downdetector.co.uk/problems/gta5");
-		});
-	});
 	describe("report", function() {
 		var reportCmd = cmds.get("report");
 		it("should send an error if no parameters are given", function() {

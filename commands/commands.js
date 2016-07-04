@@ -173,20 +173,6 @@ new Command("config",
 	true
 );
 
-new Command("botissues",
-	"Got an idea or found a bug? Here's the link to submit them.",
-	function(message) {
-		client.sendMessage(message.channel, "https://github.com/Deixel/DeixBot/issues");
-	}
-);
-
-new Command("gtadown",
-	"Rockstar sucks.",
-	function(message) {
-		client.sendMessage(message.channel, "http://downdetector.co.uk/problems/gta5");
-	}
-);
-
 new Command("report",
 	"Report them hax0rz",
 	function(message) {
