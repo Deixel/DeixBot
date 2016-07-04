@@ -22,6 +22,25 @@ function Client() {
 	};
 }
 
+function Channel() {
+	this.name = "general";
+	this.permissionsOf = function(user) {
+		return new Permissions(user);
+	};
+}
+
+function Permissions(user) {
+	this.user = user;
+	this.hasPermission = function(perm) {
+		if(perm == "administrator" && user == "Deixel") {
+			return true;
+		}
+		else {
+			return false;
+		}
+	};
+}
+
 var config = {};
 config.cmdprefix = "!";
 config.col = "0.25";
@@ -111,13 +130,34 @@ describe("Commands", function() {
 		});
 	});
 	describe("config", function() {
-		it("should fail", function() {
-			assert.fail(true, false);
+		var configCmd = cmds.get("config");
+		it("should reply with an error if the user doesn't have permission", function() {
+			var configMsg = new Message(1, new Channel(), "Schnee", "!config cmdprefix |");
+			configCmd.action(configMsg);
+			assert.equal(client.replies[client.replies.length-1], "*sticks fingers in ears* lalala I'm not listening!");
+			assert.notEqual(config.cmdprefix, "|");
+		});
+		it("should reply with a message and update the config if everything is approved", function() {
+			var configMsg = new Message(1, new Channel(), "Deixel", "!config cmdprefix |");
+			configCmd.action(configMsg);
+			assert.equal(client.replies[client.replies.length-1], "Updated config");
+			assert.equal(config.cmdprefix, "|");
 		});
 	});
 	describe("botissues", function() {
-		it("should fail", function() {
-			assert.fail(true, false);
+		var botissuesCmd = cmds.get("botissues");
+		it("should send a message with a link to github", function() {
+			var botissuesMsg = new Message(1, "general", "Deixel", "!botissues");
+			botissuesCmd.action(botissuesMsg);
+			assert.equal(client.messages[client.messages.length-1], "https://github.com/Deixel/DeixBot/issues");
+		});
+	});
+	describe("gtadown", function() {
+		var gtadownCmd = cmds.get("gtadown");
+		it("should send a message with a link to downdetector", function() {
+			var gtadownMsg = new Message(1, "general", "Deixel", "!gtadown");
+			gtadownCmd.action(gtadownMsg);
+			assert.equal(client.messages[client.messages.length-1], "http://downdetector.co.uk/problems/gta5");
 		});
 	});
 	describe("report", function() {

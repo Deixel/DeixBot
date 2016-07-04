@@ -78,7 +78,7 @@ new Command("hs",
 			client.sendMessage(message.channel, "http://services.runescape.com/m=hiscore/compare?user1=" + player);
 		}
 		else {
-			client.reply(message, "You need to specify a player")
+			client.reply(message, "You need to specify a player");
 		}
 
 	}

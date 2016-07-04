@@ -8,10 +8,10 @@
     "mysql": "latest"
   },
   "devDependencies": {
-    "eslint": "^3.0.0"
+    "eslint": "latest"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
