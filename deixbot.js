@@ -2,12 +2,32 @@ var Discord = require("discord.js");
 var configFile = require("./config");
 var cmds = require("./commands/commands");
 var mysql = require("mysql");
-var connection = mysql.createConnection({
+var db_config = {
 	host: configFile.mysql.host,
 	user: configFile.mysql.user,
 	password: configFile.mysql.pass,
 	database: configFile.mysql.db
-});
+};
+var connection;
+
+function db_connect() {
+	connection = mysql.createConnection(db_config);
+	connection.connect(function(err) {
+		if(err) {
+			console.error(err);
+			setTimeout(db_connect, 2000);
+		}
+	});
+	connection.on("error", function(err) {
+		console.error(err);
+		if(err.code === "PROTOCOL_CONNECTION_LOST") {
+			db_connect();
+		}
+		else {
+			throw err;
+		}
+	});
+}
 
 var config = {};
 
@@ -39,7 +59,7 @@ client.on("message", function(message) {
 
 //Called once the bot is logged in and ready to use.
 client.on("ready", function() {
-	connection.connect();
+	db_connect();
 	console.log("Established connection to database.");
 	connection.query("SELECT playingString FROM playing", function(err, rows) {
 		if(err) {
