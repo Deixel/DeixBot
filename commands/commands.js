@@ -217,7 +217,7 @@ new Command("say",
 
 new Command("text",
 	"Quickly print some saved text",
-	function(message) {
+	function(message, cb) {
 		var params = getParams(message.content);
 		connection.query("SELECT contents FROM quicktext WHERE alias = ?", params[0], function(err, rows) {
 			if(err) {
@@ -229,6 +229,7 @@ new Command("text",
 			else {
 				client.sendMessage(message.channel, rows[0].contents);
 			}
+			cb();
 		});
 	}
 );
