@@ -1,5 +1,7 @@
 var assert =  require("chai").assert;
 var cmds = require("../commands/commands");
+var mysql = require("mysql");
+var configFile = require("../config");
 
 function Message(id, channel, author, contents) {
 	this.id = id;
@@ -17,7 +19,7 @@ function Client() {
 	this.reply = function(message, reply) {
 		this.replies[this.replies.length] = reply;
 	};
-	this.deleteMessage = function(message) {
+	this.deleteMessage = function() {
 		//Do nothing
 	};
 }
@@ -48,7 +50,17 @@ config.col = "0.25";
 describe("Commands", function() {
 	var client = new Client();
 	before(function() {
-		cmds.setUp(client, config, null);
+		var db_config = {
+			host: configFile.mysql.host,
+			user: configFile.mysql.user,
+			password: configFile.mysql.pass,
+			database: configFile.mysql.db
+		};
+		var connection = mysql.createConnection(db_config);
+		connection.connect();
+
+
+		cmds.setUp(client, config, connection);
 	});
 	describe("get()", function() {
 		it("should return null if command doesn't exist", function() {
@@ -180,6 +192,22 @@ describe("Commands", function() {
 			var sayMsg = new Message(1, "general", "Deixel", "!say MAARK NUTT");
 			sayCmd.action(sayMsg);
 			assert.equal(client.messages[client.messages.length-1], "MAARK NUTT");
+		});
+	});
+	describe("text", function() {
+		var textCmd = cmds.get("text");
+		it("should send a error message if the tag isn't recognised", function() {
+			var textMsg = new Message(1, "general", "Deixel", "!text potato");
+			textCmd.action(textMsg, function() {
+				assert.equal(client.messages[client.messages.length-1], "404: Message not found.");
+			});
+		});
+		it("should return the appropriate message if the tag is found", function() {
+			var textMsg = new Message(1, "general", "Deixel", "!text issues");
+			textCmd.action(textMsg, function() {
+				assert.equal(client.messages[client.messages.length-1], "https://github.com/Deixel/DeixBot/issues");
+			});
+
 		});
 	});
 });

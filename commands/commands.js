@@ -215,6 +215,28 @@ new Command("say",
 	true
 );
 
+new Command("text",
+	"Quickly print some saved text",
+	function(message, cb) {
+		var params = getParams(message.content);
+		connection.query("SELECT contents FROM quicktext WHERE alias = ?", params[0], function(err, rows) {
+			if(err) {
+				console.error(err);
+			}
+			if(rows.length == 0) {
+				client.sendMessage(message.channel, "404: Message not found.");
+			}
+			else {
+				client.sendMessage(message.channel, rows[0].contents);
+			}
+			//Pretty much only used for testing
+			if(cb != null)	{
+				cb();
+			}
+		});
+	}
+);
+
 new Command("help",
 	"Lists all the commands.",
 	function(message) {
