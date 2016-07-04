@@ -161,13 +161,29 @@ describe("Commands", function() {
 		});
 	});
 	describe("report", function() {
-		it("should fail", function() {
-			assert.fail(true, false);
+		var reportCmd = cmds.get("report");
+		it("should send an error if no parameters are given", function() {
+			var reportMsg = new Message(1, "general", "Deixel", "!report");
+			reportCmd.action(reportMsg);
+			assert.equal(client.messages[client.messages.length-1], "Deixel doesn't know how reporting works!");
+		});
+		it("should send an error if 1 parameter is given", function() {
+			var reportMsg = new Message(1, "general", "wof1037", "!report Schnee");
+			reportCmd.action(reportMsg);
+			assert.equal(client.messages[client.messages.length-1], "wof1037 doesn't know how reporting works!");
+		});
+		it("should send a report message if all parameters are given", function() {
+			var reportMsg = new Message(1, "general", "Shotgun", "!report wof1037 Dirty Hax0r");
+			reportCmd.action(reportMsg);
+			assert.equal(client.messages[client.messages.length-1], "Shotgun has reported wof1037. Reason: Dirty Hax0r");
 		});
 	});
 	describe("say", function() {
-		it("should fail", function() {
-			assert.fail(true, false);
+		var sayCmd = cmds.get("say");
+		it("should send a message containing any parameters", function() {
+			var sayMsg = new Message(1, "general", "Deixel", "!say MAARK NUTT");
+			sayCmd.action(sayMsg);
+			assert.equal(client.messages[client.messages.length-1], "MAARK NUTT");
 		});
 	});
 	describe("help", function() {
