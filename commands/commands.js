@@ -220,14 +220,15 @@ new Command("text",
 	function(message) {
 		var params = getParams(message.content);
 		connection.query("SELECT contents FROM quicktext WHERE alias = ?", params[0], function(err, rows) {
-			console.log(rows);
 			if(err) {
 				console.error(err);
 			}
 			if(rows.length == 0) {
+				console.log(rows);
 				client.sendMessage(message.channel, "404: Message not found.");
 			}
 			else {
+				console.log(rows);
 				client.sendMessage(message.channel, rows[0].contents);
 			}
 		});
