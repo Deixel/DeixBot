@@ -225,9 +225,11 @@ new Command("text",
 			}
 			console.log(rows.length);
 			if(rows.length == 0) {
+				console.log("no records found");
 				client.sendMessage(message.channel, "404: Message not found.");
 			}
 			else {
+				console.log(rows[0].contents);
 				client.sendMessage(message.channel, rows[0].contents);
 			}
 		});
