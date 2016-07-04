@@ -196,15 +196,18 @@ describe("Commands", function() {
 	});
 	describe("text", function() {
 		var textCmd = cmds.get("text");
-		it("should send a error message if the tag isn't recognised", function(done) {
+		it("should send a error message if the tag isn't recognised", function() {
 			var textMsg = new Message(1, "general", "Deixel", "!text potato");
-			textCmd.action(textMsg, done);
-			assert.equal(client.messages[client.messages.length-1], "404: Message not found.");
+			textCmd.action(textMsg, function() {
+				assert.equal(client.messages[client.messages.length-1], "404: Message not found.");
+			});
 		});
-		it("should return the appropriate message if the tag is found", function(done) {
+		it("should return the appropriate message if the tag is found", function() {
 			var textMsg = new Message(1, "general", "Deixel", "!text issues");
-			textCmd.action(textMsg, done);
-			assert.equal(client.messages[client.messages.length-1], "https://github.com/Deixel/DeixBot/issues");
+			textCmd.action(textMsg, function() {
+				assert.equal(client.messages[client.messages.length-1], "https://github.com/Deixel/DeixBot/issues");
+			});
+
 		});
 	});
 });

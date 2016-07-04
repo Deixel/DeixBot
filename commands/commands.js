@@ -225,13 +225,11 @@ new Command("text",
 			}
 			if(rows.length == 0) {
 				client.sendMessage(message.channel, "404: Message not found.");
-				cb();
 			}
 			else {
 				client.sendMessage(message.channel, rows[0].contents);
-				cb();
 			}
-
+			cb();
 		});
 	}
 );
