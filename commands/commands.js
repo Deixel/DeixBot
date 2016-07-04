@@ -229,7 +229,10 @@ new Command("text",
 			else {
 				client.sendMessage(message.channel, rows[0].contents);
 			}
-			cb();
+			//Pretty much only used for testing
+			if(cb != null)	{
+				cb();
+			}
 		});
 	}
 );
