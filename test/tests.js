@@ -124,11 +124,7 @@ describe("Commands", function() {
 			assert.equal(client.messages[client.messages.length-1], "http://services.runescape.com/m=hiscore/compare?user1=schnee");
 		});
 	});
-	describe("sb", function() {
-		it("should fail", function() {
-			assert.fail(true, false);
-		});
-	});
+	//TODO Add tests for soundboard
 	describe("config", function() {
 		var configCmd = cmds.get("config");
 		it("should reply with an error if the user doesn't have permission", function() {
@@ -184,11 +180,6 @@ describe("Commands", function() {
 			var sayMsg = new Message(1, "general", "Deixel", "!say MAARK NUTT");
 			sayCmd.action(sayMsg);
 			assert.equal(client.messages[client.messages.length-1], "MAARK NUTT");
-		});
-	});
-	describe("help", function() {
-		it("should fail", function() {
-			assert.fail(true, false);
 		});
 	});
 });
