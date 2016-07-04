@@ -17,7 +17,7 @@ function Client() {
 	this.reply = function(message, reply) {
 		this.replies[this.replies.length] = reply;
 	};
-	this.deleteMessage = function(message) {
+	this.deleteMessage = function() {
 		//Do nothing
 	};
 }
@@ -180,6 +180,19 @@ describe("Commands", function() {
 			var sayMsg = new Message(1, "general", "Deixel", "!say MAARK NUTT");
 			sayCmd.action(sayMsg);
 			assert.equal(client.messages[client.messages.length-1], "MAARK NUTT");
+		});
+	});
+	describe("text", function() {
+		var textCmd = cmds.get("text");
+		it("should send a error message if the tag isn't recognised", function() {
+			var textMsg = new Message(1, "general", "Deixel", "!text potato");
+			textCmd.action(textMsg);
+			assert.equal(client.messages[client.messages.length-1], "404: Message not found.");
+		});
+		it("should return the appropriate message if the tag is found", function() {
+			var textMsg = new Message(1, "general", "Deixel", "!text issues");
+			textCmd.action(textMsg);
+			assert.equal(client.messages[client.messages.length-1], "https://github.com/Deixel/DeixBot/issues");
 		});
 	});
 });
