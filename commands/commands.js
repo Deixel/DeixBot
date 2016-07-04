@@ -164,10 +164,10 @@ new Command("config",
 		if(message.channel.permissionsOf(message.author).hasPermission("administrator")) {
 			var params = getParams(message.content);
 			config[params[0]] = params[1];
-			message.reply("Updated config");
+			client.reply(message, "Updated config");
 		}
 		else {
-			message.reply("*sticks fingers in ears* lalala I'm not listening!");
+			client.reply(message, "*sticks fingers in ears* lalala I'm not listening!");
 		}
 	},
 	true
