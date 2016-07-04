@@ -1,5 +1,7 @@
 var assert =  require("chai").assert;
 var cmds = require("../commands/commands");
+var mysql = require("mysql");
+var configFile = require("../config");
 
 function Message(id, channel, author, contents) {
 	this.id = id;
@@ -48,7 +50,17 @@ config.col = "0.25";
 describe("Commands", function() {
 	var client = new Client();
 	before(function() {
-		cmds.setUp(client, config, null);
+		var db_config = {
+			host: configFile.mysql.host,
+			user: configFile.mysql.user,
+			password: configFile.mysql.pass,
+			database: configFile.mysql.db
+		};
+		var connection = mysql.createConnection(db_config);
+		connection.connect();
+
+
+		cmds.setUp(client, config, connection);
 	});
 	describe("get()", function() {
 		it("should return null if command doesn't exist", function() {
