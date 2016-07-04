@@ -58,8 +58,14 @@ new Command("ge",
 	"Search the RuneScape Grand Exchange for an item",
 	function(message) {
 		var p = getParams(message.content);
-		var item = p.join("+");
-		client.sendMessage(message.channel, "http://services.runescape.com/m=itemdb_rs/results?query=" + item);
+		if(p.length > 0) {
+			var item = p.join("+");
+			client.sendMessage(message.channel, "http://services.runescape.com/m=itemdb_rs/results?query=" + item);
+		}
+		else {
+			client.reply(message, "You need to specify an item");
+		}
+
 	}
 );
 
@@ -67,8 +73,14 @@ new Command("hs",
 	"Search the RuneScape High Scores for a player",
 	function(message) {
 		var p = getParams(message.content);
-		var player = p.join("_");
-		client.sendMessage(message.channel, "http://services.runescape.com/m=hiscore/compare?user1=" + player);
+		if(p.length > 0) {
+			var player = p.join("_");
+			client.sendMessage(message.channel, "http://services.runescape.com/m=hiscore/compare?user1=" + player);
+		}
+		else {
+			client.reply(message, "You need to specify a player");
+		}
+
 	}
 );
 
@@ -152,10 +164,10 @@ new Command("config",
 		if(message.channel.permissionsOf(message.author).hasPermission("administrator")) {
 			var params = getParams(message.content);
 			config[params[0]] = params[1];
-			message.reply("Updated config");
+			client.reply(message, "Updated config");
 		}
 		else {
-			message.reply("*sticks fingers in ears* lalala I'm not listening!");
+			client.reply(message, "*sticks fingers in ears* lalala I'm not listening!");
 		}
 	},
 	true
