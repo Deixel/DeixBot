@@ -241,10 +241,15 @@ new Command("about",
 	"About DeixBot",
 	function(message) {
 		var aboutMsg = "**DeixBot**\n\
-		**Built By**: Deixel (http://www.deixel.co.uk)\n\
-		**Built Using**: Discord.js (https://github.com/hydrabolt/discord.js/)\n\
-		**Source**: https://github.com/Deixel/DeixBot\n";
-
+		__About Me__\n\
+		**ID:** " + client.user.id +"\
+		__Creator__\
+		**Name:** @Deixel#8796\n\
+		**Website:** http://www.deixel.co.uk\n\
+		**Source:** https://github.com/Deixel/DeixBot\n\
+		__Dev__\n\
+		**Language:** Node.JS\n\
+		**Library:** Discord.js (https://github.com/hydrabolt/discord.js/)\n"
 		client.sendMessage(message.channel, aboutMsg);
 	}
 );
