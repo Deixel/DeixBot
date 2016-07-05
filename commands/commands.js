@@ -205,20 +205,20 @@ new Command("text",
 	"Quickly print some saved text",
 	function(message, cb) {
 		var params = getParams(message.content);
-		if(params.length > 0) {
-			if(params[0] === "list") {
-				connection.query("SELECT alias FROM quicktext", function(err, rows) {
-					if(err) {
-						console.error(err);
-					}
-					var textList = "";
-					for(var i = 0; i < rows.length; i++) {
-						textList = textList.concat(rows[i].alias + " ");
-					}
-					client.sendMessage(message.channel, textList);
-				});
-			}
-			else if(params[0] === "add") {
+		if(params.length == 0 || (params.length > 0 && params[0] === "list")) {
+			connection.query("SELECT alias FROM quicktext", function(err, rows) {
+				if(err) {
+					console.error(err);
+				}
+				var textList = "";
+				for(var i = 0; i < rows.length; i++) {
+					textList = textList.concat(rows[i].alias + " ");
+				}
+				client.sendMessage(message.channel, textList);
+			});
+		}
+		else if(params.length > 0) {
+			if(params[0] === "add") {
 				var newText = {};
 				client.awaitResponse(message, "What tag would you like to add " + message.author + "?", function(err, msg1) {
 					if(err) {
