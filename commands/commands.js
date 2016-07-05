@@ -224,7 +224,7 @@ new Command("text",
 					if(err) {
 						console.error(err);
 					}
-					newText.alias = msg1.contents;
+					newText.alias = msg1.content;
 					connection.query("SELECT alias FROM quicktext WHERE alias = ?", [newText.alias], function(err, rows) {
 						if(err) {
 							console.error(err);
