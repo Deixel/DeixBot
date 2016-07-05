@@ -236,3 +236,22 @@ new Command("help",
 		client.sendMessage(message.channel, helpStr);
 	}
 );
+
+new Command("about",
+	"About DeixBot",
+	function(message) {
+		var aboutMsg = "**"+client.user.username+"**\n\
+		__About Me__\n\
+		**ID:** " + client.user.id +"\n\
+		**Playing:** " + ((client.user.game != null) ? client.user.game.name : "Nothing") + "\n\
+		**On:** " + client.servers.length + " server"+ ((client.servers.length == 1) ? "" : "s") +"\n\
+		__Creator__\n\
+		**Name:** " + client.users.get("id", "113310775887536128") +"\n\
+		**Website:** http://www.deixel.co.uk\n\
+		**Source:** https://github.com/Deixel/DeixBot\n\
+		__Dev__\n\
+		**Language:** Node.JS\n\
+		**Library:** Discord.js (https://github.com/hydrabolt/discord.js/)\n"
+		client.sendMessage(message.channel, aboutMsg);
+	}
+);
