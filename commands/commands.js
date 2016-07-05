@@ -293,6 +293,7 @@ new Command("about",
 		**ID:** " + client.user.id +"\n\
 		**Playing:** " + ((client.user.game != null) ? client.user.game.name : "Nothing") + "\n\
 		**On:** " + client.servers.length + " server"+ ((client.servers.length == 1) ? "" : "s") +"\n\
+		**Up Since:** " + new Date(client.readyTime).toUTCString + "\n\
 		__Creator__\n\
 		**Name:** <@113310775887536128> \n\
 		**Website:** http://www.deixel.co.uk\n\
