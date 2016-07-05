@@ -244,7 +244,7 @@ new Command("about",
 		__About Me__\n\
 		**ID:** " + client.user.id +"\n\
 		**Playing:** " + ((client.user.game != null) ? client.user.game.name : "Nothing") + "\n\
-		**On:** " + client.servers.length + " server"+ ((client.servers.length == 1) ? "" : "s")\n\
+		**On:** " + client.servers.length + " server"+ ((client.servers.length == 1) ? "" : "s") +"\n\
 		__Creator__\n\
 		**Name:** " + client.users.get("id", "113310775887536128") +"\n\
 		**Website:** http://www.deixel.co.uk\n\
