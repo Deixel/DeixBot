@@ -205,7 +205,7 @@ new Command("text",
 	"Quickly print some saved text",
 	function(message, cb) {
 		var params = getParams(message.content);
-		if(params.length < 0) {
+		if(params.length > 0) {
 			if(params[0] === "list") {
 				connection.query("SELECT alias FROM quicktext", function(err, rows) {
 					if(err) {
