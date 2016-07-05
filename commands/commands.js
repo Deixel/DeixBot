@@ -221,22 +221,17 @@ new Command("text",
 			else if(params[0] === "add") {
 				var newAlias = "";
 				var newTextContents = "";
-				client.sendMessage(message.author, "What tag would you like to create text for?", function(err, msg1){
+				client.awaitResponse(message, "What tag would you like to add " + message.author + "?", function(err, msg1) {
 					if(err) {
 						console.error(err);
 					}
-					client.awaitResponse(msg1, function(err) {
+					newAlias = msg1.content;
+					client.awaitResponse(msg1, "And what should " + newAlias +" display?", function(err, msg2) {
 						if(err) {
 							console.error(err);
 						}
-						newAlias = msg1.content;
-						client.awaitResponse(msg1, "And what should " + newAlias +" display?", function(err, msg2) {
-							if(err) {
-								console.error(err);
-							}
-							newTextContents = msg2.content;
-							client.sendMessage(msg2.channel, newAlias + ": " + newTextContents);
-						});
+						newTextContents = msg2.content;
+						client.sendMessage(msg2.channel, newAlias + ": " + newTextContents);
 					});
 				});
 			}
