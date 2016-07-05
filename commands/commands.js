@@ -240,11 +240,11 @@ new Command("help",
 new Command("about",
 	"About DeixBot",
 	function(message) {
-		var aboutMsg = "**DeixBot**\n\
+		var aboutMsg = "**"+client.user.alias+"**\n\
 		__About Me__\n\
-		**ID:** " + client.user.id +"\
-		__Creator__\
-		**Name:** @Deixel#8796\n\
+		**ID:** " + client.user.id +"\n\
+		__Creator__\n\
+		**Name:** Deixel\n\
 		**Website:** http://www.deixel.co.uk\n\
 		**Source:** https://github.com/Deixel/DeixBot\n\
 		__Dev__\n\
