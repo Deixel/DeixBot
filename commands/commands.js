@@ -294,6 +294,7 @@ new Command("about",
 		**Playing:** " + ((client.user.game != null) ? client.user.game.name : "Nothing") + "\n\
 		**On:** " + client.servers.length + " server"+ ((client.servers.length == 1) ? "" : "s") +"\n\
 		**Up Since:** " + new Date(client.readyTime).toUTCString() + "\n\
+		**Version:** " + process.env.node_package_version + "\n\
 		__Creator__\n\
 		**Name:** <@113310775887536128> \n\
 		**Website:** http://www.deixel.co.uk\n\
