@@ -240,7 +240,7 @@ new Command("help",
 new Command("about",
 	"About DeixBot",
 	function(message) {
-		var aboutMsg = "**"+client.user.alias+"**\n\
+		var aboutMsg = "**"+client.user.username+"**\n\
 		__About Me__\n\
 		**ID:** " + client.user.id +"\n\
 		__Creator__\n\
