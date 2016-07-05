@@ -11,7 +11,8 @@
     "eslint": "latest"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+	"start": "nodejs deixbot.js"
   },
   "repository": {
     "type": "git",
