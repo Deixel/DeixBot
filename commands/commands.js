@@ -236,3 +236,14 @@ new Command("help",
 		client.sendMessage(message.channel, helpStr);
 	}
 );
+
+new Command("about",
+	"About DeixBot",
+	function(message) {
+		var aboutMsg = "```**DeixBot**\n\
+		Built By: Deixel (http://www.deixel.co.uk)\n\
+		Built Using: Discord.js (https://github.com/hydrabolt/discord.js/)\n\
+		Source: https://github.com/Deixel/DeixBot\n```";
+		client.sendMessage(message.channel, aboutMsg);
+	}
+);
