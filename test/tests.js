@@ -141,15 +141,19 @@ describe("Commands", function() {
 		var configCmd = cmds.get("config");
 		it("should reply with an error if the user doesn't have permission", function() {
 			var configMsg = new Message(1, new Channel(), "Schnee", "!config cmdprefix |");
+			var oldPrefix = config.cmdprefix;
 			configCmd.action(configMsg);
 			assert.equal(client.replies[client.replies.length-1], "*sticks fingers in ears* lalala I'm not listening!");
-			assert.notEqual(config.cmdprefix, "|");
+			assert.propertyVal(config, "cmdprefix", oldPrefix);
+			assert.propertyNotVal(config, "cmdprefix", "|");
 		});
 		it("should reply with a message and update the config if everything is approved", function() {
 			var configMsg = new Message(1, new Channel(), "Deixel", "!config cmdprefix |");
+			var oldPrefix = config.cmdprefix;
 			configCmd.action(configMsg);
 			assert.equal(client.replies[client.replies.length-1], "Updated config");
-			assert.equal(config.cmdprefix, "|");
+			assert.propertyNotVal(config, "cmdprefix", oldPrefix);
+			assert.propertyVal(config, "cmdprefix", "|");
 		});
 	});
 	describe("report", function() {
