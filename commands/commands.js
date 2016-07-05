@@ -240,9 +240,11 @@ new Command("help",
 new Command("about",
 	"About DeixBot",
 	function(message) {
+		var curPlaying = client.user.game != null ? client.user.game.name : "Nothing";
 		var aboutMsg = "**"+client.user.username+"**\n\
 		__About Me__\n\
 		**ID:** " + client.user.id +"\n\
+		**Playing:** " + curPlaying + "\n\
 		__Creator__\n\
 		**Name:** " + client.users.get("id", "113310775887536128") +"\n\
 		**Website:** http://www.deixel.co.uk\n\
