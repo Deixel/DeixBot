@@ -205,7 +205,19 @@ new Command("text",
 	"Quickly print some saved text",
 	function(message, cb) {
 		var params = getParams(message.content);
-		connection.query("SELECT contents FROM quicktext WHERE alias = ?", params[0], function(err, rows) {
+		if(params.length < 0) {
+			if(params[0] === "list") {
+				connection.query("SELECT alias FROM quicktext", function(err, rows) {
+					if(err) {
+						console.error(err);
+					}
+					var textList = "";
+					for(var i = 0; i < rows.length; i++) {
+						textList = textList.concat(rows[i].alias + " ");
+					}
+				});
+			}
+			connection.query("SELECT contents FROM quicktext WHERE alias = ?", params[0], function(err, rows) {
 			if(err) {
 				console.error(err);
 			}
@@ -220,6 +232,8 @@ new Command("text",
 				cb();
 			}
 		});
+		}
+
 	}
 );
 
@@ -246,7 +260,7 @@ new Command("about",
 		**Playing:** " + ((client.user.game != null) ? client.user.game.name : "Nothing") + "\n\
 		**On:** " + client.servers.length + " server"+ ((client.servers.length == 1) ? "" : "s") +"\n\
 		__Creator__\n\
-		**Name:** " + client.users.get("id", "113310775887536128") +"\n\
+		**Name:** <@113310775887536128> \n\
 		**Website:** http://www.deixel.co.uk\n\
 		**Source:** https://github.com/Deixel/DeixBot\n\
 		__Dev__\n\
