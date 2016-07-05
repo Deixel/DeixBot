@@ -215,25 +215,49 @@ new Command("text",
 					for(var i = 0; i < rows.length; i++) {
 						textList = textList.concat(rows[i].alias + " ");
 					}
+					client.sendMessage(message.channel, textList);
 				});
 			}
-			connection.query("SELECT contents FROM quicktext WHERE alias = ?", params[0], function(err, rows) {
-			if(err) {
-				console.error(err);
-			}
-			if(rows.length == 0) {
-				client.sendMessage(message.channel, "404: Message not found.");
+			else if(params[0] === "add") {
+				var newAlias = "";
+				var newTextContents = "";
+				client.sendMessage(message.author, "What tag would you like to create text for?", function(err, msg1){
+					if(err) {
+						console.error(err);
+					}
+					client.awaitResponse(msg1, function(err) {
+						if(err) {
+							console.error(err);
+						}
+						newAlias = msg1.content;
+						client.awaitResponse(msg1, "And what should " + newAlias +" display?", function(err, msg2) {
+							if(err) {
+								console.error(err);
+							}
+							newTextContents = msg2.content;
+							client.sendMessage(msg2.channel, newAlias + ": " + newTextContents);
+						});
+					});
+				});
 			}
 			else {
-				client.sendMessage(message.channel, rows[0].contents);
+				connection.query("SELECT contents FROM quicktext WHERE alias = ?", params[0], function(err, rows) {
+					if(err) {
+						console.error(err);
+					}
+					if(rows.length == 0) {
+						client.sendMessage(message.channel, "404: Message not found.");
+					}
+					else {
+						client.sendMessage(message.channel, rows[0].contents);
+					}
+					//Pretty much only used for testing
+					if(cb != null)	{
+						cb();
+					}
+				});
 			}
-			//Pretty much only used for testing
-			if(cb != null)	{
-				cb();
-			}
-		});
 		}
-
 	}
 );
 
@@ -265,7 +289,7 @@ new Command("about",
 		**Source:** https://github.com/Deixel/DeixBot\n\
 		__Dev__\n\
 		**Language:** Node.JS\n\
-		**Library:** Discord.js (https://github.com/hydrabolt/discord.js/)\n"
+		**Library:** Discord.js (https://github.com/hydrabolt/discord.js/)\n";
 		client.sendMessage(message.channel, aboutMsg);
 	}
 );
