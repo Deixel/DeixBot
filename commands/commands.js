@@ -245,6 +245,7 @@ new Command("about",
 		__About Me__\n\
 		**ID:** " + client.user.id +"\n\
 		**Playing:** " + curPlaying + "\n\
+		**On:** " + client.servers.length + "servers\n\
 		__Creator__\n\
 		**Name:** " + client.users.get("id", "113310775887536128") +"\n\
 		**Website:** http://www.deixel.co.uk\n\
