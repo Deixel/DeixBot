@@ -244,7 +244,7 @@ new Command("about",
 		__About Me__\n\
 		**ID:** " + client.user.id +"\n\
 		__Creator__\n\
-		**Name:** Deixel\n\
+		**Name:** " + client.users.get("id", "113310775887536128") +"\n\
 		**Website:** http://www.deixel.co.uk\n\
 		**Source:** https://github.com/Deixel/DeixBot\n\
 		__Dev__\n\
