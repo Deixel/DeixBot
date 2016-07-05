@@ -219,20 +219,35 @@ new Command("text",
 				});
 			}
 			else if(params[0] === "add") {
-				var newAlias = "";
-				var newTextContents = "";
+				var newText = {};
 				client.awaitResponse(message, "What tag would you like to add " + message.author + "?", function(err, msg1) {
 					if(err) {
 						console.error(err);
 					}
-					newAlias = msg1.content;
-					client.awaitResponse(msg1, "And what should " + newAlias +" display?", function(err, msg2) {
+					newText.alias = msg1.contents;
+					connection.query("SELECT alias FROM quicktext WHERE alias = ?", newText.alias, function(err, rows) {
 						if(err) {
 							console.error(err);
 						}
-						newTextContents = msg2.content;
-						client.sendMessage(msg2.channel, newAlias + ": " + newTextContents);
+						if(rows.length != 0) {
+							client.sendMessage(message.channel, "Sorry, that tag already exists.");
+						}
+						else {
+							client.awaitResponse(msg1, "And what should `" + newText.alias +"` display?", function(err, msg2) {
+								if(err) {
+									console.error(err);
+								}
+								newText.contents = msg2.content;
+								connection.query("INSERT INTO quicktext SET ?", newText, function(err) {
+									if(err) {
+										console.error(err);
+									}
+									client.reply(msg2, "Added `" + newText.alias + "`");
+								});
+							});
+						}
 					});
+
 				});
 			}
 			else {
