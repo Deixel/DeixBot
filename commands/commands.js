@@ -174,12 +174,12 @@ new Command("config",
 				}
 				client.sendMessage(message.channel, propList + "```");
 			}
-			if(params.length == 2) {
+			else if(params.length == 2) {
 				config[params[0]] = params[1];
-				client.reply("Updated `" + params[0] + "` to `" + params[1] + "`!.");
+				client.reply(message, "Updated `" + params[0] + "` to `" + params[1] + "`!.");
 			}
 			else {
-				client.reply("Check yo parameters");
+				client.reply(message, "Check yo parameters");
 			}
 		}
 		else {
