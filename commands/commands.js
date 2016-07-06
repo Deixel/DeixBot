@@ -288,8 +288,7 @@ new Command("help",
 new Command("about",
 	"About DeixBot",
 	function(message) {
-		var uptime = client.uptime;
-		var calc = uptime / 1000;
+		var calc = client.uptime / 1000;
 		var secs = Math.floor(calc % 60);
 		calc /= 60;
 		var mins = Math.floor(calc % 60);
@@ -297,7 +296,6 @@ new Command("about",
 		var hours = Math.floor(calc % 24);
 		calc = Math.floor(calc / 24);
 		var upFor = calc + " day" + ((calc == 1)?" ":"s ") + hours + " hour" + ((hours == 1)?" ":"s ") + mins + " min" + ((mins == 1)?" ":"s ") + secs + " sec" + ((secs == 1)?" ":"s ");
-
 
 		var aboutMsg = "**"+client.user.username+"**\n\
 		__About Me__\n\
