@@ -288,13 +288,22 @@ new Command("help",
 new Command("about",
 	"About DeixBot",
 	function(message) {
+		var calc = client.uptime / 1000;
+		var secs = Math.floor(calc % 60);
+		calc /= 60;
+		var mins = Math.floor(calc % 60);
+		calc /= 60;
+		var hours = Math.floor(calc % 24);
+		calc = Math.floor(calc / 24);
+		var upFor = calc + " day" + ((calc == 1)?" ":"s ") + hours + " hour" + ((hours == 1)?" ":"s ") + mins + " min" + ((mins == 1)?" ":"s ") + secs + " sec" + ((secs == 1)?" ":"s ");
+
 		var aboutMsg = "**"+client.user.username+"**\n\
 		__About Me__\n\
 		**ID:** " + client.user.id +"\n\
 		**Playing:** " + ((client.user.game != null) ? client.user.game.name : "Nothing") + "\n\
 		**On:** " + client.servers.length + " server"+ ((client.servers.length == 1) ? "" : "s") +"\n\
-		**Up Since:** " + new Date(client.readyTime).toUTCString() + "\n\
-		**Version:** " + process.env.node_package_version + "\n\
+		**Up Since:** " + new Date(client.readyTime).toUTCString() + " - " + upFor + "\n\
+		**Version:** " + process.env.npm_package_version + "\n\
 		__Creator__\n\
 		**Name:** <@113310775887536128> \n\
 		**Website:** http://www.deixel.co.uk\n\
