@@ -296,7 +296,7 @@ new Command("about",
 		calc /= 60;
 		var hours = Math.floor(calc % 24);
 		calc = Math.floor(calc / 24);
-		var upFor = calc + " day" + ((calc == 1)?" ":"s ") + hours + " hour" + ((hours == 1)?" ":"s ") + mins + "min" + ((mins == 1)?" ":"s ") + secs + " sec" + ((secs == 1)?" ":"s ");
+		var upFor = calc + " day" + ((calc == 1)?" ":"s ") + hours + " hour" + ((hours == 1)?" ":"s ") + mins + " min" + ((mins == 1)?" ":"s ") + secs + " sec" + ((secs == 1)?" ":"s ");
 
 
 		var aboutMsg = "**"+client.user.username+"**\n\
