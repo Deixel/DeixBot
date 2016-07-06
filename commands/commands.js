@@ -172,7 +172,7 @@ new Command("config",
 			}
 			client.sendMessage(message.channel, propList + "```");
 		}
-		if(message.channel.permissionsOf(message.author).hasPermission("administrator")) {
+		else if(message.channel.permissionsOf(message.author).hasPermission("administrator")) {
 			if(params.length == 2) {
 				config[params[0]] = params[1];
 				client.reply("Updated `" + params[0] + "` to `" + params[1] + "`!.");
