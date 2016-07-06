@@ -161,17 +161,17 @@ new Command("sb",
 new Command("config",
 	"Admin can configure bot settings.",
 	function(message) {
-		var params = getParams(message.content);
-		if(params.length == 0 || (params.length == 1 && params[0] == "list")) {
-			var propList = "```\n";
-			for(var prop in config) {
-				if(prop != "mysql" && prop != "apikey") {
-					propList = propList.concat(prop + ": " + config[prop] +"\n");
+		if(message.channel.permissionsOf(message.author).hasPermission("administrator")) {
+			var params = getParams(message.content);
+			if(params.length == 0 || (params.length == 1 && params[0] == "list")) {
+				var propList = "```\n";
+				for(var prop in config) {
+					if(prop != "mysql" && prop != "apikey") {
+						propList = propList.concat(prop + ": " + config[prop] +"\n");
+					}
 				}
+				client.sendMessage(message.channel, propList + "```");
 			}
-			client.sendMessage(message.channel, propList + "```");
-		}
-		else if(message.channel.permissionsOf(message.author).hasPermission("administrator")) {
 			if(params.length == 2) {
 				config[params[0]] = params[1];
 				client.reply("Updated `" + params[0] + "` to `" + params[1] + "`!.");
