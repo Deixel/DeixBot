@@ -163,6 +163,7 @@ new Command("config",
 	function(message) {
 		if(message.channel.permissionsOf(message.author).hasPermission("administrator")) {
 			var params = getParams(message.content);
+			console.log(params);
 			if(params.length == 0 || (params.length == 1 && params[0] == "list")) {
 				var propList = "```\n";
 				for(var prop in config) {
