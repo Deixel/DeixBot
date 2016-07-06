@@ -163,9 +163,8 @@ new Command("config",
 	function(message) {
 		var params = getParams(message.content);
 		if(params.length == 0 || (params.length == 1 && params[0] == "list")) {
-			var properties = Object.keys(config);
 			var propList = "```\n";
-			for(var prop in properties) {
+			for(var prop in config) {
 				if(prop != "mysql" && prop != "apikey") {
 					propList = propList.concat(prop + ": " + config[prop] +"\n");
 				}
