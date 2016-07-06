@@ -31,8 +31,6 @@ function db_connect() {
 
 var config = {};
 
-var playingWith = [];
-
 var client = new Discord.Client({autoReconnect: true});
 
 client.on("message", function(message) {
@@ -61,17 +59,8 @@ client.on("message", function(message) {
 client.on("ready", function() {
 	db_connect();
 	console.log("Established connection to database.");
-	connection.query("SELECT playingString FROM playing", function(err, rows) {
-		if(err) {
-			console.error(err);
-		}
-		for(var i = 0; i < rows.length; i++) {
-			playingWith[i] = rows[i].playingString;
-		}
-		console.log("Loaded " + rows.length + " playing strings from db.");
-		updatePlaying();
-		setInterval(updatePlaying, 600000);
-	});
+	updatePlaying();
+	setInterval(updatePlaying, 600000);
 
 	connection.query("SELECT configName, configValue FROM configs ORDER BY configID ASC", function(err, rows) {
 		if(err) {
@@ -86,8 +75,12 @@ client.on("ready", function() {
 });
 
 function updatePlaying() {
-	var rand = Math.floor(Math.random() * playingWith.length);
-	client.setPlayingGame(playingWith[rand]);
+	connection.query("SELECT playingString FROM playing ORDER BY RAND() LIMIT 1", function(err, rows) {
+		if(err) {
+			console.error(err);
+		}
+		client.setPlayingGame(rows[0].playingString);
+	});
 }
 
 //Handle a CTRL+C to actually shutdown somewhat cleanly
