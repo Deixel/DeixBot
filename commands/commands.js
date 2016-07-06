@@ -162,8 +162,8 @@ new Command("config",
 	"Admin can configure bot settings.",
 	function(message) {
 		var params = getParams(message.content);
-		if(params.length == 1 && params[0] == "list") {
-			var properties = Object.getOwnPropertyNames(config);
+		if(params.length == 0 || (params.length == 1 && params[0] == "list")) {
+			var properties = Object.keys(config);
 			var propList = "```\n";
 			for(var prop in properties) {
 				if(prop != "mysql" && prop != "apikey") {
@@ -175,10 +175,10 @@ new Command("config",
 		if(message.channel.permissionsOf(message.author).hasPermission("administrator")) {
 			if(params.length == 2) {
 				config[params[0]] = params[1];
-				client.reply("Updated `" + params[0] + "` to `" + params[1] + "`!.")
+				client.reply("Updated `" + params[0] + "` to `" + params[1] + "`!.");
 			}
 			else {
-				client.reply("Check yo parameters")
+				client.reply("Check yo parameters");
 			}
 		}
 		else {
