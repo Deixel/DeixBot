@@ -94,7 +94,7 @@ new Command("hs",
 							var sTemp = skillRaw[i].split(",");
 							output = output.concat(skillNames[i] + ": " + sTemp[2] + " (" + sTemp[1] + ")\n");
 						}
-						client.updateMessage(msg, "```" + output + "```");
+						client.updateMessage(msg, "**" + player + "'s Skills**\n```Javascript\n" + output + "```");
 					});
 				});
 			});
