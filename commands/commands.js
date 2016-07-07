@@ -8,6 +8,7 @@ var commands = {};
 var client;
 var config;
 var connection;
+var http = require("http");
 
 exports.get = function(cmd) {
 	return commands[cmd];
@@ -75,6 +76,22 @@ new Command("hs",
 		var p = getParams(message.content);
 		if(p.length > 0) {
 			var player = p.join("_");
+			//http://services.runescape.com/m=hiscore/index_lite.ws?player=DisplayName
+			client.sendMessage(message.channel, "Loading...", function(err, msg) {
+				http.get("http://services.runescape.com/m=hiscore/index_lite.ws?player=" + player, function(err, res) {
+					if(err) {
+						console.error(err);
+					}
+					res.setEncoding("utf8");
+					var hsString = "";
+					res.on("data", function(d) {
+						hsString = hsString.concat(d);
+					});
+					res.on("end", function() {
+						client.updateMessage(msg, "```" + hsString + "```");
+					});
+				});
+			});
 			client.sendMessage(message.channel, "http://services.runescape.com/m=hiscore/compare?user1=" + player);
 		}
 		else {
