@@ -90,7 +90,7 @@ new Command("hs",
 						var skillRaw = hsRaw.split("\n");
 						var skillNames = require("../resources/rs-skill-names");
 						var output = "";
-						for(var i = 0; i < numSkills; i++) {
+						for(var i = 0; i <= numSkills; i++) {
 							var sTemp = skillRaw[i].split(",");
 							output = output.concat(skillNames[i] + ": " + sTemp[2] + " (" + sTemp[1] + ")\n");
 						}
