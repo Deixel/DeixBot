@@ -78,10 +78,7 @@ new Command("hs",
 			var player = p.join("_");
 			//http://services.runescape.com/m=hiscore/index_lite.ws?player=DisplayName
 			client.sendMessage(message.channel, "Loading...", function(err, msg) {
-				http.get("http://services.runescape.com/m=hiscore/index_lite.ws?player=" + player, function(err, res) {
-					if(err) {
-						console.error(err);
-					}
+				http.get("http://services.runescape.com/m=hiscore/index_lite.ws?player=" + player, function(res) {
 					res.setEncoding("utf8");
 					var hsString = "";
 					res.on("data", function(d) {
@@ -92,7 +89,6 @@ new Command("hs",
 					});
 				});
 			});
-			client.sendMessage(message.channel, "http://services.runescape.com/m=hiscore/compare?user1=" + player);
 		}
 		else {
 			client.reply(message, "You need to specify a player");
