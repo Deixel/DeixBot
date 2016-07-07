@@ -88,7 +88,7 @@ new Command("hs",
 					res.on("end", function() {
 						var numSkills = 27;
 						var skillRaw = hsRaw.split("\n");
-						var skillNames = require("./resources/rsSkills");
+						var skillNames = require("./resources/rs-skill-names");
 						var output = "";
 						for(var i = 0; i < numSkills; i++) {
 							var sTemp = skillRaw[i].split(",");
