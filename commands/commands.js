@@ -380,3 +380,23 @@ new Command("eval",
 	},
 	true
 );
+
+new Command("cli",
+	"Run a terminal command",
+	function(message) {
+		if(message.author.id === "113310775887536128") {
+			var exec = require("child_process").exec;
+			var params = getParams(message.content).join(" ");
+			exec(params, function(error, stdout, stderr) {
+				if(error) {
+					console.error(error);
+				}
+				client.sendMessage(message.channel, stdout + stderr);
+			});
+		}
+		else {
+			client.sendMessage(":no_entry: **Permission Denied** :no_entry:");
+		}
+	},
+	true
+);
