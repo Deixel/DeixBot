@@ -354,25 +354,29 @@ new Command("about",
 new Command("eval",
 	"Run some code",
 	function(message) {
-		var vm = require("vm");
-		var params = getParams(message.content);
-		var benchmark = Date.now();
-		var result;
-		var context = {
-			message: message,
-			client: client,
-			console: console,
-			commands: commands
-		};
-		try {
-			//result = vm.runInThisContext(params);
-			result = vm.runInNewContext(params, context);
+		if(message.author.id === "113310775887536128") {
+			var vm = require("vm");
+			var params = getParams(message.content);
+			var benchmark = Date.now();
+			var result;
+			var context = {
+				message: message,
+				client: client,
+				console: console,
+				commands: commands
+			};
+			try {
+				result = vm.runInNewContext(params, context);
+			}
+			catch(error) {
+				result = error;
+			}
+			benchmark = Date.now() - benchmark;
+			client.sendMessage(message.channel, "```js\n" + params + "\n--------------------\n" + result + "\n--------------------\n" + "in " + benchmark + "ms```");
 		}
-		catch(error) {
-			result = error;
+		else {
+			client.sendMessage(":no_entry: **Permission Denied** :no_entry:")
 		}
-		benchmark = Date.now() - benchmark;
-		client.sendMessage(message.channel, "```js\n" + params + "\n--------------------\n" + result + "\n--------------------\n" + "in " + benchmark + "ms```");
 	},
 	true
 );
