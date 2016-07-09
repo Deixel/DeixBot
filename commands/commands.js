@@ -350,3 +350,13 @@ new Command("about",
 		client.sendMessage(message.channel, aboutMsg);
 	}
 );
+
+new Command("eval",
+	"Run some code",
+	function(message) {
+		var vm = require("vm");
+		var result = vm.runInThisContext(message.content);
+		client.sendMessage(message.channel, "```" + result + "```");
+	},
+	true
+);
