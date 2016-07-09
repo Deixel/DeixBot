@@ -9,6 +9,7 @@ var client;
 var config;
 var connection;
 
+
 exports.get = function(cmd) {
 	return commands[cmd];
 };
@@ -75,7 +76,28 @@ new Command("hs",
 		var p = getParams(message.content);
 		if(p.length > 0) {
 			var player = p.join("_");
-			client.sendMessage(message.channel, "http://services.runescape.com/m=hiscore/compare?user1=" + player);
+			//http://services.runescape.com/m=hiscore/index_lite.ws?player=DisplayName
+			client.sendMessage(message.channel, "Loading...", function(err, msg) {
+				var http = require("http");
+				http.get("http://services.runescape.com/m=hiscore/index_lite.ws?player=" + player, function(res) {
+					res.setEncoding("utf8");
+					var hsRaw = "";
+					res.on("data", function(d) {
+						hsRaw = hsRaw.concat(d);
+					});
+					res.on("end", function() {
+						var numSkills = 27;
+						var skillRaw = hsRaw.split("\n");
+						var skillNames = require("../resources/rs-skill-names");
+						var output = "";
+						for(var i = 0; i <= numSkills; i++) {
+							var sTemp = skillRaw[i].split(",");
+							output = output.concat(skillNames[i] + ": " + sTemp[2] + " (" + sTemp[1] + ")\n");
+						}
+						client.updateMessage(msg, "**" + player + "'s Skills**\n```Javascript\n" + output + "```");
+					});
+				});
+			});
 		}
 		else {
 			client.reply(message, "You need to specify a player");
@@ -163,11 +185,25 @@ new Command("config",
 	function(message) {
 		if(message.channel.permissionsOf(message.author).hasPermission("administrator")) {
 			var params = getParams(message.content);
-			config[params[0]] = params[1];
-			client.reply(message, "Updated config");
+			if(params.length == 0 || (params.length == 1 && params[0] == "list")) {
+				var propList = "```\n";
+				for(var prop in config) {
+					if(prop != "mysql" && prop != "apikey") {
+						propList = propList.concat(prop + ": " + config[prop] +"\n");
+					}
+				}
+				client.sendMessage(message.channel, propList + "```");
+			}
+			else if(params.length == 2) {
+				config[params[0]] = params[1];
+				client.reply(message, "Updated `" + params[0] + "` to `" + params[1] + "`!.");
+			}
+			else {
+				client.reply(message, "Check yo parameters");
+			}
 		}
 		else {
-			client.reply(message, "*sticks fingers in ears* lalala I'm not listening!");
+			client.reply(message, "Bitch, you need to check yo privileges.");
 		}
 	},
 	true
@@ -288,13 +324,22 @@ new Command("help",
 new Command("about",
 	"About DeixBot",
 	function(message) {
+		var calc = client.uptime / 1000;
+		var secs = Math.floor(calc % 60);
+		calc /= 60;
+		var mins = Math.floor(calc % 60);
+		calc /= 60;
+		var hours = Math.floor(calc % 24);
+		calc = Math.floor(calc / 24);
+		var upFor = calc + " day" + ((calc == 1)?" ":"s ") + hours + " hour" + ((hours == 1)?" ":"s ") + mins + " min" + ((mins == 1)?" ":"s ") + secs + " sec" + ((secs == 1)?" ":"s ");
+
 		var aboutMsg = "**"+client.user.username+"**\n\
 		__About Me__\n\
 		**ID:** " + client.user.id +"\n\
 		**Playing:** " + ((client.user.game != null) ? client.user.game.name : "Nothing") + "\n\
 		**On:** " + client.servers.length + " server"+ ((client.servers.length == 1) ? "" : "s") +"\n\
-		**Up Since:** " + new Date(client.readyTime).toUTCString() + "\n\
-		**Version:** " + process.env.node_package_version + "\n\
+		**Up Since:** " + new Date(client.readyTime).toUTCString() + " - " + upFor + "\n\
+		**Version:** " + process.env.npm_package_version + "\n\
 		__Creator__\n\
 		**Name:** <@113310775887536128> \n\
 		**Website:** http://www.deixel.co.uk\n\

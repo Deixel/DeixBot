@@ -1,12 +1,12 @@
 var Discord = require("discord.js");
-var configFile = require("./config");
+var config = require("./config");
 var cmds = require("./commands/commands");
 var mysql = require("mysql");
 var db_config = {
-	host: configFile.mysql.host,
-	user: configFile.mysql.user,
-	password: configFile.mysql.pass,
-	database: configFile.mysql.db
+	host: config.mysql.host,
+	user: config.mysql.user,
+	password: config.mysql.pass,
+	database: config.mysql.db
 };
 var connection;
 
@@ -29,9 +29,6 @@ function db_connect() {
 	});
 }
 
-var config = {};
-
-var playingWith = [];
 
 var client = new Discord.Client({autoReconnect: true});
 
@@ -61,17 +58,8 @@ client.on("message", function(message) {
 client.on("ready", function() {
 	db_connect();
 	console.log("Established connection to database.");
-	connection.query("SELECT playingString FROM playing", function(err, rows) {
-		if(err) {
-			console.error(err);
-		}
-		for(var i = 0; i < rows.length; i++) {
-			playingWith[i] = rows[i].playingString;
-		}
-		console.log("Loaded " + rows.length + " playing strings from db.");
-		updatePlaying();
-		setInterval(updatePlaying, 600000);
-	});
+	updatePlaying();
+	setInterval(updatePlaying, 600000);
 
 	connection.query("SELECT configName, configValue FROM configs ORDER BY configID ASC", function(err, rows) {
 		if(err) {
@@ -86,8 +74,12 @@ client.on("ready", function() {
 });
 
 function updatePlaying() {
-	var rand = Math.floor(Math.random() * playingWith.length);
-	client.setPlayingGame(playingWith[rand]);
+	connection.query("SELECT playingString FROM playing ORDER BY RAND() LIMIT 1", function(err, rows) {
+		if(err) {
+			console.error(err);
+		}
+		client.setPlayingGame(rows[0].playingString);
+	});
 }
 
 //Handle a CTRL+C to actually shutdown somewhat cleanly
@@ -100,7 +92,7 @@ process.on("SIGINT", function() {
 	});
 });
 
-client.loginWithToken(configFile.apikey, function(err){
+client.loginWithToken(config.apikey, function(err){
 	if(err) {
 		console.error(err);
 	}
