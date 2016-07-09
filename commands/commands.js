@@ -356,6 +356,7 @@ new Command("eval",
 	function(message) {
 		var vm = require("vm");
 		message.content.shift;
+		console.log("Command to run: " + message.content);
 		var result = vm.runInThisContext(message.content);
 		client.sendMessage(message.channel, "```" + result + "```");
 	},
