@@ -163,11 +163,27 @@ new Command("config",
 	function(message) {
 		if(message.channel.permissionsOf(message.author).hasPermission("administrator")) {
 			var params = getParams(message.content);
-			config[params[0]] = params[1];
-			client.reply(message, "Updated config");
+			console.log(params);
+			console.log(params.length);
+			if(params.length == 0 || (params.length == 1 && params[0] == "list")) {
+				var propList = "```\n";
+				for(var prop in config) {
+					if(prop != "mysql" && prop != "apikey") {
+						propList = propList.concat(prop + ": " + config[prop] +"\n");
+					}
+				}
+				client.sendMessage(message.channel, propList + "```");
+			}
+			else if(params.length == 2) {
+				config[params[0]] = params[1];
+				client.reply(message, "Updated `" + params[0] + "` to `" + params[1] + "`!.");
+			}
+			else {
+				client.reply(message, "Check yo parameters");
+			}
 		}
 		else {
-			client.reply(message, "*sticks fingers in ears* lalala I'm not listening!");
+			client.reply(message, "Bitch, you need to check yo privileges.");
 		}
 	},
 	true

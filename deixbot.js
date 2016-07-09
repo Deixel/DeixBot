@@ -1,12 +1,12 @@
 var Discord = require("discord.js");
-var configFile = require("./config");
+var config = require("./config");
 var cmds = require("./commands/commands");
 var mysql = require("mysql");
 var db_config = {
-	host: configFile.mysql.host,
-	user: configFile.mysql.user,
-	password: configFile.mysql.pass,
-	database: configFile.mysql.db
+	host: config.mysql.host,
+	user: config.mysql.user,
+	password: config.mysql.pass,
+	database: config.mysql.db
 };
 var connection;
 
@@ -29,7 +29,6 @@ function db_connect() {
 	});
 }
 
-var config = {};
 
 var client = new Discord.Client({autoReconnect: true});
 
@@ -93,7 +92,7 @@ process.on("SIGINT", function() {
 	});
 });
 
-client.loginWithToken(configFile.apikey, function(err){
+client.loginWithToken(config.apikey, function(err){
 	if(err) {
 		console.error(err);
 	}
