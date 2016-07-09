@@ -366,7 +366,7 @@ new Command("eval",
 				commands: commands
 			};
 			try {
-				result = vm.runInNewContext(params, context);
+				result = vm.runInNewContext(params.join(" "), context);
 			}
 			catch(error) {
 				result = error;
@@ -375,7 +375,7 @@ new Command("eval",
 			client.sendMessage(message.channel, "```js\n" + params + "\n--------------------\n" + result + "\n--------------------\n" + "in " + benchmark + "ms```");
 		}
 		else {
-			client.sendMessage(":no_entry: **Permission Denied** :no_entry:")
+			client.sendMessage(":no_entry: **Permission Denied** :no_entry:");
 		}
 	},
 	true
