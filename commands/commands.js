@@ -365,7 +365,7 @@ new Command("eval",
 			result = error;
 		}
 		benchmark = Date.now() - benchmark;
-		client.sendMessage(message.channel, "```js" + params + "\n--------------------\n" + result + "\n--------------------\n" + "in " + benchmark + "ms```");
+		client.sendMessage(message.channel, "```js\n" + params + "\n--------------------\n" + result + "\n--------------------\n" + "in " + benchmark + "ms```");
 	},
 	true
 );
