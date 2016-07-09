@@ -387,11 +387,13 @@ new Command("cli",
 		if(message.author.id === "113310775887536128") {
 			var exec = require("child_process").exec;
 			var params = getParams(message.content).join(" ");
+			var benchmark = Date.now();
 			exec(params, function(error, stdout, stderr) {
 				if(error) {
 					console.error(error);
 				}
-				client.sendMessage(message.channel, stdout + stderr);
+				benchmark = Date.now() - benchmark;
+				client.sendMessage(message.channel, "```bash\n" + stdout + stderr + "\n--------------------\nin " + benchmark + "ms```");
 			});
 		}
 		else {
