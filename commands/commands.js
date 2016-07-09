@@ -356,7 +356,7 @@ new Command("eval",
 	function(message) {
 		if(message.author.id === "113310775887536128") {
 			var vm = require("vm");
-			var params = getParams(message.content);
+			var params = getParams(message.content).join(" ");
 			var benchmark = Date.now();
 			var result;
 			var context = {
@@ -366,7 +366,7 @@ new Command("eval",
 				commands: commands
 			};
 			try {
-				result = vm.runInNewContext(params.join(" "), context);
+				result = vm.runInNewContext(params, context);
 			}
 			catch(error) {
 				result = error;
