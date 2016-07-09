@@ -356,7 +356,7 @@ new Command("eval",
 	function(message) {
 		var vm = require("vm");
 		var params = getParams(message.content);
-		console.log("Command to run: " + params);
+		var benchmark = Date.now();
 		var result;
 		try {
 			result = vm.runInThisContext(params);
@@ -364,7 +364,8 @@ new Command("eval",
 		catch(error) {
 			result = error;
 		}
-		client.sendMessage(message.channel, "```" + result + "```");
+		benchmark = Date.now() - benchmark;
+		client.sendMessage(message.channel, "```js" + params + "\n--------------------\n" + result + "\n--------------------\n" + "in " + benchmark + "ms```");
 	},
 	true
 );
