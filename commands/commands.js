@@ -358,8 +358,12 @@ new Command("eval",
 		var params = getParams(message.content);
 		var benchmark = Date.now();
 		var result;
+		var context = {
+			message: message
+		};
 		try {
-			result = vm.runInThisContext(params);
+			//result = vm.runInThisContext(params);
+			result = vm.runInNewContet(params, context);
 		}
 		catch(error) {
 			result = error;
