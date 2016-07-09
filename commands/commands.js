@@ -354,10 +354,12 @@ new Command("about",
 new Command("eval",
 	"Run some code",
 	function(message) {
-		var vm = require("vm");
+		// var vm = require("vm");
 		var params = getParams(message.content);
 		console.log("Command to run: " + params);
-		var result = vm.runInThisContext(params);
+		// var result = vm.runInThisContext(params);
+
+		var result = eval(params);
 		client.sendMessage(message.channel, "```" + result + "```");
 	},
 	true
