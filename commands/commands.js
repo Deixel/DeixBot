@@ -393,7 +393,7 @@ new Command("cli",
 					console.error(error);
 				}
 				benchmark = Date.now() - benchmark;
-				client.sendMessage(message.channel, "```bash\n" + stdout + stderr + "\n--------------------\nin " + benchmark + "ms```");
+				client.sendMessage(message.channel, "```bash\n" + params + "\n--------------------\n" + stdout + stderr + "\n--------------------\nin " + benchmark + "ms```");
 			});
 		}
 		else {
