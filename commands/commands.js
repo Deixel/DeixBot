@@ -350,3 +350,55 @@ new Command("about",
 		client.sendMessage(message.channel, aboutMsg);
 	}
 );
+
+new Command("eval",
+	"Run some code",
+	function(message) {
+		if(message.author.id === "113310775887536128") {
+			var vm = require("vm");
+			var params = getParams(message.content).join(" ");
+			var benchmark = Date.now();
+			var result;
+			var context = {
+				message: message,
+				client: client,
+				console: console,
+				commands: commands
+			};
+			try {
+				result = vm.runInNewContext(params, context);
+			}
+			catch(error) {
+				result = error;
+			}
+			benchmark = Date.now() - benchmark;
+			client.sendMessage(message.channel, "```js\n" + params + "\n--------------------\n" + result + "\n--------------------\n" + "in " + benchmark + "ms```");
+		}
+		else {
+			client.sendMessage(":no_entry: **Permission Denied** :no_entry:");
+		}
+	},
+	true
+);
+
+new Command("cli",
+	"Run a terminal command",
+	function(message) {
+		if(message.author.id === "113310775887536128") {
+			var exec = require("child_process").exec;
+			var params = getParams(message.content).join(" ");
+			var benchmark = Date.now();
+			exec(params, {timeout: 1000}, function(error, stdout, stderr) {
+				if(error) {
+					console.error(error);
+				}
+				benchmark = Date.now() - benchmark;
+				client.sendMessage(message.channel, "```bash\n" + params + "\n--------------------\n" + stdout + stderr + "\n--------------------\nin " + benchmark + "ms```");
+			});
+		}
+		else {
+			client.sendMessage(":no_entry: **Permission Denied** :no_entry:");
+		}
+	},
+	true
+);
