@@ -1,14 +1,15 @@
 var Discord = require("discord.js");
-var config = require("./config");
+var appConfig = require("./config");
 var cmds = require("./commands/commands");
 var mysql = require("mysql");
 var db_config = {
-	host: config.mysql.host,
-	user: config.mysql.user,
-	password: config.mysql.pass,
-	database: config.mysql.db
+	host: appConfig.mysql.host,
+	user: appConfig.mysql.user,
+	password: appConfig.mysql.pass,
+	database: appConfig.mysql.db
 };
 var connection;
+var serverConfig = {};
 
 function db_connect() {
 	connection = mysql.createConnection(db_config);
@@ -29,6 +30,15 @@ function db_connect() {
 	});
 }
 
+function getServerConfig(server, property) {
+	if(typeof serverConfig[server.id][property] !== undefined) {
+		return serverConfig[server.id][property];
+	}
+	else {
+		return serverConfig["default"][property];
+	}
+}
+
 
 var client = new Discord.Client({autoReconnect: true});
 
@@ -40,7 +50,7 @@ client.on("message", function(message) {
 		return message.reply("oooh oooh me! I'll play!");
 	}
 
-	else if(message.content.charAt(0) == config.cmdprefix) {
+	else if(message.content.charAt(0) == getServerConfig(message.server, "cmdprefix")) {
 
 		var cmdArray = message.content.substring(1).split(" ");
 		var cmdStr = cmdArray[0];
@@ -66,11 +76,21 @@ client.on("ready", function() {
 			console.error(err);
 		}
 		for(var i = 0;i < rows.length; i++) {
-			config[rows[i].configName] = rows[i].configValue;
-			console.log("Set '"+ rows[i].configName + "' to '" + rows[i].configValue + "'.");
+			serverConfig["default"][rows[i].configName] = rows[i].configValue;
+			console.log("Set default '"+ rows[i].configName + "' to '" + rows[i].configValue + "'.");
 		}
 	});
-	cmds.setUp(client, config, connection);
+
+	connection.query("SELECT serverConfig.serverId, serverConfig.value, configs.configName FROM serverConfig INNER JOIN configs on serverConfig.settingId = configs.id", function(err, rows) {
+		if(err) {
+			console.error(err);
+		}
+		for(var i = 0; i < rows.length; i++) {
+			serverConfig[rows[i].serverId][rows[i].configName] = rows[i].value;
+		}
+	});
+
+	cmds.setUp(client, serverConfig, connection);
 });
 
 function updatePlaying() {
@@ -92,7 +112,7 @@ process.on("SIGINT", function() {
 	});
 });
 
-client.loginWithToken(config.apikey, function(err){
+client.loginWithToken(appConfig.apikey, function(err){
 	if(err) {
 		console.error(err);
 	}
