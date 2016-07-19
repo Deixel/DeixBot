@@ -8,6 +8,7 @@ var commands = {};
 var client;
 var config;
 var connection;
+var getServerConfig;
 
 
 exports.get = function(cmd) {
@@ -18,6 +19,7 @@ exports.setUp = function(cl, co, con) {
 	client = cl;
 	config = co;
 	connection = con;
+	getServerConfig = config.getServerConfig;
 };
 
 function Command(cmd, descr, action, hidden = false) {
@@ -121,7 +123,7 @@ function listSoundboard(cb) {
 }
 
 function playSoundboard(voiceConnection, filePath, iterations = 1) {
-	voiceConnection.playFile(filePath, {volume: config.vol}, function(err, intent) {
+	voiceConnection.playFile(filePath, {volume: getServerConfig(voiceConnection.server, "vol")}, function(err, intent) {
 		if(err){
 			console.error(err);
 		}
@@ -185,18 +187,39 @@ new Command("config",
 	function(message) {
 		if(message.channel.permissionsOf(message.author).hasPermission("administrator")) {
 			var params = getParams(message.content);
+			//No params or 'list'
 			if(params.length == 0 || (params.length == 1 && params[0] == "list")) {
 				var propList = "```\n";
-				for(var prop in config) {
-					if(prop != "mysql" && prop != "apikey") {
-						propList = propList.concat(prop + ": " + config[prop] +"\n");
-					}
+				for(var prop in config.serverConfig["default"].keys()) {
+					propList = propList.concat(getServerConfig(message.server, prop));
 				}
 				client.sendMessage(message.channel, propList + "```");
 			}
 			else if(params.length == 2) {
-				config[params[0]] = params[1];
-				client.reply(message, "Updated `" + params[0] + "` to `" + params[1] + "`!.");
+				//UPDATE serverConfig, configs SET serverConfig.value="£" WHERE configs.configName="cmdprefix" AND serverConfig.configID = configs.configID AND serverId=123456
+				client.sendMessage(message.channel, "Working...", function(err1, msg) {
+					connection.query("SELECT serverConfig.serverConfigId FROM serverConfig INNER JOIN configs on serverConfig.settingId = configs.configId WHERE serverConfig.serverId=? AND config.configName=?", [message.server.id,params[0]], function(err, rows) {
+						if(err) return console.error(err);
+						if(rows) {
+							connection.query("UPDATE serverConfig, configs SET serverConfig.value=? WHERE configs.configName=? AND serverConfig.configID = configs.configID  AND serverConfig.serverId=?", [params[1], params[0], message.server.id], function(err2, res) {
+								if(err2) return console.error(err);
+								if(res.affectedRows != 0) {
+									client.updateMessage(msg, "Updated `" + params[0] + "` to `" + params[1] + "`" );
+									config.serverConfig[message.server.id][params[0]] = params[1];
+								}
+							});
+						}
+						else {
+							connection.query("INSERT INTO serverConfig (serverId, value, configID) VALUES (?, ?, (SELECT configs.configID FROM configs WHERE configs.configName=?))", [message.server.id, params[1], params[0]], function(err3, result2) {
+								if(err3) return console.error(err3);
+								if(result2.affectedRows != 0) {
+									client.updateMessage(msg, "Updated `" + params[0] + "` to `" + params[1] + "`" );
+									config.serverConfig[message.server.id][params[0]] = params[1];
+								}
+							});
+						}
+					});
+				});
 			}
 			else {
 				client.reply(message, "Check yo parameters");

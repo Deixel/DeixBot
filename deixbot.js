@@ -1,5 +1,6 @@
 var Discord = require("discord.js");
-var appConfig = require("./config");
+var config =  require("./config");
+var appConfig = config.appConfig;
 var cmds = require("./commands/commands");
 var mysql = require("mysql");
 var db_config = {
@@ -9,7 +10,8 @@ var db_config = {
 	database: appConfig.mysql.db
 };
 var connection;
-var serverConfig = {};
+var serverConfig = config.serverConfig;
+var getServerConfig = config.getServerConfig;
 
 function db_connect() {
 	connection = mysql.createConnection(db_config);
@@ -29,16 +31,6 @@ function db_connect() {
 		}
 	});
 }
-
-function getServerConfig(server, property) {
-	if(typeof serverConfig[server.id][property] !== undefined) {
-		return serverConfig[server.id][property];
-	}
-	else {
-		return serverConfig["default"][property];
-	}
-}
-
 
 var client = new Discord.Client({autoReconnect: true});
 
@@ -81,7 +73,7 @@ client.on("ready", function() {
 		}
 	});
 
-	connection.query("SELECT serverConfig.serverId, serverConfig.value, configs.configName FROM serverConfig INNER JOIN configs on serverConfig.settingId = configs.id", function(err, rows) {
+	connection.query("SELECT serverConfig.serverId, serverConfig.value, configs.configName FROM serverConfig INNER JOIN configs on serverConfig.settingId = configs.configId", function(err, rows) {
 		if(err) {
 			console.error(err);
 		}
@@ -90,7 +82,7 @@ client.on("ready", function() {
 		}
 	});
 
-	cmds.setUp(client, serverConfig, connection);
+	cmds.setUp(client, config, connection);
 });
 
 function updatePlaying() {
