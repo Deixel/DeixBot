@@ -83,7 +83,6 @@ client.on("ready", function() {
 		for(var i = 0; i < rows.length; i++) {
 			serverConfig[rows[i].serverId][rows[i].configName] = rows[i].value;
 		}
-		console.log(serverConfig);
 	});
 
 	cmds.setUp(client, config, connection);
