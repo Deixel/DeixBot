@@ -32,6 +32,9 @@ function Command(cmd, descr, action, hidden = false) {
 
 function getParams(content) {
 	var params = content.split(" ");
+	if(content.contains(client.user.mention())) {
+		params.shift();
+	}
 	params.shift();
 	return params;
 }
