@@ -191,7 +191,7 @@ new Command("config",
 			if(params.length == 0 || (params.length == 1 && params[0] == "list")) {
 				var propList = "```\n";
 				for(var prop in config.serverConfig["default"]) {
-					propList = propList.concat(getServerConfig(message.server, prop));
+					propList = propList.concat(prop +": " + getServerConfig(message.server, prop) + "\n");
 				}
 				client.sendMessage(message.channel, propList + "```");
 			}
