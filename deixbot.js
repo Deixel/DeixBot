@@ -42,7 +42,7 @@ client.on("message", function(message) {
 	}
 	else if(message.content.startsWith(getServerConfig(message.server, "cmdprefix"))) {
 
-		var cmdArray = message.content.substring(1).split(" ");
+		var cmdArray = message.content.substring(getServerConfig(message.server, "cmdprefix").length).split(" ");
 		var cmdStr = cmdArray[0];
 
 		var cmd = cmds.get(cmdStr);
