@@ -198,7 +198,7 @@ new Command("config",
 			else if(params.length == 2) {
 				//UPDATE serverConfig, configs SET serverConfig.value="£" WHERE configs.configName="cmdprefix" AND serverConfig.configID = configs.configID AND serverId=123456
 				client.sendMessage(message.channel, "Working...", function(err1, msg) {
-					connection.query("SELECT serverConfig.serverConfigId FROM serverConfig INNER JOIN configs on serverConfig.settingId = configs.configId WHERE serverConfig.serverId=? AND config.configName=?", [message.server.id,params[0]], function(err, rows) {
+					connection.query("SELECT serverConfig.serverConfigId FROM serverConfig INNER JOIN configs on serverConfig.settingId = configs.configId WHERE serverConfig.serverId=? AND configs.configName=?", [message.server.id,params[0]], function(err, rows) {
 						if(err) return console.error(err);
 						if(rows) {
 							connection.query("UPDATE serverConfig, configs SET serverConfig.value=? WHERE configs.configName=? AND serverConfig.configID = configs.configID  AND serverConfig.serverId=?", [params[1], params[0], message.server.id], function(err2, res) {
