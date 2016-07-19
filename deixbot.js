@@ -67,15 +67,19 @@ client.on("ready", function() {
 		if(err) {
 			console.error(err);
 		}
+		serverConfig["default"] = {};
 		for(var i = 0;i < rows.length; i++) {
 			serverConfig["default"][rows[i].configName] = rows[i].configValue;
 			console.log("Set default '"+ rows[i].configName + "' to '" + rows[i].configValue + "'.");
 		}
 	});
 
-	connection.query("SELECT serverConfig.serverId, serverConfig.value, configs.configName FROM serverConfig INNER JOIN configs on serverConfig.settingId = configs.configId", function(err, rows) {
+	connection.query("SELECT serverConfig.serverId, serverConfig.value, configs.configName FROM serverConfig INNER JOIN configs on serverConfig.configId= configs.configId", function(err, rows) {
 		if(err) {
 			console.error(err);
+		}
+		for(var server in client.servers) {
+			serverConfig[server.id] = {};
 		}
 		for(var i = 0; i < rows.length; i++) {
 			serverConfig[rows[i].serverId][rows[i].configName] = rows[i].value;
