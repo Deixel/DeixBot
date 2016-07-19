@@ -416,7 +416,7 @@ new Command("cli",
 			var exec = require("child_process").exec;
 			var params = getParams(message.content).join(" ");
 			var benchmark = Date.now();
-			exec(params, {timeout: 1000}, function(error, stdout, stderr) {
+			exec(params, {timeout: 5000}, function(error, stdout, stderr) {
 				if(error) {
 					console.error(error);
 				}
