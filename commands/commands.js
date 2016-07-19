@@ -32,7 +32,7 @@ function Command(cmd, descr, action, hidden = false) {
 
 function getParams(content) {
 	var params = content.split(" ");
-	if(content.contains(client.user.mention())) {
+	if(content.indexOf(client.user.mention()) > -1) {
 		params.shift();
 	}
 	params.shift();
