@@ -40,7 +40,7 @@ client.on("message", function(message) {
 	else if(message.content.toLowerCase().indexOf("who gta") > -1) {
 		return message.reply("oooh oooh me! I'll play!");
 	}
-	else if(message.content.charAt(0) == getServerConfig(message.server, "cmdprefix")) {
+	else if(message.content.startsWith(getServerConfig(message.server, "cmdprefix"))) {
 
 		var cmdArray = message.content.substring(1).split(" ");
 		var cmdStr = cmdArray[0];
