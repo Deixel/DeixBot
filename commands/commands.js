@@ -215,7 +215,7 @@ new Command("config",
 									if(err3.code === "ER_BAD_NULL_ERROR") {
 										client.updateMessage(msg, "Sorry, that's an invalid config.");
 									}
-									return console.error(err3);
+									else return console.error(err3);
 								}
 								if(result2.affectedRows != 0) {
 									client.updateMessage(msg, "Updated `" + params[0] + "` to `" + params[1] + "`" );

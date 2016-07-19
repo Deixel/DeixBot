@@ -22,12 +22,11 @@ function db_connect() {
 		}
 	});
 	connection.on("error", function(err) {
-		console.error(err);
 		if(err.code === "PROTOCOL_CONNECTION_LOST") {
 			db_connect();
 		}
 		else {
-			throw err;
+			return console.log(err);
 		}
 	});
 }
