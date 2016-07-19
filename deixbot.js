@@ -1,14 +1,17 @@
 var Discord = require("discord.js");
-var config = require("./config");
+var config =  require("./config");
+var appConfig = config.appConfig;
 var cmds = require("./commands/commands");
 var mysql = require("mysql");
 var db_config = {
-	host: config.mysql.host,
-	user: config.mysql.user,
-	password: config.mysql.pass,
-	database: config.mysql.db
+	host: appConfig.mysql.host,
+	user: appConfig.mysql.user,
+	password: appConfig.mysql.pass,
+	database: appConfig.mysql.db
 };
 var connection;
+var serverConfig = config.serverConfig;
+var getServerConfig = config.getServerConfig;
 
 function db_connect() {
 	connection = mysql.createConnection(db_config);
@@ -19,16 +22,14 @@ function db_connect() {
 		}
 	});
 	connection.on("error", function(err) {
-		console.error(err);
 		if(err.code === "PROTOCOL_CONNECTION_LOST") {
 			db_connect();
 		}
 		else {
-			throw err;
+			return console.log(err);
 		}
 	});
 }
-
 
 var client = new Discord.Client({autoReconnect: true});
 
@@ -39,10 +40,9 @@ client.on("message", function(message) {
 	else if(message.content.toLowerCase().indexOf("who gta") > -1) {
 		return message.reply("oooh oooh me! I'll play!");
 	}
+	else if(message.content.startsWith(getServerConfig(message.server, "cmdprefix"))) {
 
-	else if(message.content.charAt(0) == config.cmdprefix) {
-
-		var cmdArray = message.content.substring(1).split(" ");
+		var cmdArray = message.content.substring(getServerConfig(message.server, "cmdprefix").length).split(" ");
 		var cmdStr = cmdArray[0];
 
 		var cmd = cmds.get(cmdStr);
@@ -65,11 +65,25 @@ client.on("ready", function() {
 		if(err) {
 			console.error(err);
 		}
+		serverConfig["default"] = {};
 		for(var i = 0;i < rows.length; i++) {
-			config[rows[i].configName] = rows[i].configValue;
-			console.log("Set '"+ rows[i].configName + "' to '" + rows[i].configValue + "'.");
+			serverConfig["default"][rows[i].configName] = rows[i].configValue;
+			console.log("Set default '"+ rows[i].configName + "' to '" + rows[i].configValue + "'.");
 		}
 	});
+
+	connection.query("SELECT serverConfig.serverId, serverConfig.value, configs.configName FROM serverConfig INNER JOIN configs on serverConfig.configId= configs.configId", function(err, rows) {
+		if(err) {
+			console.error(err);
+		}
+		for(var server of client.servers) {
+			serverConfig[server.id] = {};
+		}
+		for(var i = 0; i < rows.length; i++) {
+			serverConfig[rows[i].serverId][rows[i].configName] = rows[i].value;
+		}
+	});
+
 	cmds.setUp(client, config, connection);
 });
 
@@ -92,7 +106,7 @@ process.on("SIGINT", function() {
 	});
 });
 
-client.loginWithToken(config.apikey, function(err){
+client.loginWithToken(appConfig.apikey, function(err){
 	if(err) {
 		console.error(err);
 	}
