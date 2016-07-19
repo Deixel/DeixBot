@@ -16,12 +16,10 @@ var serverConfig = {};
 exports.serverConfig = serverConfig;
 
 exports.getServerConfig = function getServerConfig(server, property) {
-	if(typeof serverConfig[server.id][property] !== undefined) {
-		console.log(serverConfig[server.id][property]);
+	if(serverConfig[server.id][property] !== undefined) {
 		return serverConfig[server.id][property];
 	}
 	else {
-		console.log(server.conifg["default"][property]);
 		return serverConfig["default"][property];
 	}
 };

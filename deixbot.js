@@ -41,19 +41,18 @@ client.on("message", function(message) {
 	else if(message.content.toLowerCase().indexOf("who gta") > -1) {
 		return message.reply("oooh oooh me! I'll play!");
 	}
-	console.log("Trying to get prefix: " + getServerConfig(message.server, "cmdprefix"));
-	// else if(message.content.charAt(0) == getServerConfig(message.server, "cmdprefix")) {
-	//
-	// 	var cmdArray = message.content.substring(1).split(" ");
-	// 	var cmdStr = cmdArray[0];
-	//
-	// 	var cmd = cmds.get(cmdStr);
-	//
-	// 	if(cmd != null) {
-	// 		cmd.action(message);
-	// 	}
-	//
-	// }
+	else if(message.content.charAt(0) == getServerConfig(message.server, "cmdprefix")) {
+
+		var cmdArray = message.content.substring(1).split(" ");
+		var cmdStr = cmdArray[0];
+
+		var cmd = cmds.get(cmdStr);
+
+		if(cmd != null) {
+			cmd.action(message);
+		}
+
+	}
 });
 
 //Called once the bot is logged in and ready to use.
