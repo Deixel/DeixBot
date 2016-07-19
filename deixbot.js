@@ -52,6 +52,14 @@ client.on("message", function(message) {
 		}
 
 	}
+	else if(message.isMentioned(client.user)) {
+		var cmdArray = message.content.split(" ");
+		var cmd = cmds.get(cmdArray[1]);
+
+		if(cmd != null) {
+			cmd.action(message);
+		}
+	}
 });
 
 //Called once the bot is logged in and ready to use.
