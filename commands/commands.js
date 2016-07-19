@@ -213,7 +213,7 @@ new Command("config",
 							connection.query("INSERT INTO serverConfig (serverId, value, configID) VALUES (?, ?, (SELECT configs.configID FROM configs WHERE configs.configName=?))", [message.server.id, params[1], params[0]], function(err3, result2) {
 								if(err3) {
 									if(err3.code === "ER_BAD_NULL_ERROR") {
-										client.updateMessage(msg, "Sorry, that's an invalid config.");
+										return client.updateMessage(msg, "Sorry, that's an invalid config.");
 									}
 									else return console.error(err3);
 								}
