@@ -78,12 +78,13 @@ client.on("ready", function() {
 		if(err) {
 			console.error(err);
 		}
-		for(var server in client.servers) {
+		for(var server of client.servers) {
 			serverConfig[server.id] = {};
 		}
 		for(var i = 0; i < rows.length; i++) {
 			serverConfig[rows[i].serverId][rows[i].configName] = rows[i].value;
 		}
+		console.log(serverConfig);
 	});
 
 	cmds.setUp(client, config, connection);
