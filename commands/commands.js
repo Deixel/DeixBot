@@ -200,7 +200,7 @@ new Command("config",
 				client.sendMessage(message.channel, "Working...", function(err1, msg) {
 					connection.query("SELECT serverConfig.serverConfigId FROM serverConfig INNER JOIN configs on serverConfig.configId = configs.configId WHERE serverConfig.serverId=? AND configs.configName=?", [message.server.id,params[0]], function(err, rows) {
 						if(err) return console.error(err);
-						if(rows) {
+						if(rows.length > 0) {
 							connection.query("UPDATE serverConfig, configs SET serverConfig.value=? WHERE configs.configName=? AND serverConfig.configID = configs.configID  AND serverConfig.serverId=?", [params[1], params[0], message.server.id], function(err2, res) {
 								if(err2) return console.error(err);
 								if(res.affectedRows != 0) {
