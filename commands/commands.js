@@ -8,6 +8,7 @@ var commands = {};
 var client;
 var config;
 var connection;
+var getServerConfig;
 
 
 exports.get = function(cmd) {
@@ -18,6 +19,7 @@ exports.setUp = function(cl, co, con) {
 	client = cl;
 	config = co;
 	connection = con;
+	getServerConfig = config.getServerConfig;
 };
 
 function Command(cmd, descr, action, hidden = false) {
@@ -30,6 +32,9 @@ function Command(cmd, descr, action, hidden = false) {
 
 function getParams(content) {
 	var params = content.split(" ");
+	if(content.indexOf(client.user.mention()) > -1) {
+		params.shift();
+	}
 	params.shift();
 	return params;
 }
@@ -121,7 +126,7 @@ function listSoundboard(cb) {
 }
 
 function playSoundboard(voiceConnection, filePath, iterations = 1) {
-	voiceConnection.playFile(filePath, {volume: config.vol}, function(err, intent) {
+	voiceConnection.playFile(filePath, {volume: getServerConfig(voiceConnection.server, "vol")}, function(err, intent) {
 		if(err){
 			console.error(err);
 		}
@@ -185,18 +190,44 @@ new Command("config",
 	function(message) {
 		if(message.channel.permissionsOf(message.author).hasPermission("administrator")) {
 			var params = getParams(message.content);
+			//No params or 'list'
 			if(params.length == 0 || (params.length == 1 && params[0] == "list")) {
 				var propList = "```\n";
-				for(var prop in config) {
-					if(prop != "mysql" && prop != "apikey") {
-						propList = propList.concat(prop + ": " + config[prop] +"\n");
-					}
+				for(var prop in config.serverConfig["default"]) {
+					propList = propList.concat(prop +": " + getServerConfig(message.server, prop) + "\n");
 				}
 				client.sendMessage(message.channel, propList + "```");
 			}
 			else if(params.length == 2) {
-				config[params[0]] = params[1];
-				client.reply(message, "Updated `" + params[0] + "` to `" + params[1] + "`!.");
+				//UPDATE serverConfig, configs SET serverConfig.value="£" WHERE configs.configName="cmdprefix" AND serverConfig.configID = configs.configID AND serverId=123456
+				client.sendMessage(message.channel, "Working...", function(err1, msg) {
+					connection.query("SELECT serverConfig.serverConfigId FROM serverConfig INNER JOIN configs on serverConfig.configId = configs.configId WHERE serverConfig.serverId=? AND configs.configName=?", [message.server.id,params[0]], function(err, rows) {
+						if(err) return console.error(err);
+						if(rows.length > 0) {
+							connection.query("UPDATE serverConfig, configs SET serverConfig.value=? WHERE configs.configName=? AND serverConfig.configID = configs.configID  AND serverConfig.serverId=?", [params[1], params[0], message.server.id], function(err2, res) {
+								if(err2) return console.error(err);
+								if(res.affectedRows != 0) {
+									client.updateMessage(msg, "Updated `" + params[0] + "` to `" + params[1] + "`" );
+									config.serverConfig[message.server.id][params[0]] = params[1];
+								}
+							});
+						}
+						else {
+							connection.query("INSERT INTO serverConfig (serverId, value, configID) VALUES (?, ?, (SELECT configs.configID FROM configs WHERE configs.configName=?))", [message.server.id, params[1], params[0]], function(err3, result2) {
+								if(err3) {
+									if(err3.code === "ER_BAD_NULL_ERROR") {
+										return client.updateMessage(msg, "Sorry, that's an invalid config.");
+									}
+									else return console.error(err3);
+								}
+								if(result2.affectedRows != 0) {
+									client.updateMessage(msg, "Updated `" + params[0] + "` to `" + params[1] + "`" );
+									config.serverConfig[message.server.id][params[0]] = params[1];
+								}
+							});
+						}
+					});
+				});
 			}
 			else {
 				client.reply(message, "Check yo parameters");
@@ -313,7 +344,7 @@ new Command("help",
 		var helpStr = "```";
 		for(var cmd in commands) {
 			if(!commands[cmd].hidden) {
-				helpStr = helpStr.concat(config.cmdprefix, commands[cmd].cmd, ": ", commands[cmd].description, "\n");
+				helpStr = helpStr.concat(getServerConfig(message.server, "cmdprefix"), commands[cmd].cmd, ": ", commands[cmd].description, "\n");
 			}
 		}
 		helpStr = helpStr.concat("```");
@@ -339,14 +370,97 @@ new Command("about",
 		**Playing:** " + ((client.user.game != null) ? client.user.game.name : "Nothing") + "\n\
 		**On:** " + client.servers.length + " server"+ ((client.servers.length == 1) ? "" : "s") +"\n\
 		**Up Since:** " + new Date(client.readyTime).toUTCString() + " - " + upFor + "\n\
-		**Version:** " + process.env.npm_package_version + "\n\
+		**Version:** " + require("../package.json").version + "\n\
 		__Creator__\n\
 		**Name:** <@113310775887536128> \n\
-		**Website:** http://www.deixel.co.uk\n\
-		**Source:** https://github.com/Deixel/DeixBot\n\
+		**Website:** <http://www.deixel.co.uk>\n\
+		**Source:** <https://github.com/Deixel/DeixBot>\n\
 		__Dev__\n\
 		**Language:** Node.JS\n\
-		**Library:** Discord.js (https://github.com/hydrabolt/discord.js/)\n";
+		**Library:** Discord.js (<https://github.com/hydrabolt/discord.js/>)\n";
 		client.sendMessage(message.channel, aboutMsg);
+	}
+);
+
+new Command("eval",
+	"Run some code",
+	function(message) {
+		if(message.author.id === "113310775887536128") {
+			var vm = require("vm");
+			var params = getParams(message.content).join(" ");
+			var benchmark = Date.now();
+			var result;
+			var context = {
+				message: message,
+				client: client,
+				console: console,
+				commands: commands
+			};
+			try {
+				result = vm.runInNewContext(params, context);
+			}
+			catch(error) {
+				result = error;
+			}
+			benchmark = Date.now() - benchmark;
+			client.sendMessage(message.channel, "```js\n" + params + "\n--------------------\n" + result + "\n--------------------\n" + "in " + benchmark + "ms```");
+		}
+		else {
+			client.sendMessage(":no_entry: **Permission Denied** :no_entry:");
+		}
+	},
+	true
+);
+
+new Command("cli",
+	"Run a terminal command",
+	function(message) {
+		if(message.author.id === "113310775887536128") {
+			var exec = require("child_process").exec;
+			var params = getParams(message.content).join(" ");
+			var benchmark = Date.now();
+			exec(params, {timeout: 5000}, function(error, stdout, stderr) {
+				if(error) {
+					console.error(error);
+				}
+				benchmark = Date.now() - benchmark;
+				client.sendMessage(message.channel, "```bash\n" + params + "\n--------------------\n" + stdout + stderr + "\n--------------------\nin " + benchmark + "ms```");
+			});
+		}
+		else {
+			client.sendMessage(":no_entry: **Permission Denied** :no_entry:");
+		}
+	},
+	true
+);
+
+new Command("img",
+	"Search for an image on google",
+	function(message) {
+		var params = getParams(message.content);
+		var request = require("request");
+		if(params.length > 0) {
+			request("http://www.googleapis.com/customsearch/v1?key=" + config.appConfig.googleapi + "&cx=" + config.appConfig.searchid + "&q=" + params.join("+") + "&searchType=image&alt=json&num=10&start=1", function(err, res, body) {
+				var data;
+				try {
+					data = JSON.parse(body);
+				}
+				catch(error) {
+					console.error(error);
+				}
+				if(!data) {
+					console.log(data);
+					return client.message("Error");
+				}
+				else if(!data.items || data.items.length == 0) {
+					console.log(data);
+					return client.sendMessage(message.channel, "No results found");
+				}
+				else {
+					var result = data.items[Math.floor(Math.random()*10)];
+					client.sendMessage(message.channel, result.link);
+				}
+			});
+		}
 	}
 );
