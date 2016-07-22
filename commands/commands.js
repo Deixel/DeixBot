@@ -370,14 +370,14 @@ new Command("about",
 		**Playing:** " + ((client.user.game != null) ? client.user.game.name : "Nothing") + "\n\
 		**On:** " + client.servers.length + " server"+ ((client.servers.length == 1) ? "" : "s") +"\n\
 		**Up Since:** " + new Date(client.readyTime).toUTCString() + " - " + upFor + "\n\
-		**Version:** " + process.env.npm_package_version + "\n\
+		**Version:** " + require("../package.json").version + "\n\
 		__Creator__\n\
 		**Name:** <@113310775887536128> \n\
-		**Website:** http://www.deixel.co.uk\n\
-		**Source:** https://github.com/Deixel/DeixBot\n\
+		**Website:** <http://www.deixel.co.uk>\n\
+		**Source:** <https://github.com/Deixel/DeixBot>\n\
 		__Dev__\n\
 		**Language:** Node.JS\n\
-		**Library:** Discord.js (https://github.com/hydrabolt/discord.js/)\n";
+		**Library:** Discord.js (<https://github.com/hydrabolt/discord.js/>)\n";
 		client.sendMessage(message.channel, aboutMsg);
 	}
 );
@@ -457,7 +457,7 @@ new Command("img",
 					return client.sendMessage(message.channel, "No results found");
 				}
 				else {
-					var result = data.items[0];
+					var result = data.items[Math.floor(Math.random()*10)];
 					client.sendMessage(message.channel, result.link);
 				}
 			});
