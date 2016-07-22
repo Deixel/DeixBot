@@ -1,6 +1,7 @@
 var config = {};
 
 config.apikey = "Discord API Key";
+config.googlekey = "Google Custom Search Key";
 
 config.mysql = {};
 config.mysql.host = "localhost";
