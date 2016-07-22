@@ -1,7 +1,8 @@
 var config = {};
 
 config.apikey = "Discord API Key";
-config.googlekey = "Google Custom Search Key";
+config.searchid = "Google Custom Search Key";
+config.googleapi = "Google API Key";
 
 config.mysql = {};
 config.mysql.host = "localhost";
@@ -17,7 +18,7 @@ var serverConfig = {};
 exports.serverConfig = serverConfig;
 
 exports.getServerConfig = function getServerConfig(server, property) {
-	if(serverConfig[server.id][property] !== undefined) {
+	if(server !== undefined && serverConfig[server.id][property] !== undefined) {
 		return serverConfig[server.id][property];
 	}
 	else {
