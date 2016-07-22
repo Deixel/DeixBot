@@ -457,7 +457,7 @@ new Command("img",
 					return client.sendMessage(message.channel, "No results found");
 				}
 				else {
-					var result = data.items[0];
+					var result = data.items[Math.floor(Math.random()*10)];
 					client.sendMessage(message.channel, result.link);
 				}
 			});
