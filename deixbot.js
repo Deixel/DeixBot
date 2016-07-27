@@ -31,6 +31,13 @@ function db_connect() {
 	});
 }
 
+function getParams(content) {
+	var params = content.split(" ");
+	if(content.indexOf(client.user.mention()) > 1) params.shift();
+	params.shift();
+	return params;
+}
+
 var client = new Discord.Client({autoReconnect: true});
 
 client.on("message", function(message) {
