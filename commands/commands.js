@@ -440,7 +440,7 @@ new Command("img",
 		var params = getParams(message.content);
 		var request = require("request");
 		if(params.length > 0) {
-			request("http://www.googleapis.com/customsearch/v1?key=" + config.appConfig.googleapi + "&cx=" + config.appConfig.searchid + "&q=" + params.join("+") + "&searchType=image&alt=json&num=10&start=1", function(err, res, body) {
+			request("https://www.googleapis.com/customsearch/v1?key=" + config.appConfig.googleapi + "&cx=" + config.appConfig.searchid + "&q=" + params.join("+") + "&searchType=image&alt=json&num=10&start=1", function(err, res, body) {
 				var data;
 				try {
 					data = JSON.parse(body);
