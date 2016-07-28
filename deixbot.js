@@ -10,6 +10,7 @@ var db_config = {
 	database: appConfig.mysql.db
 };
 var connection;
+config.connection = connection;
 var serverConfig = config.serverConfig;
 var getServerConfig = config.getServerConfig;
 
