@@ -52,7 +52,7 @@ commands.unload = {
 		if(message.author.id == appConfig.ownerid) {
 			try {
 				delete commands[params[0]];
-				delete require.cache("./commands/" + params[0]);
+				delete require.cache["./commands/" + params[0]];
 				client.sendMessage(message.channel, "Successfully unloaded " + params[0]);
 			}
 			catch(err) {
