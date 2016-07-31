@@ -2,9 +2,9 @@ module.exports = {
 	alias: "cli",
 	description: "Run a terminal command",
 	hidden: true,
-	action: (client, message, params) => {
+	action: (client, message, params, config) => {
 		//TODO Remove hardcoded ID
-		if(message.author.id === "113310775887536128") {
+		if(message.author.id === config.appConfig.ownerid) {
 			var exec = require("child_process").exec;
 			params = params.join(" ");
 			var benchmark = Date.now();
@@ -17,7 +17,7 @@ module.exports = {
 			});
 		}
 		else {
-			client.sendMessage(":no_entry: **Permission Denied** :no_entry:");
+			client.sendMessage(message.channel, ":no_entry: **Permission Denied** :no_entry:");
 		}
 	}
 };

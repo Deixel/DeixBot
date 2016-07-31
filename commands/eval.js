@@ -2,9 +2,9 @@ module.exports = {
 	alias: "eval",
 	description: "Run some code",
 	hidden: true,
-	action: (client, message, params) => {
+	action: (client, message, params, config) => {
 		//TODO Remove hardcoded ID
-		if(message.author.id === "113310775887536128") {
+		if(message.author.id === config.appConfig.ownerid){
 			var vm = require("vm");
 			params = params.join(" ");
 			var benchmark = Date.now();
@@ -25,7 +25,7 @@ module.exports = {
 			client.sendMessage(message.channel, "```js\n" + params + "\n--------------------\n" + result + "\n--------------------\n" + "in " + benchmark + "ms```");
 		}
 		else {
-			client.sendMessage(":no_entry: **Permission Denied** :no_entry:");
+			client.sendMessage(message.channel, ":no_entry: **Permission Denied** :no_entry:");
 		}
 	}
 };
