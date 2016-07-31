@@ -29,7 +29,7 @@ commands.load = {
 	description: "Load a command",
 	hidden: true,
 	action: (client, message, params) => {
-		if(message.author.id == config.ownerid) {
+		if(message.author.id == appConfig.ownerid) {
 			try {
 				commands[params[0]] = require("./commands/" + params[0]);
 				client.sendMessage(message.channel, "Successfully loaded " + params[0]);
@@ -49,7 +49,7 @@ commands.unload = {
 	description: "Unload a command",
 	hidden: true,
 	action:  (client, message, params) => {
-		if(message.author.id == config.ownerid) {
+		if(message.author.id == appConfig.ownerid) {
 			try {
 				delete commands[params[0]];
 				delete require.cache("./commands/" + params[0]);
@@ -70,7 +70,7 @@ commands.reload = {
 	description: "Reload a command",
 	hidden: true,
 	action: (client, message, params) => {
-		if(message.author.id == config.ownerid) {
+		if(message.author.id == appConfig.ownerid) {
 			commands.unload.action(client, message, params);
 			commands.load.action(client, message, params);
 		}
