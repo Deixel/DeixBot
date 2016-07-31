@@ -20,7 +20,11 @@ commands.help = {
 	hidden: false,
 	action: (client, message) => {
 		var helpStr = "```";
-		commands.filter(c => !c.hidden).map( c => helpStr = helpStr.concat(getServerConfig(message.server, "cmdprefix"), c.alias, ": ", c.description,  "\n"));
+		for(var cmd in commands) {
+			if(!commands[cmd].hidden) {
+				helpStr = helpStr.concat(getServerConfig(message.server, "cmdprefix"), commands[cmd].cmd, ": ", commands[cmd].description, "\n");
+			}
+		}
 		helpStr = helpStr.concat("```");
 		client.sendMessage(message.channel, helpStr);
 	}
