@@ -2,12 +2,6 @@ var Discord = require("discord.js");
 var config =  require("./config");
 var appConfig = config.appConfig;
 var mysql = require("mysql");
-var db_config = {
-	host: appConfig.mysql.host,
-	user: appConfig.mysql.user,
-	password: appConfig.mysql.pass,
-	database: appConfig.mysql.db
-};
 var connection;
 config.connection = connection;
 var serverConfig = config.serverConfig;
@@ -30,6 +24,57 @@ commands.help = {
 	}
 };
 
+commands.load = {
+	alias: "load",
+	description: "Load a command",
+	hidden: true,
+	action: (client, message, params) => {
+		if(message.author.id == config.ownerid) {
+			try {
+				commands[params[0]] = require("./commands/" + params[0]);
+				client.sendMessage("Successfully loaded " + params[0]);
+			}
+			catch(err) {
+				client.sendMessage("Failed to load " + params[0]);
+			}
+		}
+		else {
+			client.sendMessage(":no_entry: **Permission Denied** :no_entry:");
+		}
+	}
+};
+
+commands.unload = {
+	alias: "unload",
+	description: "Unload a command",
+	hidden: true,
+	action:  (client, message, params) => {
+		if(message.author.id == config.ownerid) {
+			try {
+				delete commands[params[0]];
+				delete require.cache("./commands/" + params[0]);
+				client.sendMessage("Successfully unloaded " + params[0]);
+			}
+			catch(err) {
+				client.sendMessage("Failed to unload " + params[0]);
+			}
+		}
+		else {
+			client.sendMessage(":no_entry: **Permission Denied** :no_entry:");
+		}
+	}
+};
+
+commands.reload = {
+	alias: "reload",
+	description: "Reload a command",
+	hidden: true,
+	action: (client, message, params) => {
+		commands.unload.action(client, message, params);
+		commands.load.action(client, message, params);
+	}
+};
+
 function loadCommands() {
 	var fs = require("fs");
 	var files = fs.readdirSync("./commands");
@@ -44,7 +89,7 @@ function loadCommands() {
 }
 
 function db_connect() {
-	connection = mysql.createConnection(db_config);
+	connection = mysql.createConnection(appConfig.mysql);
 	connection.connect(function(err) {
 		if(err) {
 			console.error(err);
