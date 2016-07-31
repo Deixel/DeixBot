@@ -5,12 +5,11 @@ module.exports = {
 	action: (client, message, params, config) => {
 		var connection = config.connection;
 		if(message.channel.permissionsOf(message.author).hasPermission("administrator")) {
-			var params = getParams(message.content);
 			//No params or 'list'
 			if(params.length == 0 || (params.length == 1 && params[0] == "list")) {
 				var propList = "```\n";
 				for(var prop in config.serverConfig["default"]) {
-					propList = propList.concat(prop +": " + getServerConfig(message.server, prop) + "\n");
+					propList = propList.concat(prop +": " + config.getServerConfig(message.server, prop) + "\n");
 				}
 				client.sendMessage(message.channel, propList + "```");
 			}
