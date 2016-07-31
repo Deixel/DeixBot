@@ -1,7 +1,6 @@
 var Discord = require("discord.js");
 var config =  require("./config");
 var appConfig = config.appConfig;
-var cmds = require("./commands/commands");
 var mysql = require("mysql");
 var db_config = {
 	host: appConfig.mysql.host,
@@ -13,6 +12,32 @@ var connection;
 config.connection = connection;
 var serverConfig = config.serverConfig;
 var getServerConfig = config.getServerConfig;
+var commands = {};
+
+commands.help = {
+	alias: "help",
+	description: "This help message!",
+	hidden: false,
+	action: (client, message) => {
+		var helpStr = "```";
+		commands.filter(c => !c.hidden).map( c => helpStr = helpStr.concat(getServerConfig(message.server, "cmdprefix"), c.alias, ": ", c.description,  "\n"));
+		helpStr = helpStr.concat("```");
+		client.sendMessage(message.channel, helpStr);
+	}
+};
+
+function loadCommands() {
+	var fs = require("fs");
+	var files = fs.readdirSync("./commands");
+	var loaded = 0;
+	for(let file of files) {
+		if(file.endsWith(".js")) {
+			commands[file.slice(0, -3)] = require("./commands/" + file);
+			loaded++;
+		}
+	}
+	console.log("Loaded  " + loaded + " commands!");
+}
 
 function db_connect() {
 	connection = mysql.createConnection(db_config);
@@ -34,7 +59,9 @@ function db_connect() {
 
 function getParams(content) {
 	var params = content.split(" ");
-	if(content.indexOf(client.user.mention()) > 1) params.shift();
+	if(content.indexOf(client.user.mention()) > -1) {
+		params.shift();
+	}
 	params.shift();
 	return params;
 }
@@ -51,21 +78,18 @@ client.on("message", function(message) {
 	else if(message.content.startsWith(getServerConfig(message.server, "cmdprefix"))) {
 
 		var cmdArray = message.content.substring(getServerConfig(message.server, "cmdprefix").length).split(" ");
-		var cmdStr = cmdArray[0];
-
-		var cmd = cmds.get(cmdStr);
+		var cmd = commands[cmdArray[0]];
 
 		if(cmd != null) {
-			cmd.action(message);
+			cmd.action(client, message, getParams(message.content), config);
 		}
-
 	}
 	else if(message.isMentioned(client.user)) {
 		cmdArray = message.content.split(" ");
-		cmd = cmds.get(cmdArray[1]);
+		cmd = commands[cmdArray[1]];
 
 		if(cmd != null) {
-			cmd.action(message);
+			cmd.action(client, message, getParams(message.content), config);
 		}
 	}
 });
@@ -99,8 +123,7 @@ client.on("ready", function() {
 			serverConfig[rows[i].serverId][rows[i].configName] = rows[i].value;
 		}
 	});
-
-	cmds.setUp(client, config, connection);
+	loadCommands();
 });
 
 function updatePlaying() {

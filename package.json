@@ -5,7 +5,9 @@
   "main": "deixbot.js",
   "dependencies": {
     "discord.js": ">=8.0.0",
-    "mysql": "latest"
+    "mysql": "latest",
+	"d20": "latest",
+	"request": "latest"
   },
   "devDependencies": {
     "eslint": "latest"
