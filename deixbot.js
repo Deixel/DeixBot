@@ -22,7 +22,7 @@ commands.help = {
 		var helpStr = "```";
 		for(var cmd in commands) {
 			if(!commands[cmd].hidden) {
-				helpStr = helpStr.concat(getServerConfig(message.server, "cmdprefix"), commands[cmd].cmd, ": ", commands[cmd].description, "\n");
+				helpStr = helpStr.concat(getServerConfig(message.server, "cmdprefix"), commands[cmd].alias, ": ", commands[cmd].description, "\n");
 			}
 		}
 		helpStr = helpStr.concat("```");
