@@ -34,11 +34,12 @@ commands.load = {
 	action: (client, message, params) => {
 		if(message.author.id == appConfig.ownerid) {
 			try {
-				commands[params[0]] = require("./commands/" + params[0]);
+				commands[params[0]] = require("./commands/" + params[0] + ".js");
 				client.sendMessage(message.channel, "Successfully loaded " + params[0]);
 			}
 			catch(err) {
 				client.sendMessage(message.channel, "Failed to load " + params[0]);
+				log.error(err);
 			}
 		}
 		else {
@@ -55,11 +56,12 @@ commands.unload = {
 		if(message.author.id == appConfig.ownerid) {
 			try {
 				delete commands[params[0]];
-				delete require.cache["./commands/" + params[0]];
+				delete require.cache["./commands/" + params[0] + ".js"];
 				client.sendMessage(message.channel, "Successfully unloaded " + params[0]);
 			}
 			catch(err) {
 				client.sendMessage(message.channel, "Failed to unload " + params[0]);
+				log.error(err);
 			}
 		}
 		else {
