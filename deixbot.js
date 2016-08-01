@@ -36,6 +36,7 @@ commands.load = {
 			try {
 				commands[params[0]] = require("./commands/" + params[0] + ".js");
 				client.sendMessage(message.channel, "Successfully loaded " + params[0]);
+				log.info("Loaded " + params[0]);
 			}
 			catch(err) {
 				client.sendMessage(message.channel, "Failed to load " + params[0]);
@@ -58,6 +59,7 @@ commands.unload = {
 				delete commands[params[0]];
 				delete require.cache["./commands/" + params[0] + ".js"];
 				client.sendMessage(message.channel, "Successfully unloaded " + params[0]);
+				log.info("Unloaded " + params[0]);
 			}
 			catch(err) {
 				client.sendMessage(message.channel, "Failed to unload " + params[0]);
@@ -76,8 +78,20 @@ commands.reload = {
 	hidden: true,
 	action: (client, message, params) => {
 		if(message.author.id == appConfig.ownerid) {
-			commands.unload.action(client, message, params);
-			commands.load.action(client, message, params);
+			// commands.unload.action(client, message, params);
+			// commands.load.action(client, message, params);
+			try {
+				delete commands[params[0]];
+				delete require.cache[require.resolve("./commands/" + params[0] + ".js")];
+				commands[params[0]] = require("./commands/" + params[0] + ".js");
+				client.sendMessage(message.channel, "Successfully reloaded " + params[0]);
+				log.info("Reloaded " + params[0]);
+			}
+			catch(err) {
+				client.sendMessage(message.channel, "Failed to reload " + params[0]);
+				log.error(err);
+			}
+
 		}
 	}
 };
