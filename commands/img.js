@@ -1,4 +1,4 @@
-var log = require(__dirname + "/logger.js");
+var log = require("../logger.js");
 module.exports = {
 	alias: "img",
 	description: "Search for an image on google",

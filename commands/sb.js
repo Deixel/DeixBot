@@ -1,4 +1,4 @@
-var log = require(__dirname + "/logger.js");
+var log = require("../logger.js");
 module.exports = {alias: "sb",
     description: "Play something from the soundboard.",
     hidden: false,

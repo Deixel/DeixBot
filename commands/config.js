@@ -1,4 +1,4 @@
-var log = require(__dirname + "/logger.js");
+var log = require("../logger.js");
 module.exports = {
 	alias: "config",
 	description: "Admin can configure bot settings",
