@@ -1,3 +1,4 @@
+var log = require(__dirname + "/logger.js");
 module.exports = {
 	alias: "config",
 	description: "Admin can configure bot settings",
@@ -17,10 +18,10 @@ module.exports = {
 				//UPDATE serverConfig, configs SET serverConfig.value="£" WHERE configs.configName="cmdprefix" AND serverConfig.configID = configs.configID AND serverId=123456
 				client.sendMessage(message.channel, "Working...", function(err1, msg) {
 					connection.query("SELECT serverConfig.serverConfigId FROM serverConfig INNER JOIN configs on serverConfig.configId = configs.configId WHERE serverConfig.serverId=? AND configs.configName=?", [message.server.id,params[0]], function(err, rows) {
-						if(err) return console.error(err);
+						if(err) return log.error(err);
 						if(rows.length > 0) {
 							connection.query("UPDATE serverConfig, configs SET serverConfig.value=? WHERE configs.configName=? AND serverConfig.configID = configs.configID  AND serverConfig.serverId=?", [params[1], params[0], message.server.id], function(err2, res) {
-								if(err2) return console.error(err);
+								if(err2) return log.error(err);
 								if(res.affectedRows != 0) {
 									client.updateMessage(msg, "Updated `" + params[0] + "` to `" + params[1] + "`" );
 									config.serverConfig[message.server.id][params[0]] = params[1];
@@ -33,7 +34,7 @@ module.exports = {
 									if(err3.code === "ER_BAD_NULL_ERROR") {
 										return client.updateMessage(msg, "Sorry, that's an invalid config.");
 									}
-									else return console.error(err3);
+									else return log.error(err3);
 								}
 								if(result2.affectedRows != 0) {
 									client.updateMessage(msg, "Updated `" + params[0] + "` to `" + params[1] + "`" );

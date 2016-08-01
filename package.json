@@ -7,7 +7,9 @@
     "discord.js": ">=8.0.0",
     "mysql": "latest",
 	"d20": "latest",
-	"request": "latest"
+	"request": "latest",
+	"winston": "latest",
+	"dateformat": "latest"
   },
   "devDependencies": {
     "eslint": "latest"

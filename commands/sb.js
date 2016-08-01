@@ -1,3 +1,4 @@
+var log = require(__dirname + "/logger.js");
 module.exports = {alias: "sb",
     description: "Play something from the soundboard.",
     hidden: false,
@@ -11,7 +12,7 @@ module.exports = {alias: "sb",
 		else if(voiceChannel != null) {
 			config.connection.query("SELECT path FROM soundboard WHERE alias = ?", [params[0]], function(err, rows) {
 				if(err)	{
-					return console.error(err);
+					return log.error(err);
 				}
 				if(rows.length == 0) {
 					client.sendMessage(message.channel, "I have no idea what that is, " + message.author);
@@ -20,13 +21,13 @@ module.exports = {alias: "sb",
 					});
 				}
 				else if (rows.length > 1) {
-					console.warn("Soundboard alias " + params[0] + "returned multiple paths");
+					log.warn("Soundboard alias " + params[0] + "returned multiple paths");
 				}
 				else {
 					var filePath = rows[0].path;
 					client.joinVoiceChannel(voiceChannel, function(err, voiceConnection) {
 						if(err) {
-							console.error(err);
+							return log.error(err);
 						}
 						params.length == 2 ? playSoundboard(config, voiceConnection, filePath, parseInt(params[1])) : playSoundboard(config, voiceConnection, filePath);
 					});
@@ -42,7 +43,7 @@ module.exports = {alias: "sb",
 function listSoundboard(config, cb) {
 	config.connection.query("SELECT alias, description FROM soundboard", function(err, rows) {
 		if(err) {
-			return console.error(err);
+			return log.error(err);
 		}
 		var sbList = "```";
 		for(var i = 0; i < rows.length; i++) {
@@ -56,10 +57,10 @@ function listSoundboard(config, cb) {
 function playSoundboard(config, voiceConnection, filePath, iterations = 1) {
 	voiceConnection.playFile(filePath, {volume: config.getServerConfig(voiceConnection.server, "vol")}, function(err, intent) {
 		if(err){
-			console.error(err);
+			return log.error(err);
 		}
 		intent.on("error", function(err) {
-			console.error(err);
+			return log.error(err);
 		});
 		intent.once("end", function() {
 			if(iterations <= 1) {

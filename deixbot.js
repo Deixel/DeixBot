@@ -1,11 +1,14 @@
 var Discord = require("discord.js");
+var mysql = require("mysql");
+var log = require(__dirname + "/logger.js");
 var config =  require("./config");
 var appConfig = config.appConfig;
-var mysql = require("mysql");
+
 var connection;
 config.connection = connection;
 var serverConfig = config.serverConfig;
 var getServerConfig = config.getServerConfig;
+
 var commands = {};
 
 commands.help = {
@@ -87,14 +90,14 @@ function loadCommands() {
 			loaded++;
 		}
 	}
-	console.log("Loaded  " + loaded + " commands!");
+	log.info("Loaded  " + loaded + " commands!");
 }
 
 function db_connect() {
 	connection = mysql.createConnection(appConfig.mysql);
 	connection.connect(function(err) {
 		if(err) {
-			console.error(err);
+			log.error(err);
 			setTimeout(db_connect, 2000);
 		}
 	});
@@ -103,7 +106,7 @@ function db_connect() {
 			db_connect();
 		}
 		else {
-			return console.log(err);
+			return log.error(err);
 		}
 	});
 }
@@ -148,24 +151,24 @@ client.on("message", function(message) {
 //Called once the bot is logged in and ready to use.
 client.on("ready", function() {
 	db_connect();
-	console.log("Established connection to database.");
+	log.info("Established connection to database.");
 	updatePlaying();
 	setInterval(updatePlaying, 600000);
 
 	connection.query("SELECT configName, configValue FROM configs ORDER BY configID ASC", function(err, rows) {
 		if(err) {
-			console.error(err);
+			return log.error(err);
 		}
 		serverConfig["default"] = {};
 		for(var i = 0;i < rows.length; i++) {
 			serverConfig["default"][rows[i].configName] = rows[i].configValue;
-			console.log("Set default '"+ rows[i].configName + "' to '" + rows[i].configValue + "'.");
+			log.info("Set default '"+ rows[i].configName + "' to '" + rows[i].configValue + "'.");
 		}
 	});
 
 	connection.query("SELECT serverConfig.serverId, serverConfig.value, configs.configName FROM serverConfig INNER JOIN configs on serverConfig.configId= configs.configId", function(err, rows) {
 		if(err) {
-			console.error(err);
+			return log.error(err);
 		}
 		for(var server of client.servers) {
 			serverConfig[server.id] = {};
@@ -180,7 +183,7 @@ client.on("ready", function() {
 function updatePlaying() {
 	connection.query("SELECT playingString FROM playing ORDER BY RAND() LIMIT 1", function(err, rows) {
 		if(err) {
-			console.error(err);
+			return log.error(err);
 		}
 		client.setPlayingGame(rows[0].playingString);
 	});
@@ -190,7 +193,7 @@ function updatePlaying() {
 process.on("SIGINT", function() {
 	client.logout(function(error) {
 		if(error) {
-			console.error(error);
+			return log.error(error);
 		}
 		process.exit(0);
 	});
@@ -198,6 +201,6 @@ process.on("SIGINT", function() {
 
 client.loginWithToken(appConfig.apikey, function(err){
 	if(err) {
-		console.error(err);
+		return log.error(err);
 	}
 });

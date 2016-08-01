@@ -1,3 +1,4 @@
+var log = require(__dirname + "/logger.js");
 module.exports = {
 	alias: "text",
 	"description": "Quickly print some saved text",
@@ -7,7 +8,7 @@ module.exports = {
 		if(params.length == 0 || (params.length > 0 && params[0] === "list")) {
 			connection.query("SELECT alias FROM quicktext", function(err, rows) {
 				if(err) {
-					console.error(err);
+					return log.error(err);
 				}
 				var textList = "";
 				for(var i = 0; i < rows.length; i++) {
@@ -21,12 +22,12 @@ module.exports = {
 				var newText = {};
 				client.awaitResponse(message, "What tag would you like to add " + message.author + "?", function(err, msg1) {
 					if(err) {
-						console.error(err);
+						return log.error(err);
 					}
 					newText.alias = msg1.content;
 					connection.query("SELECT alias FROM quicktext WHERE alias = ?", [newText.alias], function(err, rows) {
 						if(err) {
-							console.error(err);
+							return log.error(err);
 						}
 						if(rows.length != 0) {
 							client.sendMessage(message.channel, "Sorry, that tag already exists.");
@@ -34,12 +35,12 @@ module.exports = {
 						else {
 							client.awaitResponse(msg1, "And what should `" + newText.alias +"` display?", function(err, msg2) {
 								if(err) {
-									console.error(err);
+									return log.error(err);
 								}
 								newText.contents = msg2.content;
 								connection.query("INSERT INTO quicktext SET ?", newText, function(err) {
 									if(err) {
-										console.error(err);
+										return log.error(err);
 									}
 									client.reply(msg2, "Added `" + newText.alias + "`");
 								});
@@ -52,7 +53,7 @@ module.exports = {
 			else {
 				connection.query("SELECT contents FROM quicktext WHERE alias = ?", params[0], function(err, rows) {
 					if(err) {
-						console.error(err);
+						return log.error(err);
 					}
 					if(rows.length == 0) {
 						client.sendMessage(message.channel, "404: Message not found.");

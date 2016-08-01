@@ -1,3 +1,4 @@
+var log = require(__dirname + "/logger.js");
 module.exports = {
 	alias: "img",
 	description: "Search for an image on google",
@@ -11,14 +12,14 @@ module.exports = {
 					data = JSON.parse(body);
 				}
 				catch(error) {
-					console.error(error);
+					log.error(error);
 				}
 				if(!data) {
-					console.log(data);
+					log.info(data);
 					return client.message("Error");
 				}
 				else if(!data.items || data.items.length == 0) {
-					console.log(data);
+					log.info(data);
 					return client.sendMessage(message.channel, "No results found");
 				}
 				else {

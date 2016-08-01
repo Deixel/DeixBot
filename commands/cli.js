@@ -1,3 +1,4 @@
+var log = require(__dirname + "/logger.js");
 module.exports = {
 	alias: "cli",
 	description: "Run a terminal command",
@@ -10,7 +11,7 @@ module.exports = {
 			var benchmark = Date.now();
 			exec(params, {timeout: 5000}, function(error, stdout, stderr) {
 				if(error) {
-					console.error(error);
+					return log.error(error);
 				}
 				benchmark = Date.now() - benchmark;
 				client.sendMessage(message.channel, "```bash\n" + params + "\n--------------------\n" + stdout + stderr + "\n--------------------\nin " + benchmark + "ms```");
