@@ -5,7 +5,6 @@ var config =  require("./config");
 var appConfig = config.appConfig;
 
 var connection;
-config.connection = connection;
 var serverConfig = config.serverConfig;
 var getServerConfig = config.getServerConfig;
 
@@ -111,6 +110,7 @@ function loadCommands() {
 
 function db_connect() {
 	connection = mysql.createConnection(appConfig.mysql);
+	config.connection = connection;
 	connection.connect(function(err) {
 		if(err) {
 			log.error(err);
