@@ -154,6 +154,10 @@ client.on("message", function(message) {
 			cmd.action(client, message, getParams(message.content), config);
 		}
 	}
+	else if(subreddit = message.content.matches(/\/r\/\w+/)) { //eslint-disable-line
+		client.sendMessage(message.channel, "http://www.reddit.com/" + subreddit[0]); //eslint-disable-line no-undef
+
+	}
 	else if(message.isMentioned(client.user)) {
 		cmdArray = message.content.split(" ");
 		cmd = commands[cmdArray[1]];
