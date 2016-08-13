@@ -139,6 +139,7 @@ function getParams(content) {
 var client = new Discord.Client({autoReconnect: true});
 
 client.on("message", function(message) {
+	if(message.author.equals(client.user)) return; 
 	if(message.content.toLowerCase().indexOf("hello") > -1 && message.isMentioned(client.user)) {
 		return client.sendMessage(message.channel, "Hello " + message.author);
 	}
@@ -154,8 +155,8 @@ client.on("message", function(message) {
 			cmd.action(client, message, getParams(message.content), config);
 		}
 	}
-	else if(subreddit = message.content.matches(/\/r\/\w+/)) { //eslint-disable-line
-		client.sendMessage(message.channel, "http://www.reddit.com/" + subreddit[0]); //eslint-disable-line no-undef
+	else if(subreddit = message.content.match(/\/r\/\w+/)) { //eslint-disable-line
+		client.sendMessage(message.channel, "http://www.reddit.com" + subreddit[0]); //eslint-disable-line no-undef
 
 	}
 	else if(message.isMentioned(client.user)) {
