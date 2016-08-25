@@ -95,21 +95,6 @@ commands.reload = {
 	}
 };
 
-commands.listcmds = {
-	alias: "listcmds",
-	description: "List all loaded commands",
-	hidden: true,
-	action: (client, message) => {
-		if(message.author.id == appConfig.ownerid) {
-			var cmdlist = Object.keys(commands);
-			client.sendMessage(message.channel, cmdlist);
-		}
-		else {
-			client.sendMessage(message.channel, ":no_entry: **Permission Denied** :no_entry:");
-		}
-	}
-};
-
 function loadCommands() {
 	var fs = require("fs");
 	var files = fs.readdirSync("./commands");
@@ -154,6 +139,7 @@ function getParams(content) {
 var client = new Discord.Client({autoReconnect: true});
 
 client.on("message", function(message) {
+	if(message.author.equals(client.user)) return; 
 	if(message.content.toLowerCase().indexOf("hello") > -1 && message.isMentioned(client.user)) {
 		return client.sendMessage(message.channel, "Hello " + message.author);
 	}
@@ -168,6 +154,10 @@ client.on("message", function(message) {
 		if(cmd != null) {
 			cmd.action(client, message, getParams(message.content), config);
 		}
+	}
+	else if(subreddit = message.content.match(/\/r\/\w+/)) { //eslint-disable-line
+		client.sendMessage(message.channel, "http://www.reddit.com" + subreddit[0]); //eslint-disable-line no-undef
+
 	}
 	else if(message.isMentioned(client.user)) {
 		cmdArray = message.content.split(" ");
@@ -228,11 +218,6 @@ process.on("SIGINT", function() {
 		}
 		process.exit(0);
 	});
-});
-
-process.on("uncaughtException", (err) => {
-	log.error(err);
-	process.exit(1);
 });
 
 client.loginWithToken(appConfig.apikey, function(err){
