@@ -5,7 +5,7 @@ module.exports = {alias: "sb",
 	action: (client, message, params, config) => {
 		var voiceChannel = message.author.voiceChannel;
 		if(params.length == 0 || (params.length > 0 && params[0] == "list")) {
-			listSoundboard(function(sbList){
+			listSoundboard(config, function(sbList){
 				client.sendMessage(message.channel, sbList);
 			});
 		}

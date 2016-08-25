@@ -96,6 +96,21 @@ commands.reload = {
 	}
 };
 
+commands.listcmds = {
+	alias: "listcmds",
+	description: "List all loaded commands",
+	hidden: true,
+	action: (client, message) => {
+		if(message.author.id == appConfig.ownerid) {
+			var cmdlist = Object.keys(commands);
+			client.sendMessage(message.channel, cmdlist);
+		}
+		else {
+			client.sendMessage(message.channel, ":no_entry: **Permission Denied** :no_entry:");
+		}
+	}
+};
+
 function loadCommands() {
 	var fs = require("fs");
 	var files = fs.readdirSync("./commands");
@@ -111,6 +126,7 @@ function loadCommands() {
 
 function db_connect() {
 	connection = mysql.createConnection(appConfig.mysql);
+	config.connection = connection;
 	connection.connect(function(err) {
 		if(err) {
 			log.error(err);
@@ -213,6 +229,11 @@ process.on("SIGINT", function() {
 		}
 		process.exit(0);
 	});
+});
+
+process.on("uncaughtException", (err) => {
+	log.error(err);
+	process.exit(1);
 });
 
 client.loginWithToken(appConfig.apikey, function(err){
