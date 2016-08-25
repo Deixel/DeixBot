@@ -5,7 +5,6 @@ var config =  require("./config");
 var appConfig = config.appConfig;
 
 var connection;
-config.connection = connection;
 var serverConfig = config.serverConfig;
 var getServerConfig = config.getServerConfig;
 
