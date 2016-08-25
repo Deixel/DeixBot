@@ -95,6 +95,21 @@ commands.reload = {
 	}
 };
 
+commands.listcmds = {
+	alias: "listcmds",
+	description: "List all loaded commands",
+	hidden: true,
+	action: (client, message) => {
+		if(message.author.id == appConfig.ownerid) {
+			var cmdlist = Object.keys(commands);
+			client.sendMessage(message.channel, cmdlist);
+		}
+		else {
+			client.sendMessage(message.channel, ":no_entry: **Permission Denied** :no_entry:");
+		}
+	}  
+};
+
 function loadCommands() {
 	var fs = require("fs");
 	var files = fs.readdirSync("./commands");
@@ -139,7 +154,7 @@ function getParams(content) {
 var client = new Discord.Client({autoReconnect: true});
 
 client.on("message", function(message) {
-	if(message.author.equals(client.user)) return; 
+	if(message.author.equals(client.user)) return;
 	if(message.content.toLowerCase().indexOf("hello") > -1 && message.isMentioned(client.user)) {
 		return client.sendMessage(message.channel, "Hello " + message.author);
 	}
