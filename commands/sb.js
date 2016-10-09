@@ -9,6 +9,9 @@ module.exports = {alias: "sb",
 				client.sendMessage(message.channel, sbList);
 			});
 		}
+		else if(params.length > 0 && params[0] == "stop" && client.voiceConnection && client.voiceConnection.playing) {
+			client.voiceConnection.stopPlaying();
+		}
 		else if(voiceChannel != null) {
 			config.connection.query("SELECT path FROM soundboard WHERE alias = ?", [params[0]], function(err, rows) {
 				if(err)	{
@@ -22,6 +25,9 @@ module.exports = {alias: "sb",
 				}
 				else if (rows.length > 1) {
 					log.warn("Soundboard alias " + params[0] + "returned multiple paths");
+				}
+				else if(client.voiceConnection && client.voiceConnection.playing) {
+					client.sendMessage(message.channel, "Sorry, I'm already playing something");
 				}
 				else {
 					var filePath = rows[0].path;
@@ -45,7 +51,7 @@ function listSoundboard(config, cb) {
 		if(err) {
 			return log.error(err);
 		}
-		var sbList = "```";
+		var sbList = "```ruby\n";
 		for(var i = 0; i < rows.length; i++) {
 			sbList = sbList.concat(rows[i].alias + ": " + rows[i].description + "\n");
 		}

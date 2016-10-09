@@ -174,6 +174,9 @@ client.on("message", function(message) {
 		client.sendMessage(message.channel, "http://www.reddit.com" + subreddit[0]); //eslint-disable-line no-undef
 
 	}
+	else if (message.content.toLowerCase().indexOf("lewd")  > -1 && message.isMentioned(client.user)) {
+		client.sendFile(message.channel, "https://i.imgur.com/rlraAOV.png", "", "Stop it, that's lewd");
+	}
 	else if(message.isMentioned(client.user)) {
 		cmdArray = message.content.split(" ");
 		cmd = commands[cmdArray[1]];
