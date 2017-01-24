@@ -17,7 +17,8 @@
     "winston": "latest"
   },
   "devDependencies": {
-    "eslint": "latest"
+    "eslint": "latest",
+	"babel-eslint": "latest"
   },
   "scripts": {
     "test": "mocha",

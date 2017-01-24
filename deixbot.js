@@ -28,26 +28,26 @@ client.registry
 
 client.setProvider(sqlite.open(path.join(__dirname, 'settings.sqlite3')).then(db => new Commando.SQLiteProvider(db))).catch(log.error);
 
-client.on("ready", () => {
-log.info("Client is ready");
-updatePlaying();
-setInterval(updatePlaying, 600000);
+client.on('ready', () => {
+	log.info('Client is ready');
+	updatePlaying();
+	setInterval(updatePlaying, 600000);
 });
 
 //client.on('debug', (info) => log.debug(info));
 
 client.login(appConfig.apikey)
-	.then(() => log.info("Logged in with token")
+	.then(() => log.info('Logged in with token')
 );
 
 function updatePlaying() {
 	/*
-		connection.query("SELECT palyingString from playing ORDER BY RAND() LIMIT 1", (err, rows)
+		connection.query('SELECT playingString from playing ORDER BY RAND() LIMIT 1', (err, rows)
 		client.user.setGame(rows[0].playingString);
 	*/
 }
 
 
-process.on("SIGINT", () => {
-		client.destroy().then(process.exit(0))
+process.on('SIGINT', () => {
+	client.destroy().then(process.exit(0));
 });
