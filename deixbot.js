@@ -1,4 +1,4 @@
-giconst Commando = require('discord.js-commando');
+const Commando = require('discord.js-commando');
 //const mysql = require('mysql');
 const sqlite = require('sqlite');
 const log = require(__dirname + '/logger.js');
@@ -9,7 +9,7 @@ const path = require('path');
 var connection;
 var serverConfig = config.serverConfig;
 var getServerConfig = config.getServerConfig;
-var db = sqlite.open(path.join(__dirname,'deixbot.sqlite')).catch(log.error);
+var db = new sqlite.Database(path.join(__dirname,'deixbot.sqlite')).catch(log.error);
 
 const client = new Commando.Client({
 	owner: appConfig.ownerid,
