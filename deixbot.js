@@ -1,5 +1,5 @@
-const Commando = require('discord.js-commando');
-const mysql = require('mysql');
+giconst Commando = require('discord.js-commando');
+//const mysql = require('mysql');
 const sqlite = require('sqlite');
 const log = require(__dirname + '/logger.js');
 const config =  require('./config');
@@ -9,6 +9,7 @@ const path = require('path');
 var connection;
 var serverConfig = config.serverConfig;
 var getServerConfig = config.getServerConfig;
+var db = sqlite.open(path.join(__dirname,'deixbot.sqlite')).catch(log.error);
 
 const client = new Commando.Client({
 	owner: appConfig.ownerid,
@@ -42,10 +43,9 @@ client.login(appConfig.apikey)
 );
 
 function updatePlaying() {
-	/*
-		connection.query('SELECT playingString from playing ORDER BY RAND() LIMIT 1', (err, rows)
+	db.run('SELECT playingString from playing ORDER BY RAND() LIMIT 1').then( (rows) => {
 		client.user.setGame(rows[0].playingString);
-	*/
+	}
 }
 
 
