@@ -41,3 +41,4 @@ jspm_packages
 sounds/*
 config.js
 .exclude
+*.sqlite*
