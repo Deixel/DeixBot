@@ -19,7 +19,6 @@
     "babel-eslint": "latest"
   },
   "scripts": {
-    "test": "mocha",
     "start": "nodejs --harmony deixbot.js"
   },
   "repository": {
