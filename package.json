@@ -8,16 +8,15 @@
     "dateformat": "latest",
     "discord.js": "^11.0.0",
     "discord.js-commando": "latest",
-    "erlpack": "github:hammerandchisel/erlpack",
     "mysql": "latest",
-    "node-opus": "^0.2.4",
+    "node-opus": "latest",
     "request": "latest",
     "sqlite": "latest",
-    "uws": "^0.12.0",
     "winston": "latest"
   },
   "devDependencies": {
-    "eslint": "latest"
+    "eslint": "latest",
+    "babel-eslint": "latest"
   },
   "scripts": {
     "test": "mocha",

@@ -40,3 +40,4 @@ jspm_packages
 ./config.js
 sounds/*
 config.js
+.exclude

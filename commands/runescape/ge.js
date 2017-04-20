@@ -5,7 +5,7 @@ module.exports = class GeCommand extends commando.Command {
 		super(client, {
 			name: 'ge',
 			group: 'runescape',
-			memberName: 'ge', 
+			memberName: 'ge',
 			aliases: ['grandexchange'],
 			description: 'Search the RuneScape Grand Exchange for an item',
 			args: [
