@@ -5,8 +5,8 @@ const config =  require('./config');
 const appConfig = config.appConfig;
 const path = require('path');
 
-var serverConfig = config.serverConfig;
-var getServerConfig = config.getServerConfig;
+//var serverConfig = config.serverConfig;
+//var getServerConfig = config.getServerConfig;
 var db;
 
 const responses = [ 
@@ -25,6 +25,15 @@ const responses = [
 		action: (msg) => {
 			var replies = ['I am good. Thanks for asking!', 'I am functioning within normal parameters', 'I am Combat Ready:tm:!'];
 			return msg.channel.sendMessage(replies[parseInt(Math.random() * replies.length)]);
+		}
+	},
+	{
+		check: (msg) => {
+			return msg.cleanContent.match(/\/r\/\w+/);
+		},
+		action: (msg) => {
+			var subreddit = msg.cleanContent.match(/\/r\/\w+/);
+			return msg.channel.sendMessage('http://www.reddit.com' + subreddit[0]);
 		}
 	}
 ];
@@ -58,7 +67,7 @@ sqlite.open(path.join(__dirname,'deixbot.sqlite')).then( (rdb) => {
 	log.info('Successfully opened database');
 	db = rdb;
 	client.login(appConfig.apikey).then(() => {
-			log.info('Logged in with token');
+		log.info('Logged in with token');
 	});
 }).catch(log.error);
 
@@ -70,7 +79,7 @@ function updatePlaying() {
 
 client.on('message', (msg) => {
 	responses.forEach( (e) => {
-			if(e.check(msg)) return e.action(msg)
+		if(e.check(msg)) return e.action(msg);
 	});
 });
 

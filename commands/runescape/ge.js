@@ -10,9 +10,9 @@ module.exports = class GeCommand extends commando.Command {
 			description: 'Search the RuneScape Grand Exchange for an item',
 			args: [
 				{
-						key: 'item',
-						type: 'string',
-						prompt: 'what item do you want to search for?'
+					key: 'item',
+					type: 'string',
+					prompt: 'what item do you want to search for?'
 				}
 
 			]

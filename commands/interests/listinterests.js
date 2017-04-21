@@ -1,5 +1,4 @@
 const commando = require('discord.js-commando');
-const Discord = require('discord.js');
 
 module.exports = class ListGroupsCommand extends commando.Command {
 	constructor(client) {
@@ -12,7 +11,7 @@ module.exports = class ListGroupsCommand extends commando.Command {
 		});
 	}
 
-	async run (msg, args) {
+	async run (msg) {
 		if(msg.guild) {
 			var groupNames = msg.guild.roles.filter(r => { return r.name.startsWith('g_');}).map(r => r.name);
 			var memberGroups = msg.guild.member(msg.author).roles.filter( r => { return r.name.startsWith('g');}).map(r => r.name);
