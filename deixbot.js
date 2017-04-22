@@ -9,7 +9,24 @@ const path = require('path');
 //var getServerConfig = config.getServerConfig;
 var db;
 
-const responses = require('./resources/responses.js'); 
+var responses = require('./resources/responses.js'); 
+
+var reloadResponses = {
+	check: (msg) => {
+		return msg.author.id === appConfig.ownerid && /(!reboot responses|!reboot chat|reboot speech)/.test(msg.cleanContent); 
+	},
+	action: (msg) => {
+		msg.channel.sendMessage('Rebooting speech module...').then( () => {
+			delete require.cache[require.resolve('./resources/responses.js')];
+			responses = [];
+			responses = require('./resources/responses.js');
+			responses.push(reloadResponses);
+			return msg.channel.sendMessage('Speech module back online! Sal-u-tations!');
+		});
+	}
+};
+
+responses.push(reloadResponses);
 
 const client = new Commando.Client({
 	owner: appConfig.ownerid,
