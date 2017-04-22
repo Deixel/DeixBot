@@ -14,7 +14,7 @@ module.exports = class AddInterestCommand extends commando.Command {
 					type: 'role',
 					prompt: 'what interest do you want to add?',
 					validate: (value) => {
-						return value.startsWith('g_') ? true : 'that is not a valid interest')
+						return value.startsWith('g_') ? true : 'that is not a valid interest';
 					}
 				}
 			]
