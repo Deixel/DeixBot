@@ -7,11 +7,15 @@ module.exports = class AddInterestCommand extends commando.Command {
 			group: 'interests',
 			memberName: 'addinterest',
 			description: 'Add an interest to access their channel(s)',
+			guildOnly: true,
 			args: [
 				{
 					key: 'interest',
 					type: 'role',
-					prompt: 'What interest do you want to add?'
+					prompt: 'what interest do you want to add?',
+					validate: (value) => {
+						return value.startsWith('g_') ? true : 'that is not a valid interest')
+					}
 				}
 			]
 		});
@@ -20,15 +24,12 @@ module.exports = class AddInterestCommand extends commando.Command {
 	async run (msg, args) {
 		const role = args.interest;
 		var user = msg.guild.member(msg.author);
-		if(!user.roles.has(role.id) && role.name.startsWith('g_')) {
+		if(!user.roles.has(role.id)) {
 			msg.guild.member(msg.author).addRole(role);
 			return msg.reply('you have been added to ' + role.name);
 		}
 		else {
-			if(!role.name.startsWith('g_')) 
-				return msg.reply('that\'s not a valid option...');
-			else
-				return msg.reply('you are already a member of this group!');
+			return msg.reply('this is already one of your interests!');
 		}
 	}
 };
