@@ -37,6 +37,7 @@ const client = new Commando.Client({
 client.registry
 	.registerGroups([
 		['interests', 'Interests'],
+		['soundboard', 'Soundboard'],
 		['runescape', 'RuneScape'],
 		['internet', 'Internet'],
 		['games', 'Games'],
@@ -47,7 +48,7 @@ client.registry
 
 client.setProvider(sqlite.open(path.join(__dirname, 'settings.sqlite3')).then(sdb => new Commando.SQLiteProvider(sdb))).catch(log.error);
 
-client.on('ready', () => {
+client.once('ready', () => {
 	log.info('Client is ready');
 	updatePlaying();
 	setInterval(updatePlaying, 600000);
