@@ -7,6 +7,7 @@ module.exports = class StopSoundboard extends commando.Command {
 			group: 'soundboard',
 			memberName: 'stopsb',
 			description: 'Stop whatever is currently playing from the soundboard',
+			guildOnly: true,
 			aliases: ['sbstop']
 		});
 	}
