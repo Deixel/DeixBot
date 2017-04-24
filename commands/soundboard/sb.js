@@ -58,16 +58,15 @@ module.exports = class SoundboardCommand extends commando.Command {
 							db.get('SELECT path from soundboard WHERE alias = ?', args.sound).then( (result) => {
 								if(result !== undefined) {
 									voiceChannelToJoin.join().then( (voiceConn) => {
-										var streamDispatch = voiceConn.playFile('./resources/sounds/' + result.path);
-										streamDispatch.once('end', () => {
-											return voiceChannelToJoin.leave();
-										});
+										playSoundboard(voiceConn, result.path, args.count).then( () => { db.close(); return voiceChannelToJoin.leave() } );
 									}).catch( (err) => {
 										log.error(err); 
+										db.close()
 										return msg.reply('whoops! something went wrong!');
 									});
 								}
 								else {
+									db.close()
 									return msg.channel.sendMessage('Invalid sound');
 								}
 							});
@@ -87,3 +86,18 @@ module.exports = class SoundboardCommand extends commando.Command {
 		}
 	}
 };
+
+
+function playSoundboard(voiceConnection, filePath, iterations) {
+	return new Promise( (resolve) => {
+		var streamDispatch = voiceConnection.playFile('./resources/sounds/' + filePath);
+		streamDispatch.once('end', () => {
+			if(iterations > 1) {
+				playSoundboard(voiceConnection, filePath, iterations-1).then( () => resolve());
+			}
+			else {
+				resolve();
+			}
+		});
+	});
+}
