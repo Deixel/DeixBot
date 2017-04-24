@@ -13,8 +13,8 @@ module.exports = class ListGroupsCommand extends commando.Command {
 	}
 
 	async run (msg) {
-		var groupNames = msg.guild.roles.filter(r => { return r.name.startsWith('g_');}).map(r => r.name);
 		var memberGroups = msg.guild.member(msg.author).roles.filter( r => { return r.name.startsWith('g');}).map(r => r.name);
+		var groupNames = msg.guild.roles.filter(r => { return r.name.startsWith('g_');}).map(r => r.name).filter( e => { return memberGroups.indexOf(e) == -1; });
 		return msg.channel.sendMessage('**' + msg.author.username + '\'s Current Interests**\n' + memberGroups.join('\n') + '\n\n**Available Groups**\n' + groupNames.join('\n'));
 	}
 };
