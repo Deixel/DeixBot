@@ -6,13 +6,20 @@ module.exports = class BlameCommand extends commando.Command {
 			name: 'blame',
 			group: 'misc',
 			memberName: 'blame', 
-			description: 'Assigns blame appropriately' 
+			description: 'Assigns blame appropriately',
+			args: [
+				{
+					key: 'blame',
+					type: 'string',
+					default: 'Yury',
+					prompt: 'who is to blame?'
+				}
+			]
 		});
 	}
 
 	async run(msg, args) {
-		var responsible = args.length > 0 ? args : 'Yury';
-		msg.channel.sendMessage('I blame ' + responsible);
+		msg.channel.sendMessage('I blame ' + args.blame);
 		msg.delete();
 	}
 };
