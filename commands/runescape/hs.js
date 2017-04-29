@@ -1,6 +1,4 @@
 const commando = require('discord.js-commando');
-const log = require('../../logger.js');
-
 
 module.exports = class HsCommand extends commando.Command {
 	constructor(client) {
@@ -33,7 +31,6 @@ module.exports = class HsCommand extends commando.Command {
 					msg.channel.stopTyping();
 					return msg.channel.send('Unable to find highscores for ' + player);
 				}
-				log.info(res.statusCode);
 				let numSkills = 27;
 				let skillRaw = hsRaw.split('\n');
 				let skillNames = require('../../resources/rs-skill-names');
