@@ -50,6 +50,8 @@ client.setProvider(sqlite.open(path.join(__dirname, 'settings.sqlite3')).then(sd
 
 client.once('ready', () => {
 	log.info('Client is ready');
+	log.info('Logged in as ' + client.user.username + '#' + client.user.discriminator);
+	log.info('Client has cached ' + client.channels.size + ' channels across ' + client.guilds.size + ' guilds');
 	updatePlaying();
 	setInterval(updatePlaying, 600000);
 });

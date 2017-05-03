@@ -6,7 +6,7 @@
   "dependencies": {
     "d20": "latest",
     "dateformat": "latest",
-    "discord.js": "^11.0.0",
+    "discord.js": "^11.1.0",
     "discord.js-commando": "latest",
     "mysql": "latest",
     "node-opus": "latest",
