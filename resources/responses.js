@@ -1,7 +1,7 @@
 module.exports = [ 
 	{
 		check: (msg) => {
-			return msg.cleanContent.toLowerCase().includes('hello') && msg.isMentioned(msg.client.user);
+			return /(hello|hi|hey|salutations)/gi.test(msg.cleanContent) && msg.isMentioned(msg.client.user);
 		},
 		action: (msg) => {
 			return msg.channel.sendMessage('Sal-u-tations ' + msg.author + '!');
@@ -32,6 +32,31 @@ module.exports = [
 		action: (msg) => {
 			return msg.channel.sendFile('https://i.imgur.com/rlraAOV.png', 'lewd.png', 'Stop it, that\'s lewd!');
 		}
+	},
+	{
+		check: (msg) => {
+			return /are you ready/gi.test(msg.cleanContent) && msg.isMentioned(msg.client.user);
+		},
+		action: (msg) => {
+			return msg.channel.sendMessage('I\'m more than ready! I\'m Combat Ready!:tm:!:crossed_swords:');
+		}
+	},
+	{
+		check: (msg) => {
+			return /what do you know about blake/gi.test(msg.cleanContent) && msg.isMentioned(msg.client.user);
+		},
+		action: (msg) => {
+			var replies = ['You mean the Faunus girl? :cat:', 'I heard she\'s quite fond of tuna... :fish:'];
+			return msg.channel.send(replies[parseInt(Math.random() * replies.length)]);
+		}
+	},
+	{
+		check: (msg) => {
+			return /are you a real (girl|person)/gi.test(msg.cleanContent) && msg.isMentioned(msg.client.user);
+		},
+		action: (msg) => {
+			return msg.channel.send('Of course I am. Why would you ask that? *hic*');
+		}
 	}
-];
+];	
  
