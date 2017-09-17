@@ -69,6 +69,7 @@ function updatePlaying() {
 }
 
 client.on('message', (msg) => {
+	log.debug(msg.author.username + ' in #' + msg.channel.name + ': ' + msg.cleanContent);
 	if(msg.author.id !== client.user.id) {
 		responses.forEach( (e) => {
 			if(e.check(msg)) return e.action(msg);
@@ -76,7 +77,26 @@ client.on('message', (msg) => {
 	}
 });
 
+client.on('messageDeleted', (msg) => {
+	log.debug(msg.author.username + ' deleted from #' + msg.channel.name + ': ' + msg.cleanContent);
+});
+
+
+client.on('guildMemberAdd', (member) => {
+	if(member.guild.id === '344447107874291715') {
+		member.send('Sal-u-tations, ' + member.user.username + '! Welcome to ' + member.guild.name + '!\n\n Be sure to check out the rules and installation instructions in #rules-n-info.\n I also have a number of useful abilities. Just say `!help` at any time to see those!\n\n If you have any questions, just ask <@113310775887536128>.');
+	}
+});
+
 process.on('SIGINT', () => {
 	client.destroy();
 	db.close().then(process.exit(0));
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+	log.error('Unhandled Promise Rejection at Promise ' + promise + ' Reason: ' + reason);
+});
+
+client.on('disconnect', (event) => {
+	log.error('Client has disconnected: ' + event.reason);
 });
