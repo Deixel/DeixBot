@@ -30,9 +30,9 @@ module.exports = class BlameCommand extends commando.Command {
 	}
 
 	async run(msg, args) {
-		if(args.operation === 'pick') {
-			msg.channel.startTyping();
-			sqlite.open('./deixbot.sqlite').then( (db) => {
+		sqlite.open('./deixbot.sqlite').then( (db) => {
+			if(args.operation === 'pick') {
+				msg.channel.startTyping();
 				db.get('SELECT gameName FROM pickgame ORDER BY RANDOM() LIMIT 1').then( (game) => {
 					msg.channel.stopTyping();
 					if(game) {
@@ -41,45 +41,40 @@ module.exports = class BlameCommand extends commando.Command {
 					else {
 						return msg.channel.send('Couldn\'t find any games in the list');
 					}
-				});
-			}).catch(log.error);
-		}
-		else if(args.operation === 'add') {
-			msg.channel.startTyping();
-			sqlite.open('./deixbot.sqlite').then( (db) => {
+				}).catch(log.error);
+			}
+			else if(args.operation === 'add') {
+				msg.channel.startTyping();
 				db.run('INSERT INTO pickgame ( gameName ) VALUES ( ? )', args.game).then( () => {
 					msg.channel.stopTyping();
 					return msg.channel.send(`Added ${args.game} to the list`);
+				}).catch( (err) => { 
+					msg.stopTyping();
+					msg.channel.send('Whoops. Something went wrong. Sorry :frowning:');
+					return log.error(err);
 				});
-			}).catch( (err) => { 
-				msg.stopTyping();
-				msg.channel.send('Whoops. Something went wrong. Sorry :frowning:');
-				return log.error(err);
-			});
-		}
-		else if(args.operation === 'remove') {
-			msg.channel.startTyping();
-			sqlite.open('./deixbot.sqlite').then( (db) => {
+			}
+			else if(args.operation === 'remove') {
+				msg.channel.startTyping();
 				db.run('DELETE FROM pickgame WHERE gameId = (SELECT gameId FROM pickgame WHERE gameName = ? LIMIT 1)', args.game).then( () => {
 					msg.channel.stopTyping();
 					return msg.channel.send(`Removed ${args.game} from the list`);
-				});
-			}).catch(log.error);
-		}
-		else if(args.operation === 'list') {
-			msg.channel.startTyping();
-			sqlite.open('./deixbot.sqlite').then( (db) => {
+				}).catch(log.error);
+			}
+			else if(args.operation === 'list') {
+				msg.channel.startTyping();
 				db.all('SELECT gameName FROM pickgame').then( (rows) => {
 					if(rows.length === 0) {
-						msg.channel.send('There are no games in the list right now!');
+						msg.channel.stopTyping();
+						return msg.channel.send('There are no games in the list right now!');
 					}
 					else {
 						var gameList = rows.map( g => g.gameName ).join(' ');
 						msg.channel.stopTyping();
-						msg.channel.send(`**Games to Choose From**\n${gameList}`);
+						return msg.channel.send(`**Games to Choose From**\n${gameList}`);
 					}
-				});
-			}).catch(log.error);
-		}
+				}).catch(log.error);
+			}
+		});
 	}
 };
