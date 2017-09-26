@@ -100,5 +100,8 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 client.on('disconnect', (event) => {
-	log.error('Client has disconnected: ' + event.reason);
+	log.error('Client has disconnected: ' + event);
+	client.login(appConfig.apikey).then(() => {
+		log.info('Relogged in with token');
+	});
 });

@@ -57,6 +57,14 @@ module.exports = [
 		action: (msg) => {
 			return msg.channel.send('Of course I am. Why would you ask that? *hic*');
 		}
+	},
+	{
+		check: (msg) => {
+			return msg.content.toLowerCase().includes('pun') && msg.isMentioned(msg.client.user);
+		},
+		action: (msg) => {
+			return msg.channel.send({file: 'https://i.imgur.com/ZfHfdk6.png'});
+		}
 	}
 ];	
  
