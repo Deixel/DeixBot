@@ -86,7 +86,7 @@ client.on('messageDeleted', (msg) => {
 
 client.on('guildMemberAdd', (member) => {
 	if(member.guild.id === '344447107874291715') {
-		member.send('Sal-u-tations, ' + member.user.username + '! Welcome to ' + member.guild.name + '!\n\n Be sure to check out the rules and installation instructions in #rules-n-info.\n I also have a number of useful abilities. Just say `!help` at any time to see those!\n\n If you have any questions, just ask <@113310775887536128>.');
+		member.send('Sal-u-tations, ' + member.user.username + '! Welcome to ' + member.guild.name + '!\n\n Be sure to check out the rules and installation instructions in <#344447108301979658>.\n I also have a number of useful abilities. Just say `!help` at any time to see those!\n\n If you have any questions, just ask <@113310775887536128>.');
 	}
 });
 
@@ -100,8 +100,6 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 client.on('disconnect', (event) => {
-	log.error('Client has disconnected: ' + event);
-	client.login(appConfig.apikey).then(() => {
-		log.info('Relogged in with token');
-	});
+	log.error('Client has disconnected: ' + event.reason + '(' + event.code + ')');
+	process.exit(1);
 });
