@@ -16,15 +16,15 @@ module.exports = [
 			return msg.channel.sendMessage(replies[parseInt(Math.random() * replies.length)]);
 		}
 	},
-	{
+/*	{
 		check: (msg) => {
-			return msg.cleanContent.match(/\/r\/\w+/);
+			return msg.cleanContent.match(/(\s|^)\/r\/\w+\s/);
 		},
 		action: (msg) => {
 			var subreddit = msg.cleanContent.match(/\/r\/\w+/);
 			return msg.channel.sendMessage('https://www.reddit.com' + subreddit[0]);
 		}
-	},
+	},*/
 	{
 		check: (msg) => {
 			return msg.content.toLowerCase().includes('lewd') && msg.isMentioned(msg.client.user);
@@ -64,6 +64,14 @@ module.exports = [
 		},
 		action: (msg) => {
 			return msg.channel.send({file: 'https://i.imgur.com/ZfHfdk6.png'});
+		}
+	},
+	{
+		check: (msg) => {
+			return msg.cleanContent.includes('🚜') && msg.author.id !== msg.client.user.id;
+		},
+		action: (msg) => {
+			return msg.react('💥');
 		}
 	}
 ];	
