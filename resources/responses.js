@@ -73,6 +73,14 @@ module.exports = [
 		action: (msg) => {
 			return msg.react('💥');
 		}
+	},
+	{
+		check: (msg) => {
+			return msg.cleanContent.includes('(╯°□°）╯︵ ┻━┻');
+		},
+		action: (msg) => {
+			return msg.channel.send(`Hey <@${msg.author.id}>, We try to keep this place tidy, thanks\n┬─┬ ノ( ゜-゜ノ)`);
+		}
 	}
 ];	
  

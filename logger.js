@@ -23,7 +23,8 @@ module.exports = new winston.Logger ({
 			maxFiles: 10,
 			json: false,
 			prettyPrint: true,
-			tailable: true
+			tailable: true,
+			handleExceptions: true
 		})
 	]
 });
