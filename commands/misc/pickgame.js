@@ -36,7 +36,8 @@ module.exports = class BlameCommand extends commando.Command {
 				db.get('SELECT gameName FROM pickgame ORDER BY RANDOM() LIMIT 1').then( (game) => {
 					msg.channel.stopTyping();
 					if(game) {
-						return msg.channel.send('And the winner is: `' + game.gameName + '`!');
+						//return msg.channel.send('And the winner is: `' + game.gameName + '`!');
+						return msg.channel.send('Why are you asking me? You\'re just going to play Overwatch anyway...');
 					}
 					else {
 						return msg.channel.send('Couldn\'t find any games in the list');

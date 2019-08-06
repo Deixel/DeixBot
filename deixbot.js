@@ -52,8 +52,8 @@ client.once('ready', () => {
 	log.info('Client is ready');
 	log.info('Logged in as ' + client.user.username + '#' + client.user.discriminator);
 	log.info('Client has cached ' + client.channels.size + ' channels across ' + client.guilds.size + ' guilds');
-	updatePlaying();
-	setInterval(updatePlaying, 600000);
+	//updatePlaying();
+	//setInterval(updatePlaying, 600000);
 });
 
 sqlite.open(path.join(__dirname,'deixbot.sqlite')).then( (rdb) => {
@@ -61,6 +61,9 @@ sqlite.open(path.join(__dirname,'deixbot.sqlite')).then( (rdb) => {
 	db = rdb;
 	client.login(appConfig.apikey).then(() => {
 		log.info('Logged in with token');
+	}).catch( () => {
+		log.error('Failed to login');
+		process.exit(1);
 	});
 }).catch(log.error);
 
@@ -92,7 +95,8 @@ client.on('guildMemberAdd', (member) => {
 
 process.on('SIGINT', () => {
 	client.destroy();
-	db.close().then(process.exit(0));
+	process.exit(0);
+//	db.close().then(process.exit(0));
 });
 
 process.on('unhandledRejection', (reason, promise) => {
