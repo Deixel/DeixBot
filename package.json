@@ -1,22 +1,22 @@
 {
   "name": "deixbot",
-  "version": "1.3.0",
+  "version": "2.0.0",
   "description": "A Discord Bot built using NodeJS and Discord.js",
   "main": "deixbot.js",
   "dependencies": {
-    "discord.js": ">=8.0.0",
+    "d20": "latest",
+    "dateformat": "latest",
+    "discord.js": "latest",
+    "discord.js-commando": "latest",
     "mysql": "latest",
-	"d20": "latest",
-	"request": "latest",
-	"winston": "latest",
-	"dateformat": "latest"
+    "node-opus": "latest",
+    "request": "latest",
+    "sqlite": "latest",
+    "winston": "latest"
   },
   "devDependencies": {
-    "eslint": "latest"
-  },
-  "scripts": {
-    "test": "mocha",
-	"start": "nodejs deixbot.js"
+    "eslint": "latest",
+    "babel-eslint": "latest"
   },
   "repository": {
     "type": "git",

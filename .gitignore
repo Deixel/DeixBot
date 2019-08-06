@@ -38,4 +38,7 @@ jspm_packages
 
 # Config File
 ./config.js
-sounds/*
+resources/sounds/*
+config.js
+.exclude
+*.sqlite*
