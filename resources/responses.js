@@ -1,4 +1,4 @@
-module.exports = [ 
+module.exports = [
 	{
 		check: (msg) => {
 			return /(hello|hi|hey|salutations)/gi.test(msg.cleanContent) && msg.isMentioned(msg.client.user);
@@ -82,5 +82,4 @@ module.exports = [
 			return msg.channel.send(`Hey <@${msg.author.id}>, We try to keep this place tidy, thanks\n┬─┬ ノ( ゜-゜ノ)`);
 		}
 	}
-];	
- 
+];
