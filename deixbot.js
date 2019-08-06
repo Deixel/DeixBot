@@ -9,11 +9,11 @@ const path = require('path');
 //var getServerConfig = config.getServerConfig;
 var db;
 
-var responses = require('./resources/responses.js'); 
+var responses = require('./resources/responses.js');
 
 var reloadResponses = {
 	check: (msg) => {
-		return msg.author.id === appConfig.ownerid && /(!reboot responses|!reboot chat|reboot speech)/.test(msg.cleanContent); 
+		return msg.author.id === appConfig.ownerid && /(!reboot responses|!reboot chat|reboot speech)/.test(msg.cleanContent);
 	},
 	action: (msg) => {
 		msg.channel.sendMessage('Rebooting speech module...').then( () => {
@@ -52,8 +52,8 @@ client.once('ready', () => {
 	log.info('Client is ready');
 	log.info('Logged in as ' + client.user.username + '#' + client.user.discriminator);
 	log.info('Client has cached ' + client.channels.size + ' channels across ' + client.guilds.size + ' guilds');
-	//updatePlaying();
-	//setInterval(updatePlaying, 600000);
+	updatePlaying();
+	setInterval(updatePlaying, 600000);
 });
 
 sqlite.open(path.join(__dirname,'deixbot.sqlite')).then( (rdb) => {
@@ -68,8 +68,8 @@ sqlite.open(path.join(__dirname,'deixbot.sqlite')).then( (rdb) => {
 }).catch(log.error);
 
 function updatePlaying() {
-	db.get('SELECT playingString from playing ORDER BY RANDOM() LIMIT 1').then((game) => { 
-		client.user.setGame(game.playingString);
+	db.get('SELECT playingString from playing ORDER BY RANDOM() LIMIT 1').then((game) => {
+		client.user.setActivity(game.playingString, {type: 'PLAYING'});
 	}).catch(log.error);
 }
 
