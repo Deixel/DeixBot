@@ -19,7 +19,7 @@ var reloadResponses = {
 			responses = [];
 			responses = require("./resources/responses.js");
 			responses.push(reloadResponses);
-			return msg.channel.sendMessage("Speech module back online! Sal-u-tations!");
+			return msg.channel.send("Speech module back online! Sal-u-tations!");
 		});
 	}
 };
