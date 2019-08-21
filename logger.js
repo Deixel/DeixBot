@@ -1,5 +1,4 @@
-var winston = require('winston');
-var dateFormat = require('dateformat');
+var winston = require("winston");
 const {combine, timestamp, printf, } = winston.format;
 
 const myFormat = printf( ({level, message, timestamp }) => {
@@ -12,11 +11,11 @@ module.exports = winston.createLogger ({
 	),
 	transports: [
 		new winston.transports.Console({
-			level: 'debug',
+			level: "debug",
 		}),
 		new winston.transports.File({
-			level: 'info',
-			filename: './logs/deixbot.log',
+			level: "info",
+			filename: "./logs/deixbot.log",
 			maxsize: 100000,
 			maxFiles: 10,
 			tailable: true,

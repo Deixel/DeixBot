@@ -1,14 +1,14 @@
-const commando = require('discord.js-commando');
+const commando = require("discord.js-commando");
 
 module.exports = class StopSoundboard extends commando.Command {
 	constructor(client) {
 		super(client, {
-			name: 'stopsb',
-			group: 'soundboard',
-			memberName: 'stopsb',
-			description: 'Stop whatever is currently playing from the soundboard',
+			name: "stopsb",
+			group: "soundboard",
+			memberName: "stopsb",
+			description: "Stop whatever is currently playing from the soundboard",
 			guildOnly: true,
-			aliases: ['sbstop']
+			aliases: ["sbstop"]
 		});
 	}
 
@@ -18,7 +18,7 @@ module.exports = class StopSoundboard extends commando.Command {
 			voiceChannel.leave();
 		}
 		else {
-			msg.channel.sendMessage('*record scratch*');
+			msg.channel.sendMessage("*record scratch*");
 		}
 	}
 };
