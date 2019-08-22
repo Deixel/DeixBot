@@ -86,10 +86,21 @@ client.on("guildMemberAdd", (member) => {
 	}
 });
 
+client.reminders = [];
+setInterval(() => {
+	if(client.reminders.length != 0) {
+		client.reminders.forEach((val, index) => {
+			if(Date.now() > val.timeout) {
+				val.channel.send(`Hey ${val.person}, ${val.message}`);
+				client.reminders.splice(index, 1);
+			}
+		});
+	}
+}, 5000);
+
 process.on("SIGINT", () => {
 	client.destroy();
-	process.exit(0);
-//	db.close().then(process.exit(0));
+	db.close().then(process.exit(0));
 });
 
 process.on("unhandledRejection", (reason, promise) => {
@@ -98,5 +109,5 @@ process.on("unhandledRejection", (reason, promise) => {
 
 client.on("disconnect", (event) => {
 	log.error(`Client has disconnected: ${event.reason} ( ${event.code})`);
-	process.exit(1);
+	db.close().then(process.exit(1));
 });

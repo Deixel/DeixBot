@@ -48,36 +48,46 @@ module.exports = class QuoteCommand extends commando.Command {
 					key: "message",
 					type: "string",
 					prompt: "what message?",
-					default: "Time's up!"
+					default: "time's up!"
 				}
 			]
 		});
 	}
 
 	async run(msg, args) {
-		msg.channel.send("Reminder set!").then(() => {
-			var timeout = 1000 * args.length;
-			switch (args.unit) {
-				case "s":
-				case "sec":
-				case "secs":
-				case "second":
-				case "seconds":
-					break;
-				case "m":
-				case "min":
-				case "mins":
-				case "minute":
-				case "minutes":
-					timeout *= 60;
-					break;
-				case "h":
-				case "hour":
-				case "hours":
-					timeout *= 60*60;
-			}
-			setTimeout(() => msg.channel.send(`Hey ${args.person}, ${args.message}`), timeout);
-		});
-		//msg.channel.send(`Setting a reminder for ${args.person} ${args.delim} ${args.length} ${args.unit}`);
+
+		var timeout = 1000 * args.length;
+		switch (args.unit) {
+		case "s":
+		case "sec":
+		case "secs":
+		case "second":
+		case "seconds":
+			break;
+		case "m":
+		case "min":
+		case "mins":
+		case "minute":
+		case "minutes":
+			timeout *= 60;
+			break;
+		case "h":
+		case "hour":
+		case "hours":
+			timeout *= 60*60;
+		}
+
+		if(timeout < 10000){
+			return msg.reply("sorry, the timeout has to be at least 10 seconds");
+		}
+		timeout += Date.now();
+		var reminder = {
+			person: args.person,
+			message: args.message,
+			timeout: timeout,
+			channel: msg.channel
+		};
+		msg.client.reminders.push(reminder);
+		msg.channel.send("Reminder set!");
 	}
 };
