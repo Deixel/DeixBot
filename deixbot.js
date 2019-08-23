@@ -60,16 +60,16 @@ client.setProvider(sqlite.open(path.join(__dirname, "settings.sqlite3")).then(sd
 
 client.once("ready", () => {
 	log.info("Client is ready");
-	log.info(`Logged in as ${client.user.username}#${client.user.discriminator}`);
+	log.info(`Logged in as ${client.user.tag}`);
 	log.info(`Client has cached ${client.channels.size} channels across ${client.guilds.size} guilds`);
 	updatePlaying();
 	setInterval(updatePlaying, 600000);
-	log.debug("Trying to restore reminders...");
+	log.info("Trying to restore reminders...");
 	db.all("SELECT * FROM reminders").then((rows) => {
 		if(rows.length > 0) {
 			rows.forEach((row) =>{
 				if(row.timestamp < Date.now()) {  //Cleanup any old reminders that happened while we were offline
-					log.debug(`Cleaning up old reminder ${row.reminderId}`);
+					log.info(`Cleaning up missed reminder ID ${row.reminderId}`);
 					db.run(SQL`DELETE FROM reminders WHERE reminderId = ${row.reminderId}` ).catch(log.error);
 				}
 				else {
