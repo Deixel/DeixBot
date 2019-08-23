@@ -1,8 +1,6 @@
 const commando = require("discord.js-commando");
-const log = require("../../logger.js");
-
 //remind <me|user> <in|at> <time>
-module.exports = class QuoteCommand extends commando.Command {
+module.exports = class RemindCommand extends commando.Command {
 	constructor(client) {
 		super(client, {
 			name: "remind",
