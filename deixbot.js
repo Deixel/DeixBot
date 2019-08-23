@@ -52,11 +52,13 @@ client.once("ready", () => {
 sqlite.open(path.join(__dirname,"deixbot.sqlite")).then( (rdb) => {
 	log.info("Successfully opened database");
 	db = rdb;
-	client.login(appConfig.apikey).then(() => {
-		log.info("Logged in with token");
-	}).catch( () => {
-		log.error("Failed to login");
-		process.exit(1);
+	db.migrate({force: "last"}).then(() => {
+		client.login(appConfig.apikey).then(() => {
+			log.info("Logged in with token");
+		}).catch( () => {
+			log.error("Failed to login");
+			process.exit(1);
+		});
 	});
 }).catch(log.error);
 
