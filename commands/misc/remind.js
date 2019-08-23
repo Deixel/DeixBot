@@ -1,4 +1,9 @@
 const commando = require("discord.js-commando");
+const sqlite = require("sqlite");
+const log = require("../../logger.js");
+const SQL = require("sql-template-strings");
+
+
 //remind <me|user> <in|at> <time>
 module.exports = class RemindCommand extends commando.Command {
 	constructor(client) {
@@ -85,7 +90,17 @@ module.exports = class RemindCommand extends commando.Command {
 			timeout: timeout,
 			channel: msg.channel
 		};
-		msg.client.reminders.push(reminder);
+		var client = msg.client;
+		client.reminders.push(reminder);
+		sqlite.open("./deixbot.sqlite").then(async (db) => {
+			await db.run(SQL`INSERT INTO reminders (channelId, remindee, message, timestamp) VALUES ( ${reminder.channel.id}, ${reminder.person.toString()}, ${reminder.message}, ${reminder.timeout})`).then((row) => {reminder.id = row.lastID;}).catch((err) => {
+				log.error(err);
+				return msg.channel.send("Sorry, something went wrong!");
+			});
+		}).catch(log.error);
+		if(!client.hasOwnProperty("reminderTimer")) {
+			client.reminderTimer = setInterval( client.reminderFunc , 5000);
+		}
 		msg.channel.send("Reminder set!");
 	}
 };

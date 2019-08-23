@@ -4,6 +4,7 @@ const log = require(__dirname + "/logger.js");
 const config =  require("./config");
 const appConfig = config.appConfig;
 const path = require("path");
+const SQL = require("sql-template-strings");
 
 var db;
 
@@ -31,6 +32,22 @@ const client = new Commando.Client({
 	commandPrefix: "!",
 });
 
+client.reminders = [];
+
+client.reminderFunc = () => {
+	client.reminders.forEach((val, index) => {
+		if(Date.now() > val.timeout) {
+			val.channel.send(`Hey ${val.person}, ${val.message}`);
+			client.reminders.splice(index, 1);
+			db.run(SQL`DELETE FROM reminders WHERE reminderId = ${val.id}`);
+		}
+		if(client.reminders.length == 0) {
+			clearInterval(client.reminderTimer);
+			delete client.reminderTimer;
+		}
+	});
+};
+
 client.registry
 	.registerGroups([
 		["soundboard", "Soundboard"],
@@ -47,12 +64,43 @@ client.once("ready", () => {
 	log.info(`Client has cached ${client.channels.size} channels across ${client.guilds.size} guilds`);
 	updatePlaying();
 	setInterval(updatePlaying, 600000);
+	log.debug("Trying to restore reminders...");
+	db.all("SELECT * FROM reminders").then((rows) => {
+		if(rows.length > 0) {
+			rows.forEach((row) =>{
+				if(row.timestamp < Date.now()) {  //Cleanup any old reminders that happened while we were offline
+					log.debug(`Cleaning up old reminder ${row.reminderId}`);
+					db.run(SQL`DELETE FROM reminders WHERE reminderId = ${row.reminderId}` ).catch(log.error);
+				}
+				else {
+					var channel = client.channels.get(row.channelId);
+					if(typeof channel !== "undefined") {
+						var reminder = {
+							person: row.remindee,
+							message: row.message,
+							timeout: row.timestamp,
+							channel: channel
+						};
+						log.debug(`Loaded reminder ${row.reminderId} | ${row.remindee} | ${row.message} | ${row.timestamp} | ${channel.name}`);
+						client.reminders.push(reminder);
+					}
+					else {
+						log.debug(`Can't find channel with id ${row.channelId}`);
+						db.run(SQL`DELETE FROM reminders WHERE reminderId = ${row.reminderId}`).catch(log.error);
+					}
+				}
+			});
+			if(client.reminders.length > 0) {
+				client.reminderTimer = setInterval(client.reminderFunc, 5000);
+			}
+		}
+	}).catch(log.error);
 });
 
 sqlite.open(path.join(__dirname,"deixbot.sqlite")).then( (rdb) => {
 	log.info("Successfully opened database");
 	db = rdb;
-	db.migrate({force: "last"}).then(() => {
+	db.migrate().then(() => {
 		client.login(appConfig.apikey).then(() => {
 			log.info("Logged in with token");
 		}).catch( () => {
@@ -76,7 +124,6 @@ client.on("message", (msg) => {
 	}
 });
 
-
 client.on("guildMemberAdd", (member) => {
 	if(member.guild.id === "344447107874291715") {
 		member.send(`Sal-u-tations, ${member.user.username}! Welcome to ${member.guild.name}!
@@ -87,18 +134,6 @@ client.on("guildMemberAdd", (member) => {
 			If you have any questions, just ask <@113310775887536128>.`);
 	}
 });
-
-client.reminders = [];
-setInterval(() => {
-	if(client.reminders.length != 0) {
-		client.reminders.forEach((val, index) => {
-			if(Date.now() > val.timeout) {
-				val.channel.send(`Hey ${val.person}, ${val.message}`);
-				client.reminders.splice(index, 1);
-			}
-		});
-	}
-}, 5000);
 
 process.on("SIGINT", () => {
 	client.destroy();

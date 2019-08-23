@@ -39,7 +39,16 @@ CREATE TABLE IF NOT EXISTS "pickgame" (
 , 'gameName' varchar(64) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS "reminders" (
+   'reminderId' integer NOT NULL PRIMARY KEY AUTOINCREMENT
+,  'channelId' varchar(64) NOT NULL
+,  'remindee' varchar(64) NOT NULL
+,  'message' varchar(64) NOT NULL
+,  'timestamp' varchar(64) NOT NULL 
+);
+
 -- Down
 DROP TABLE playing;
 DROP TABLE soundboard;
 DROP TABLE pickgame;
+DROP TABLE reminders
