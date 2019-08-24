@@ -74,7 +74,7 @@ module.exports = class BlameCommand extends commando.Command {
 						return msg.channel.send("There are no games in the list right now!");
 					}
 					else {
-						var gameList = rows.map( g => g.gameName ).join(" ");
+						var gameList = "`" + rows.map( g => g.gameName ).join("` `") + "`";
 						msg.channel.stopTyping();
 						return msg.channel.send(`**Games to Choose From**\n${gameList}`);
 					}
