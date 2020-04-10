@@ -1,30 +1,24 @@
-var winston = require('winston');
-var dateFormat = require('dateformat');
-module.exports = new winston.Logger ({
+var winston = require("winston");
+const {combine, timestamp, printf, } = winston.format;
+
+const myFormat = printf( ({level, message, timestamp }) => {
+	return `${timestamp} [${level}]: ${message}`;
+});
+module.exports = winston.createLogger ({
+	format: combine(
+		timestamp(),
+		myFormat
+	),
 	transports: [
 		new winston.transports.Console({
-			timestamp: function() {
-				var now = new Date();
-				return dateFormat(now, 'yyyy-mm-dd HH:MM:ss');
-			},
-			level: 'debug',
-			json: false,
-			colorize: true,
-			prettyPrint: true
+			level: "debug",
 		}),
 		new winston.transports.File({
-			timestamp: function() {
-				var now = new Date();
-				return dateFormat(now, 'yyyy-mm-dd HH:MM:ss');
-			},
-			level: 'info',
-			filename: './logs/deixbot.log',
-			maxSize: 100000,
+			level: "info",
+			filename: "./logs/deixbot.log",
+			maxsize: 100000,
 			maxFiles: 10,
-			json: false,
-			prettyPrint: true,
 			tailable: true,
-			handleExceptions: true
 		})
 	]
 });

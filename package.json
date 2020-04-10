@@ -12,6 +12,7 @@
     "node-opus": "latest",
     "request": "latest",
     "sqlite": "latest",
+    "sqlite3": "^4.1.1",
     "winston": "latest"
   },
   "devDependencies": {
