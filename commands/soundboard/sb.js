@@ -90,7 +90,7 @@ module.exports = class SoundboardCommand extends commando.Command {
 
 function playSoundboard(voiceConnection, filePath, iterations) {
 	return new Promise( (resolve) => {
-		var streamDispatch = voiceConnection.playFile("./resources/sounds/" + filePath);
+		var streamDispatch = voiceConnection.playFile("./resources/sounds/" + filePath,{ volume: 0.15 });
 		streamDispatch.once("end", () => {
 			if(iterations > 1) {
 				playSoundboard(voiceConnection, filePath, iterations-1).then( () => resolve());
