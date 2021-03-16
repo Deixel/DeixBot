@@ -5,6 +5,7 @@ const config =  require("./config");
 const appConfig = config.appConfig;
 const path = require("path");
 const SQL = require("sql-template-strings");
+const fs =  require("fs");
 
 var db;
 
@@ -60,16 +61,16 @@ client.setProvider(sqlite.open(path.join(__dirname, "settings.sqlite3")).then(sd
 
 client.once("ready", () => {
 	log.info("Client is ready");
-	log.info(`Logged in as ${client.user.tag}`);
+	log.info(`Logged in as ${client.user.username}#${client.user.discriminator}`);
 	log.info(`Client has cached ${client.channels.size} channels across ${client.guilds.size} guilds`);
 	updatePlaying();
 	setInterval(updatePlaying, 600000);
-	log.info("Trying to restore reminders...");
+	log.debug("Trying to restore reminders...");
 	db.all("SELECT * FROM reminders").then((rows) => {
 		if(rows.length > 0) {
 			rows.forEach((row) =>{
 				if(row.timestamp < Date.now()) {  //Cleanup any old reminders that happened while we were offline
-					log.info(`Cleaning up missed reminder ID ${row.reminderId}`);
+					log.debug(`Cleaning up old reminder ${row.reminderId}`);
 					db.run(SQL`DELETE FROM reminders WHERE reminderId = ${row.reminderId}` ).catch(log.error);
 				}
 				else {
@@ -115,12 +116,18 @@ function updatePlaying() {
 		client.user.setActivity(game.playingString, {type: "PLAYING"});
 	}).catch(log.error);
 }
-
+var minecraftChatChannel = "801603076473094165" 
 client.on("message", (msg) => {
-	if(msg.author.id !== client.user.id) {
+	if(msg.author.id === client.user.id) return;
+
+	if(msg.channel.id !== minecraftChatChannel) {
 		responses.forEach( (e) => {
 			if(e.check(msg)) return e.action(msg);
 		});
+	}
+	if(msg.channel.id === minecraftChatChannel) {
+		var message = "[" + msg.author.username + "]" + " " + msg.cleanContent;
+		fs.writeFile("/tmp/DiscordToMinecraft", message, (err) => log.error);
 	}
 });
 
@@ -135,7 +142,34 @@ client.on("guildMemberAdd", (member) => {
 	}
 });
 
+client.on("debug", (info) => log.info);
+
+client.on("error", (error) => log.error);
+
+var pipeChecker;
+var pipeCheckerFd;
+fs.open("/tmp/MinecraftToDiscord", (err, fd) => {
+	pipeCheckerFd = fd;
+	pipeChecker = setInterval( () => {
+		var data = fs.read(fd, (err, bytesRead, buffer) => { 
+			if(err) {
+				log.error(err)
+			}
+			if(bytesRead > 0) {
+				buffer = buffer.slice(0, bytesRead);
+				var message = buffer.toString();
+				var channel = client.channels.get("801603076473094165");
+				channel.send(message);
+			}
+		});
+	}, 1000);
+});
+
 process.on("SIGINT", () => {
+	clearInterval(pipeChecker);
+	if(pipeCheckerFd != null) {
+		fs.close(pipeCheckerFd, (err) => log.error);
+	}
 	client.destroy();
 	db.close().then(process.exit(0));
 });
