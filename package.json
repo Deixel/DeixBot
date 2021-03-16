@@ -5,19 +5,15 @@
   "main": "deixbot.js",
   "dependencies": {
     "d20": "latest",
-    "dateformat": "latest",
     "discord.js": "latest",
     "discord.js-commando": "latest",
-    "mysql": "latest",
     "node-opus": "latest",
-    "request": "latest",
     "sqlite": "latest",
     "sqlite3": "^4.1.1",
     "winston": "latest"
   },
   "devDependencies": {
-    "eslint": "latest",
-    "babel-eslint": "latest"
+    "eslint": "latest"
   },
   "repository": {
     "type": "git",
