@@ -14,9 +14,9 @@ module.exports = winston.createLogger ({
 			level: "debug",
 		}),
 		new winston.transports.File({
-			level: "info",
+			level: "error",
 			filename: "./logs/deixbot.log",
-			maxsize: 100000,
+			maxsize: 10000,
 			maxFiles: 10,
 			tailable: true,
 		})
