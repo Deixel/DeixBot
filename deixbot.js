@@ -9,6 +9,8 @@ const fs =  require("fs");
 
 var db;
 
+
+// Load responses from file, then add the hard-coded reload response
 var responses = require("./resources/responses.js");
 
 var reloadResponses = {
@@ -33,6 +35,8 @@ const client = new Commando.Client({
 	commandPrefix: "!",
 });
 
+
+//Process reminders as their timer runs out
 client.reminders = [];
 
 client.reminderFunc = () => {
