@@ -4,15 +4,17 @@
   "description": "A Discord Bot built using NodeJS and Discord.js",
   "main": "deixbot.js",
   "dependencies": {
-    "d20": "latest",
-    "discord.js": "latest",
-    "discord.js-commando": "latest",
-    "node-opus": "latest",
+    "@discordjs/opus": "latest",
+    "@types/sqlite3": "^3.1.7",
+    "discord.js": "github:discordjs/discord.js#master",
+    "require-directory": "^2.1.1",
+    "sql-template-strings": "latest",
     "sqlite": "latest",
-    "sqlite3": "^4.1.1",
+    "sqlite3": "latest",
     "winston": "latest"
   },
   "devDependencies": {
+    "@types/node": "^15.6.0",
     "eslint": "latest"
   },
   "repository": {
@@ -24,5 +26,9 @@
   "bugs": {
     "url": "https://github.com/Deixel/DeixBot/issues"
   },
-  "homepage": "https://github.com/Deixel/DeixBot#readme"
+  "homepage": "https://github.com/Deixel/DeixBot#readme",
+  "scripts": {
+    "build": "tsc && npm run copy-files",
+    "copy-files": "cp -r ./src/migrations ./out/"
+  }
 }

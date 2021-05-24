@@ -42,3 +42,4 @@ resources/sounds/*
 config.js
 .exclude
 *.sqlite*
+out/*
