@@ -1,14 +1,16 @@
+#!/usr/bin/env node
 import Discord = require("discord.js");
 import { open, Database } from "sqlite";
 import sqlite3 from "sqlite3";
 import log from "./logger";
-const appConfig =  require("../config");
+const appConfig: Interface.Config =  require("../config");
 import path from "path";
 import SQL from "sql-template-strings";
 import fs from "fs";
 import util from "util";
 import {responses} from "./resources/responses";
 import  commandList from "./CommandList"
+import * as Interface from "./interfaces";
 var db: Database;
 
 /*responses.push(new Response( 
@@ -26,17 +28,10 @@ var db: Database;
 	}
 ));*/
 
-interface Reminder {
-	id: number;
-	person: string;
-	message: string;
-	timeout: number;
-	channel: Discord.TextChannel;
-}
-
 class DeixBot extends Discord.Client {
-	reminders: Reminder[] = [];
+	reminders: Interface.Reminder[] = [];
 	reminderTimer: NodeJS.Timeout | undefined;
+	registeredCommands: Discord.ApplicationCommand[] = [];
 
 	constructor(options: Discord.ClientOptions) {
 		super(options);
@@ -59,8 +54,7 @@ class DeixBot extends Discord.Client {
 	};
 }
 
-//const client = new DeixBot({ intents: ["GUILD_MESSAGES", "GUILD_MEMBERS", "DIRECT_MESSAGES"] });
-const client = new Discord.Client({ intents: ["GUILD_MESSAGES", "GUILD_MEMBERS", "DIRECT_MESSAGES", "GUILDS"] });
+const client = new DeixBot({ intents: ["GUILD_MESSAGES", "GUILD_MEMBERS", "DIRECT_MESSAGES", "GUILDS"] });
 
 
 client.once("ready", () => {
@@ -72,8 +66,18 @@ client.once("ready", () => {
 	updatePlaying();
 	setInterval(updatePlaying, 600000);
 	commandList.forEach( cmd => {
-		log.info("Creating command " + cmd.commandData.name)
-		client.guilds.cache.get("160355542601170944")?.commands.create(cmd.commandData);
+		log.info("Creating command " + cmd.commandData.name);
+		if(appConfig.guildid){
+			client.guilds.cache.get(appConfig.guildid)?.commands.create(cmd.commandData).then( (cmd) => {
+				client.registeredCommands.push(cmd);
+			});
+		}
+		else {
+			client.application?.commands.create(cmd.commandData).then( (cmd) => {
+				client.registeredCommands.push(cmd);
+			});
+		}
+		
 	});
 	
 	//log.debug("Trying to restore reminders...");
@@ -130,10 +134,8 @@ open({filename: path.join(__dirname,"deixbot.sqlite"), driver: sqlite3.Database}
 }).catch(log.error);
 
 function updatePlaying() {
-	db.get("SELECT playingString from playing ORDER BY RANDOM() LIMIT 1").then((game) => {
-		if(client.user !== undefined) {
-			(client.user as Discord.ClientUser).setActivity(game.playingString, {type: "PLAYING"});
-		}
+	db.get("SELECT playingString from playing ORDER BY RANDOM() LIMIT 1").then((game: Interface.playingRow) => {
+		(client.user as Discord.ClientUser).setActivity(game.playingString, {type: "PLAYING"});
 	}).catch(log.error);
 }
 var minecraftChatChannel = "801603076473094165" 
@@ -192,6 +194,16 @@ process.on("SIGINT", () => {
 	// if(pipeCheckerFd != null) {
 	// 	fs.close(pipeCheckerFd, (err) => log.error);
 	// }
+	client.registeredCommands.forEach( async cmd => {
+		log.info("Deleting command " + cmd.name);
+		if(appConfig.guildid){
+			await client.guilds.cache.get(appConfig.guildid)?.commands.delete(cmd);
+		}
+		else {
+			await client.application?.commands.delete(cmd);
+		}
+	});
+	log.info("All commands destroyed");
 	client.destroy();
 	db.close().then(process.exit(0));
 });

@@ -22,6 +22,8 @@ class Quote extends DeixBotCommand {
 			let response = new Discord.MessageEmbed({
 				timestamp: msg.createdAt,
 				description: msg.cleanContent,
+				title: (msg.channel as Discord.TextChannel).name,
+				url: msg.url,
 				footer: {
 					text: msg.author.username,
 					iconURL: (msg.author.avatarURL() || undefined)
