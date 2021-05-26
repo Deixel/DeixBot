@@ -71,8 +71,8 @@ class Remind extends DeixBotCommand
                     multiplier *= 60; // 60
                     break;
             }
-            delayTime *= multiplier;
-            let remindEpoch = Math.floor(Date.now() / 1000) + delayTime;
+            delayTime *= multiplier * 1000; // JS epochs are in ms
+            let remindEpoch = Date.now() + delayTime;
             let channel = interaction.channel as Discord.TextChannel;
             let message = interaction.options[ReminderOptions.message].value as string;
 
@@ -84,7 +84,7 @@ class Remind extends DeixBotCommand
             }
             client.reminderManager?.add(reminder);
             let response = new Discord.MessageEmbed({
-                timestamp: new Date(remindEpoch*1000),
+                timestamp: new Date(remindEpoch),
                 title: "Reminder Set!",
                 description: message,
             });

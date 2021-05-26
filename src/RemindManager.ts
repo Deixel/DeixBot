@@ -51,7 +51,7 @@ export default class RemindManager {
             if(rows.length > 0) {
                 rows.forEach(async (row) => {
                     log.debug(`Loading reminder ${row.reminderId} | ${row.remindee} | ${row.message} | ${row.timestamp} | ${row.channelId}`);
-                        if( row.timestamp < Math.floor(Date.now()/1000)) {
+                        if( row.timestamp < Date.now()/1000) {
                             log.debug("Deleting stale reminder " + row.reminderId);
                             this.deleteFromDatabase(row.reminderId);
                         }
