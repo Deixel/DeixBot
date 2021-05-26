@@ -1,6 +1,7 @@
 import Discord from "discord.js";
 import { Database } from "sqlite";
 import RemindManager from "./RemindManager";
+import { Response } from "./resources/responses"
 
 export class DeixBot extends Discord.Client {
 	db?: Database;
@@ -10,6 +11,7 @@ export class DeixBot extends Discord.Client {
 	constructor(options: Discord.ClientOptions) {
 		super(options);
 	}
+
 
 	createRemindManager()
 	{
@@ -37,9 +39,14 @@ export enum ReminderOptions
 
 export interface Config 
 {
-    ownerid: string,
-    apikey: string,
-    guildid?: string
+    owner_id: string,
+    api_key: string,
+    test_guild_id?: string,
+	minecraft_chat_channel: string,
+	minecraft_chat_in_pipe: string,
+	minecraft_chat_out_pipe: string,
+	minecraft_guild_id: string,
+	minecraft_guild_rules_channel: string,
 }
 
 // ========== DATABASE TABLE ROWS ==========
