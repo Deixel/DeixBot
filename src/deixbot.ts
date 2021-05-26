@@ -5,13 +5,11 @@ import sqlite3 from "sqlite3";
 import log from "./logger";
 const appConfig: Interface.Config =  require("../config");
 import path from "path";
-import SQL from "sql-template-strings";
 import fs from "fs";
-import util from "util";
 import {responses} from "./resources/responses";
 import  commandList from "./CommandList"
 import * as Interface from "./interfaces";
-var db: Database;
+import {DeixBot} from "./interfaces";
 
 /*responses.push(new Response( 
 	(msg: Discord.Message) => {
@@ -28,33 +26,22 @@ var db: Database;
 	}
 ));*/
 
-class DeixBot extends Discord.Client {
-	reminders: Interface.Reminder[] = [];
-	reminderTimer: NodeJS.Timeout | undefined;
-	registeredCommands: Discord.ApplicationCommand[] = [];
-
-	constructor(options: Discord.ClientOptions) {
-		super(options);
-	}
-
-	reminderFunc() {
-		this.reminders.forEach((val, index) => {
-			if(Date.now() > val.timeout) {
-				val.channel.send(`Hey ${val.person}, ${val.message}`);
-				this.reminders.splice(index, 1);
-				db.run(SQL`DELETE FROM reminders WHERE reminderId = ${val.id}`);
-			}
-			if(this.reminders.length == 0) {
-				if(this.reminderTimer !== undefined) {
-					clearInterval(this.reminderTimer as NodeJS.Timeout);
-				}
-				delete this.reminderTimer;
-			}
+open({filename: path.join(__dirname,"deixbot.sqlite"), driver: sqlite3.Database}).then( (rdb) => {
+	log.info("Successfully opened database");
+	rdb.migrate().then(() => {
+		client.db = rdb;
+		client.login(appConfig.apikey).then(() => {
+			log.info("Logged in with token");
+			client.createRemindManager();
+		}).catch( (err) => {
+			log.error("Failed to login: " + err);
+			process.exit(1);
 		});
-	};
-}
+	});
+}).catch(log.error);
 
-const client = new DeixBot({ intents: ["GUILD_MESSAGES", "GUILD_MEMBERS", "DIRECT_MESSAGES", "GUILDS"] });
+
+export const client = new DeixBot({ intents: ["GUILD_MESSAGES", "GUILD_MEMBERS", "DIRECT_MESSAGES", "GUILDS"] }); 
 
 
 client.once("ready", () => {
@@ -70,7 +57,7 @@ client.once("ready", () => {
 		if(appConfig.guildid){
 			client.guilds.cache.get(appConfig.guildid)?.commands.create(cmd.commandData).then( (cmd) => {
 				client.registeredCommands.push(cmd);
-			});
+			}).catch( err => console.error );
 		}
 		else {
 			client.application?.commands.create(cmd.commandData).then( (cmd) => {
@@ -80,38 +67,7 @@ client.once("ready", () => {
 		
 	});
 	
-	//log.debug("Trying to restore reminders...");
-	// db.all("SELECT * FROM reminders").then((rows) => {
-	// 	if(rows.length > 0) {
-	// 		rows.forEach((row) =>{
-	// 			if(row.timestamp < Date.now()) {  //Cleanup any old reminders that happened while we were offline
-	// 				log.debug(`Cleaning up old reminder ${row.reminderId}`);
-	// 				db.run(SQL`DELETE FROM reminders WHERE reminderId = ${row.reminderId}` ).catch(log.error);
-	// 			}
-	// 			else {
-	// 				var channel = client.channels.cache.get(row.channelId);
-	// 				if(channel !== undefined) {
-	// 					var reminder : Reminder = {
-	// 						id: row.reminderId,
-	// 						person: row.remindee,
-	// 						message: row.message,
-	// 						timeout: row.timestamp,
-	// 						channel: channel as Discord.TextChannel
-	// 					};
-	// 					log.debug(`Loaded reminder ${row.reminderId} | ${row.remindee} | ${row.message} | ${row.timestamp} | ${(channel as Discord.TextChannel).name}`);
-	// 					client.reminders.push(reminder);
-	// 				}
-	// 				else {
-	// 					log.debug(`Can't find channel with id ${row.channelId}`);
-	// 					db.run(SQL`DELETE FROM reminders WHERE reminderId = ${row.reminderId}`).catch(log.error);
-	// 				}
-	// 			}
-	// 		});
-	// 		if(client.reminders.length > 0) {
-	// 			client.reminderTimer = setInterval(client.reminderFunc, 5000);
-	// 		}
-	// 	}
-	// }).catch(log.error);
+
 });
 
 client.on("interaction", (interaction) => {
@@ -120,21 +76,10 @@ client.on("interaction", (interaction) => {
 	commandList.get(name)?.response(interaction);
 });
 
-open({filename: path.join(__dirname,"deixbot.sqlite"), driver: sqlite3.Database}).then( (rdb) => {
-	log.info("Successfully opened database");
-	db = rdb;
-	db.migrate().then(() => {
-		client.login(appConfig.apikey).then(() => {
-			log.info("Logged in with token");
-		}).catch( (err) => {
-			log.error("Failed to login: " + err);
-			process.exit(1);
-		});
-	});
-}).catch(log.error);
+
 
 function updatePlaying() {
-	db.get("SELECT playingString from playing ORDER BY RANDOM() LIMIT 1").then((game: Interface.playingRow) => {
+	client.db?.get("SELECT playingString from playing ORDER BY RANDOM() LIMIT 1").then((game: Interface.playingRow) => {
 		(client.user as Discord.ClientUser).setActivity(game.playingString, {type: "PLAYING"});
 	}).catch(log.error);
 }
@@ -205,7 +150,7 @@ process.on("SIGINT", () => {
 	});
 	log.info("All commands destroyed");
 	client.destroy();
-	db.close().then(process.exit(0));
+	client.db?.close().then(process.exit(0));
 });
 
 process.on("unhandledRejection", (reason, promise) => {
@@ -214,5 +159,5 @@ process.on("unhandledRejection", (reason, promise) => {
 
 client.on("disconnect", (event) => {
 	log.error(`Client has disconnected: ${event.reason} ( ${event.code})`);
-	db.close().then(process.exit(1));
+	client.db?.close().then(process.exit(1));
 });

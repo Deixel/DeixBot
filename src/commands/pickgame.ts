@@ -2,14 +2,9 @@ import Discord from "discord.js";
 import DeixBotCommand from "../DeixBotCommand";
 import { open } from "sqlite";
 import sqlite3 from "sqlite3";
-import path from "path";
 import log from "../logger";
+import { pickgameRow } from "../interfaces";
 
-interface pickgameRow
-{
-	gameId: number,
-	gameName: string
-}
 
 class PickGame extends DeixBotCommand {
 	constructor()
