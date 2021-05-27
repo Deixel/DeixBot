@@ -26,8 +26,7 @@ export let responses = [
 			return /(hello|hi|hey|salutations)/gi.test(msg.cleanContent) && msg.mentions.users.has((msg.client.user as Discord.ClientUser).id);
 		},
 		(msg) => {
-		//	return msg.channel.send(`Sal-u-tations ${msg.author} !`);
-			return msg.channel.send("Sup!");
+			return msg.channel.send(`Sal-u-tations ${msg.author} !`);
 		}
 	),
 	new Response( (msg) => {
