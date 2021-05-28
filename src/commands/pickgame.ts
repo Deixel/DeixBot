@@ -5,6 +5,13 @@ import sqlite3 from "sqlite3";
 import log from "../logger";
 import { pickgameRow } from "../interfaces";
 
+enum SubCmds
+{
+	please = "please",
+	list = "list",
+	add = "add",
+	remove = "remove"
+}
 
 class PickGame extends DeixBotCommand {
 	constructor()
@@ -14,17 +21,17 @@ class PickGame extends DeixBotCommand {
 			description: "Pick a game from the list",
 			options: [
 				{
-					name: "please",
+					name: SubCmds.please,
 					type: "SUB_COMMAND",
 					description: "Ask me to pick a game",
 				},
 				{
-					name: "list",
+					name: SubCmds.list,
 					type: "SUB_COMMAND",
 					description: "Add a new game to the list",
 				},
 				{
-					name: "add",
+					name: SubCmds.add,
 					type: "SUB_COMMAND",
 					description: "The game you want to add",
 					options: [{
@@ -35,7 +42,7 @@ class PickGame extends DeixBotCommand {
 					}]
 				},
 				{
-					name: "remove",
+					name: SubCmds.remove,
 					type: "SUB_COMMAND",
 					description: "The game you want to remove",
 					options: [{
@@ -51,16 +58,16 @@ class PickGame extends DeixBotCommand {
 
 	response(interaction: Discord.CommandInteraction): void {
 		switch(interaction.options[0].name){
-			case "please":
+			case SubCmds.please:
 				this.pick(interaction);
 				break;
-			case "list":
+			case SubCmds.list:
 				this.list(interaction);
 				break;
-			case "add":
+			case SubCmds.add:
 				this.add(interaction);
 				break;
-			case "remove":
+			case SubCmds.remove:
 				this.remove(interaction);
 				break;
 			default:

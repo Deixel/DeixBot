@@ -3,15 +3,16 @@ import Discord = require("discord.js");
 import { open, Database } from "sqlite";
 import sqlite3 from "sqlite3";
 import log from "./logger";
-const config: Interface.Config =  require("../config");
 import path from "path";
 import fs, { unwatchFile } from "fs";
+import fsPromises, { FileHandle } from "fs/promises";
 import {responses, Response} from "./resources/responses";
 import  commandList from "./CommandList"
 import * as Interface from "./interfaces";
 import {DeixBot} from "./interfaces";
 import DeixBotCommand from "./DeixBotCommand";
 import { Sb } from "./commands/sb";
+const config: Interface.Config =  require("../config");
 
 // First, sanity check the config file
 if( 
@@ -74,6 +75,7 @@ client.once("ready", () => {
 
 function registerCommand(cmd: DeixBotCommand) {
 	log.info("Registering command " + cmd.commandData.name);
+	log.info(JSON.stringify(cmd.commandData));
 	// Discord can take up to an hour to update global commands, so when testing only register then in the test guild (updates instantly)
 	if(config.test_guild_id){
 		client.guilds.cache.get(config.test_guild_id)?.commands.create(cmd.commandData).then( (cmd) => {
@@ -131,18 +133,17 @@ client.on("guildMemberAdd", (member) => {
 });
 
 // Generic catch-all error reporter
-client.on("error", (error) => log.error);
+client.on("error", log.error);
 
 //Open the minecraft chat in-pipe and regularly poll it for new messages
 var pipeChecker: NodeJS.Timeout;
-var pipeCheckerFd: number | null;
-fs.open(config.minecraft_chat_in_pipe, "r", (err: any, fd: any) => {
+var pipeCheckerFd: FileHandle | null;
+fsPromises.open(config.minecraft_chat_in_pipe, fs.constants.O_RDONLY | fs.constants.O_NONBLOCK, 0o644).then( (fd) => {
 	pipeCheckerFd = fd;
 	pipeChecker = setInterval( () => {
-		var data = fs.read(fd, Buffer.alloc(16384), 0, 16384, null, (err, bytesRead, buffer) => { 
-			if(err) {
-				log.error(err)
-			}
+		fd.read(Buffer.alloc(16384), 0, 16384, null).then( (result) => { 
+			let buffer = result.buffer;
+			let bytesRead = result.bytesRead;
 			if(bytesRead > 0) {
 				buffer = buffer.slice(0, bytesRead);
 				var message = buffer.toString();
@@ -151,21 +152,39 @@ fs.open(config.minecraft_chat_in_pipe, "r", (err: any, fd: any) => {
 			}
 		});
 	}, 1000);
-});
+}).catch(log.error);
 
 // CTRL-C received, tidy up and shutdown
 process.on("SIGINT", () => {
 	log.info("SIGINT received")
 	clearInterval(pipeChecker);
 	if(pipeCheckerFd != null) {
-		fs.close(pipeCheckerFd, (err) => log.error);
+		pipeCheckerFd.close().then(() => {
+			finishExit();
+		});
 	}
-	log.info("Pipechecker stopped");
+	else {
+		finishExit();
+	}
+});
 
+async function finishExit()
+{
+	for(let i = 0; i < client.registeredCommands.length; i++) {
+		let cmd = client.registeredCommands[i];
+		log.info("Deleting command " + cmd.name);
+		if(config.test_guild_id){
+			await client.guilds.cache.get(config.test_guild_id)?.commands.delete(cmd);
+		}
+		else {
+			await client.application?.commands.delete(cmd);
+		}
+	}
 	client.destroy();
+	await client.db?.close();
 	log.info("Client destroyed");
 	process.exit(0);
-});
+}
 
 // Promise failed somewhere and we didn't catch it properly
 process.on("unhandledRejection", (reason, promise) => {
