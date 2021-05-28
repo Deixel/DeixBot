@@ -72,3 +72,11 @@ export interface pickgameRow
 	gameId: number,
 	gameName: string
 }
+
+export interface soundboardRow
+{
+	soundID: number,
+	alias: string,
+	description: string,
+	path: string
+}

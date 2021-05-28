@@ -5,11 +5,13 @@ import sqlite3 from "sqlite3";
 import log from "./logger";
 const config: Interface.Config =  require("../config");
 import path from "path";
-import fs from "fs";
+import fs, { unwatchFile } from "fs";
 import {responses, Response} from "./resources/responses";
 import  commandList from "./CommandList"
 import * as Interface from "./interfaces";
 import {DeixBot} from "./interfaces";
+import DeixBotCommand from "./DeixBotCommand";
+import { Sb } from "./commands/sb";
 
 // First, sanity check the config file
 if( 
@@ -59,21 +61,31 @@ client.once("ready", () => {
 	updatePlaying();
 	setInterval(updatePlaying, 600000);
 	commandList.forEach( cmd => {
-		log.info("Creating command " + cmd.commandData.name);
-		// Discord can take up to an hour to update global commands, so when testing only register then in the test guild (updates instantly)
-		if(config.test_guild_id){
-			client.guilds.cache.get(config.test_guild_id)?.commands.create(cmd.commandData).then( (cmd) => {
-				client.registeredCommands.push(cmd);
-			}).catch( err => console.error );
+		if(cmd.commandData.name === "sb") {
+			(cmd as Sb).populateChoices(cmd as Sb).then( () => {
+				registerCommand(cmd);
+			})
 		}
 		else {
-			client.application?.commands.create(cmd.commandData).then( (cmd) => {
-				client.registeredCommands.push(cmd);
-			});
+			registerCommand(cmd);
 		}
-		
 	});
 });
+
+function registerCommand(cmd: DeixBotCommand) {
+	log.info("Registering command " + cmd.commandData.name);
+	// Discord can take up to an hour to update global commands, so when testing only register then in the test guild (updates instantly)
+	if(config.test_guild_id){
+		client.guilds.cache.get(config.test_guild_id)?.commands.create(cmd.commandData).then( (cmd) => {
+			client.registeredCommands.push(cmd);
+		}).catch( err => console.error );
+	}
+	else {
+		client.application?.commands.create(cmd.commandData).then( (cmd) => {
+			client.registeredCommands.push(cmd);
+		});
+	}
+}
 
 // Someone has sent a slash command, respond to it
 client.on("interaction", (interaction) => {
@@ -148,18 +160,11 @@ process.on("SIGINT", () => {
 	if(pipeCheckerFd != null) {
 		fs.close(pipeCheckerFd, (err) => log.error);
 	}
-	client.registeredCommands.forEach( async cmd => {
-		log.info("Deleting command " + cmd.name);
-		if(config.test_guild_id){
-			await client.guilds.cache.get(config.test_guild_id)?.commands.delete(cmd);
-		}
-		else {
-			await client.application?.commands.delete(cmd);
-		}
-	});
-	log.info("All commands destroyed");
+	log.info("Pipechecker stopped");
+
 	client.destroy();
-	client.db?.close().then(process.exit(0));
+	log.info("Client destroyed");
+	process.exit(0);
 });
 
 // Promise failed somewhere and we didn't catch it properly
