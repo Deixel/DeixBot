@@ -62,6 +62,7 @@ client.once("ready", () => {
 	updatePlaying();
 	setInterval(updatePlaying, 600000);
 	commandList.forEach( cmd => {
+		//Special case as sb needs to do some DB queries before it can be registered
 		if(cmd.commandData.name === "sb") {
 			(cmd as Sb).populateChoices(cmd as Sb).then( () => {
 				registerCommand(cmd);
@@ -75,7 +76,6 @@ client.once("ready", () => {
 
 function registerCommand(cmd: DeixBotCommand) {
 	log.info("Registering command " + cmd.commandData.name);
-	log.info(JSON.stringify(cmd.commandData));
 	// Discord can take up to an hour to update global commands, so when testing only register then in the test guild (updates instantly)
 	if(config.test_guild_id){
 		client.guilds.cache.get(config.test_guild_id)?.commands.create(cmd.commandData).then( (cmd) => {

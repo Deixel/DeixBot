@@ -37,6 +37,14 @@ export enum ReminderOptions
     message = 3
 }
 
+export interface Sound
+{
+	id: number,
+	alias: string,
+	description: string
+	path: string
+}
+
 export interface Config 
 {
     owner_id: string,

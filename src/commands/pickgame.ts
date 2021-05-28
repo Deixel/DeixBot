@@ -72,7 +72,7 @@ class PickGame extends DeixBotCommand {
 				break;
 			default:
 				interaction.reply("Something went horribly wrong!", {ephemeral: true});
-				log.error("Managed to reach default in PickGame switch");
+				log.error("Managed to reach default in PickGame switch with: " + interaction.options[0].name);
 		}
 	}
 

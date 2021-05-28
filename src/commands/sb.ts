@@ -3,7 +3,7 @@ import DeixBotCommand from "../DeixBotCommand";
 import { open } from "sqlite";
 import sqlite3 from "sqlite3";
 import log from "../logger";
-import { soundboardRow } from "../interfaces";
+import { soundboardRow, Sound } from "../interfaces";
 import { client } from "../deixbot";
 
 enum SubCmds
@@ -15,6 +15,8 @@ enum SubCmds
 
 export class Sb extends DeixBotCommand
 {
+    sounds = new Discord.Collection<number, Sound>(); 
+
     constructor()
     {
         super({
@@ -48,22 +50,30 @@ export class Sb extends DeixBotCommand
         })
     }
 
+
+    
     populateChoices(self: Sb): Promise<void>
     {
         return new Promise(async (resolve, reject) => {
             try {
                 let db = await open({ filename: "./deixbot.sqlite", driver: sqlite3.Database });
-                let rows = await db.all<soundboardRow[]>("SELECT soundID, alias FROM soundboard");
+                let rows = await db.all<soundboardRow[]>("SELECT * FROM soundboard");
                 if(rows) {
                     let choices: Discord.ApplicationCommandOptionChoice[] = [];
                     rows.forEach(row => {
-                        let sound: Discord.ApplicationCommandOptionChoice = {
+                        let soundOption: Discord.ApplicationCommandOptionChoice = {
                             value: row.soundID,
                             name: row.alias,
                         };
-                        choices.push(sound);
+                        choices.push(soundOption);
+                        let sound: Sound = {
+                            id: row.soundID,
+                            alias: row.alias,
+                            description: row.description,
+                            path: row.path
+                        }
+                        this.sounds.set(row.soundID, sound);
                     });
-                    log.info(JSON.stringify(choices));
                     choices.sort((a,b) => {
                         if(a.name < b.name) {
                             return -1;
@@ -92,8 +102,69 @@ export class Sb extends DeixBotCommand
     }
 
     response(interaction: Discord.CommandInteraction): void {
+        interaction.defer(true);
+        switch(interaction.options[0].name) {
+            case SubCmds.play:
+                this.play(interaction);
+                break;
+            case SubCmds.list:
+                this.list(interaction);
+                break;
+            case SubCmds.stop:
+                this.stop(interaction);
+                break;
+            default:
+                interaction.reply("Something went horribly wrong!", {ephemeral: true});
+                log.error("Managed to reach default in Sb switch with: " + interaction.options[0].name);
+        }
+    }
+
+    play(interaction: Discord.CommandInteraction): void 
+    {
 
     }
+
+     list(interaction: Discord.CommandInteraction)
+    {
+        if(this.sounds.size == 0) {
+            interaction.followUp("Sorry, I couldn't find any sounds on the soundboard :disappointed:");
+        }
+        else {
+            //let sbList = this.sounds.map( (s: Sound) => { return " - " + s.alias + ": " + s.description}).sort().join("\n");
+            let fields : Discord.EmbedFieldData[] = [];
+            this.sounds.forEach( (sound)  => {
+                fields.push({ name: sound.alias, value: sound.description });
+            });
+            fields.sort( (a, b) => {
+                if(a.name < b.name) {
+                    return -1;
+                }
+                if(a.name > b.name) {
+                    return 1;
+                }
+                return 0;
+            });
+            let response = new Discord.MessageEmbed({
+                title: "Sounds To Choose From",
+            }).addFields(fields);
+            interaction.followUp(response);
+        }
+    }
+
+    stop(interaction: Discord.CommandInteraction)
+    {
+        interaction.guild?.members.fetch(client.user?.id as Discord.UserResolvable).then( (member) => {
+            if(member?.voice.channel) {
+                member.voice.channel.leave();
+                interaction.followUp("Stopped", {ephemeral: true})
+            }
+            else {
+                interaction.followUp("*record scratch*", {ephemeral: true});
+            }
+        });
+    }
+
+
 }
 
 export default new Sb();
