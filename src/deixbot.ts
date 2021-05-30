@@ -40,7 +40,7 @@ export const client = new DeixBot({ intents: ["GUILD_MESSAGES", "GUILD_MEMBERS",
 // Open the config database, then login
 open({filename: path.join(__dirname,"deixbot.sqlite"), driver: sqlite3.Database}).then( (rdb) => {
 	log.info("Successfully opened database");
-	rdb.migrate().then(() => {
+	rdb.migrate({ migrationsPath: "../src/migrations/" }).then(() => {
 		client.db = rdb;
 		client.login(config.api_key).then(() => {
 			log.info("Logged in with token");

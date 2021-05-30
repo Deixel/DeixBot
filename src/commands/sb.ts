@@ -121,7 +121,7 @@ export class Sb extends DeixBotCommand
 
     play(interaction: Discord.CommandInteraction): void 
     {
-
+        
     }
 
      list(interaction: Discord.CommandInteraction)
@@ -130,7 +130,6 @@ export class Sb extends DeixBotCommand
             interaction.followUp("Sorry, I couldn't find any sounds on the soundboard :disappointed:");
         }
         else {
-            //let sbList = this.sounds.map( (s: Sound) => { return " - " + s.alias + ": " + s.description}).sort().join("\n");
             let fields : Discord.EmbedFieldData[] = [];
             this.sounds.forEach( (sound)  => {
                 fields.push({ name: sound.alias, value: sound.description });
