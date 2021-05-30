@@ -16,7 +16,7 @@ enum SubCmds
 export class Sb extends DeixBotCommand
 {
     sounds = new Discord.Collection<number, Sound>(); 
-
+    guildAllowList = ["160355542601170944"];
     constructor()
     {
         super({
@@ -121,7 +121,7 @@ export class Sb extends DeixBotCommand
 
     play(interaction: Discord.CommandInteraction): void 
     {
-        
+
     }
 
      list(interaction: Discord.CommandInteraction)

@@ -6,7 +6,7 @@ import { Response } from "./resources/responses"
 export class DeixBot extends Discord.Client {
 	db?: Database;
 	reminderManager?: RemindManager;
-	registeredCommands: Discord.ApplicationCommand[] = [];
+	registeredCommands: Discord.Collection<string, Discord.ApplicationCommand[]> = new Discord.Collection<string, Discord.ApplicationCommand[]>();
 
 	constructor(options: Discord.ClientOptions) {
 		super(options);
@@ -49,7 +49,6 @@ export interface Config
 {
     owner_id: string,
     api_key: string,
-    test_guild_id?: string,
 	minecraft_chat_channel: string,
 	minecraft_chat_in_pipe: string,
 	minecraft_chat_out_pipe: string,

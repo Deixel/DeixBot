@@ -12,6 +12,7 @@ import * as Interface from "./interfaces";
 import {DeixBot} from "./interfaces";
 import DeixBotCommand from "./DeixBotCommand";
 import { Sb } from "./commands/sb";
+import { nextTick } from "process";
 const config: Interface.Config =  require("../config");
 
 // First, sanity check the config file
@@ -27,12 +28,6 @@ if(
 	process.exit(1);
 }
 
-if( undefined === config.test_guild_id ) {
-	log.warn("test_guild_id is undefined in config, will register all commands globally");
-}
-else {
-	log.info("Commands will only be registered in guild " + config.test_guild_id);
-}
 
 // The bot object itself, extends Discord.Client so we can attach a few extra properties to the object
 export const client = new DeixBot({ intents: ["GUILD_MESSAGES", "GUILD_MEMBERS", "DIRECT_MESSAGES", "GUILDS"] }); 
@@ -74,18 +69,22 @@ client.once("ready", () => {
 	});
 });
 
-function registerCommand(cmd: DeixBotCommand) {
+async function registerCommand(cmd: DeixBotCommand) {
 	log.info("Registering command " + cmd.commandData.name);
 	// Discord can take up to an hour to update global commands, so when testing only register then in the test guild (updates instantly)
-	if(config.test_guild_id){
-		client.guilds.cache.get(config.test_guild_id)?.commands.create(cmd.commandData).then( (cmd) => {
-			client.registeredCommands.push(cmd);
-		}).catch( err => console.error );
-	}
-	else {
-		client.application?.commands.create(cmd.commandData).then( (cmd) => {
-			client.registeredCommands.push(cmd);
-		});
+	let guilds = client.guilds.cache.array();
+	for(let i = 0; i < guilds.length; i++) {
+		let guildId = guilds[i].id;
+		if(!cmd.guildAllowList.includes(guildId)) {
+			log.info("Skipping " + cmd.commandData.name + " on guild " + guildId);
+			continue;
+		}
+		let registeredCmd = await client.guilds.cache.get(guildId)?.commands.create(cmd.commandData);
+		if(!client.registeredCommands.get(guildId)) {
+			client.registeredCommands.set(guildId,[]);
+		}
+		client.registeredCommands.get(guildId)?.push(registeredCmd as Discord.ApplicationCommand);
+		log.info("Registered " + cmd.commandData.name + " on guild " + guildId);
 	}
 }
 
@@ -170,14 +169,13 @@ process.on("SIGINT", () => {
 
 async function finishExit()
 {
-	for(let i = 0; i < client.registeredCommands.length; i++) {
-		let cmd = client.registeredCommands[i];
-		log.info("Deleting command " + cmd.name);
-		if(config.test_guild_id){
-			await client.guilds.cache.get(config.test_guild_id)?.commands.delete(cmd);
-		}
-		else {
-			await client.application?.commands.delete(cmd);
+	let guilds = client.registeredCommands.keyArray();
+	for(let guildIndex = 0; guildIndex < guilds.length; guildIndex++) {
+		let guildCmds = client.registeredCommands.array()[guildIndex];
+		for(let cmdIndex = 0; cmdIndex < guildCmds.length; cmdIndex++ ) {
+			let cmd = guildCmds[cmdIndex];
+			log.info("Deleting command " + cmd.name + " from guild " + guilds[guildIndex]);
+			await client.guilds.cache.get(guilds[guildIndex])?.commands.delete(cmd);
 		}
 	}
 	client.destroy();
