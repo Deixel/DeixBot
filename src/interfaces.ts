@@ -47,15 +47,23 @@ export interface Sound
 
 export interface Config 
 {
+	/** The ID of the user that owns the bot */
     owner_id: string,
+	/** The Discord API token to use when logging in */
     api_key: string,
+	/** ID of the channel to mirror to the Minecraft Server */
 	minecraft_chat_channel: string,
+	/** Path to the FIFO pipe for incoming Minecraft messages */
 	minecraft_chat_in_pipe: string,
+	/** Path to the FIFO pipe for outgoing Minecraft messages */
 	minecraft_chat_out_pipe: string,
+	/** The ID of the guild monitor for new joiners, to send them a welcome message */
 	minecraft_guild_id: string,
+	/** The ID of the channel on the Minecraft guild to point new joiners at */
 	minecraft_guild_rules_channel: string,
+	/** If this is set to true, all commands will be forced to be guild-only */
+	prevent_global_commands?: boolean 
 }
-
 // ========== DATABASE TABLE ROWS ==========
 
 

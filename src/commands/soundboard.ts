@@ -23,7 +23,6 @@ export class Soundboard extends DeixBotCommand
         super({
             name: "soundboard",
             description: "Play something from the soundboard in your current voice channel",
-            defaultPermission: false,
             options: [
                 {
                     name: SubCmds.play,

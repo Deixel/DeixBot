@@ -13,6 +13,12 @@ import {DeixBot} from "./interfaces";
 import DeixBotCommand from "./DeixBotCommand";
 import { Soundboard } from "./commands/soundboard";
 const config: Interface.Config =  require("../config");
+let preventGlobalCommands = false;
+if(config.prevent_global_commands) {
+	log.info("preventGlobalCommands set - all commands will be guild-based");
+	preventGlobalCommands = config.prevent_global_commands;
+}
+
 
 // First, sanity check the config file
 if( 
@@ -57,7 +63,7 @@ client.once("ready", () => {
 	setInterval(updatePlaying, 600000);
 	commandList.forEach( (cmd, name) => {
 		//Special case as sb needs to do some DB queries before it can be registered
-		if(name === "sb") {
+		if(name === "soundboard") {
 			(cmd as Soundboard).populateChoices(cmd as Soundboard).then( () => {
 				registerCommand(cmd);
 			})
@@ -70,7 +76,7 @@ client.once("ready", () => {
 
 async function registerCommand(cmd: DeixBotCommand) {
 	try {
-		if(cmd.globalCommand) {
+		if(cmd.globalCommand && !preventGlobalCommands) {
 			log.info("Registering global command " + cmd.commandData.name);
 			let registeredCmd = await client.application?.commands.create(cmd.commandData);
 			if(!client.registeredCommands.get("GLOBAL")) {
