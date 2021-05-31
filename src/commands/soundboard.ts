@@ -13,15 +13,17 @@ enum SubCmds
     stop = "stop"
 }
 
-export class Sb extends DeixBotCommand
+export class Soundboard extends DeixBotCommand
 {
-    sounds = new Discord.Collection<number, Sound>(); 
+    sounds = new Discord.Collection<number, Sound>();
+    globalCommand = false;
     guildAllowList = ["160355542601170944"];
     constructor()
     {
         super({
-            name: "sb",
+            name: "soundboard",
             description: "Play something from the soundboard in your current voice channel",
+            defaultPermission: false,
             options: [
                 {
                     name: SubCmds.play,
@@ -52,7 +54,7 @@ export class Sb extends DeixBotCommand
 
 
     
-    populateChoices(self: Sb): Promise<void>
+    populateChoices(self: Soundboard): Promise<void>
     {
         return new Promise(async (resolve, reject) => {
             try {
@@ -166,4 +168,4 @@ export class Sb extends DeixBotCommand
 
 }
 
-export default new Sb();
+export default new Soundboard();

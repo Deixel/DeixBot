@@ -11,8 +11,7 @@ import  commandList from "./CommandList"
 import * as Interface from "./interfaces";
 import {DeixBot} from "./interfaces";
 import DeixBotCommand from "./DeixBotCommand";
-import { Sb } from "./commands/sb";
-import { nextTick } from "process";
+import { Soundboard } from "./commands/soundboard";
 const config: Interface.Config =  require("../config");
 
 // First, sanity check the config file
@@ -56,10 +55,10 @@ client.once("ready", () => {
 	log.info(`Client has cached ${client.channels.cache.size} channels across ${client.guilds.cache.size} guilds`);
 	updatePlaying();
 	setInterval(updatePlaying, 600000);
-	commandList.forEach( cmd => {
+	commandList.forEach( (cmd, name) => {
 		//Special case as sb needs to do some DB queries before it can be registered
-		if(cmd.commandData.name === "sb") {
-			(cmd as Sb).populateChoices(cmd as Sb).then( () => {
+		if(name === "sb") {
+			(cmd as Soundboard).populateChoices(cmd as Soundboard).then( () => {
 				registerCommand(cmd);
 			})
 		}
@@ -70,21 +69,34 @@ client.once("ready", () => {
 });
 
 async function registerCommand(cmd: DeixBotCommand) {
-	log.info("Registering command " + cmd.commandData.name);
-	// Discord can take up to an hour to update global commands, so when testing only register then in the test guild (updates instantly)
-	let guilds = client.guilds.cache.array();
-	for(let i = 0; i < guilds.length; i++) {
-		let guildId = guilds[i].id;
-		if(!cmd.guildAllowList.includes(guildId)) {
-			log.info("Skipping " + cmd.commandData.name + " on guild " + guildId);
-			continue;
+	try {
+		if(cmd.globalCommand) {
+			log.info("Registering global command " + cmd.commandData.name);
+			let registeredCmd = await client.application?.commands.create(cmd.commandData);
+			if(!client.registeredCommands.get("GLOBAL")) {
+				client.registeredCommands.set("GLOBAL", []);
+			}
+			client.registeredCommands.get("GLOBAL")?.push(registeredCmd as Discord.ApplicationCommand);
 		}
-		let registeredCmd = await client.guilds.cache.get(guildId)?.commands.create(cmd.commandData);
-		if(!client.registeredCommands.get(guildId)) {
-			client.registeredCommands.set(guildId,[]);
-		}
-		client.registeredCommands.get(guildId)?.push(registeredCmd as Discord.ApplicationCommand);
-		log.info("Registered " + cmd.commandData.name + " on guild " + guildId);
+		else {
+			let guilds = client.guilds.cache.array();
+			for(let guild of guilds) {
+				let guildId = guild.id;
+				if(cmd.guildAllowList.length > 0 && !cmd.guildAllowList.includes(guildId)) {
+					log.info("Skipping " + cmd.commandData.name + " on guild " + guildId);
+					continue;
+				}
+				let registeredCmd = await client.guilds.cache.get(guildId)?.commands.create(cmd.commandData);
+				if(!client.registeredCommands.get(guildId)) {
+					client.registeredCommands.set(guildId,[]);
+				}
+				client.registeredCommands.get(guildId)?.push(registeredCmd as Discord.ApplicationCommand);
+				log.info("Registered " + cmd.commandData.name + " on guild " + guildId);
+			}
+		}	
+	}
+	catch (err) {
+		log.error(err);
 	}
 }
 
@@ -186,7 +198,7 @@ async function finishExit()
 
 // Promise failed somewhere and we didn't catch it properly
 process.on("unhandledRejection", (reason, promise) => {
-	log.error(`Unhandled Promise Rejection at Promise ${promise} Reason: ${reason}`);
+	log.error(`Unhandled Promise Rejection at Promise ${JSON.stringify(reason)} Reason: ${reason}`);
 });
 
 // Discord has disconnected unexpectedly, shutdown and let pm2 restart us
