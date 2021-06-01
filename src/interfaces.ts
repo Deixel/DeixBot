@@ -62,7 +62,9 @@ export interface Config
 	/** The ID of the channel on the Minecraft guild to point new joiners at */
 	minecraft_guild_rules_channel: string,
 	/** If this is set to true, all commands will be forced to be guild-only */
-	prevent_global_commands?: boolean 
+	prevent_global_commands?: boolean,
+	/** An array of command names to register. All others will be ignored */
+	commands_allowlist?: string[]
 }
 // ========== DATABASE TABLE ROWS ==========
 

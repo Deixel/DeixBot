@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import Discord = require("discord.js");
+import Discord from "discord.js";
 import { open, Database } from "sqlite";
 import sqlite3 from "sqlite3";
 import log from "./logger";
@@ -17,6 +17,9 @@ let preventGlobalCommands = false;
 if(config.prevent_global_commands) {
 	log.info("preventGlobalCommands set - all commands will be guild-based");
 	preventGlobalCommands = config.prevent_global_commands;
+}
+if(config.commands_allowlist) {
+	log.info("Command Allowlist set to: " + config.commands_allowlist.join(", "));
 }
 
 
@@ -62,6 +65,12 @@ client.once("ready", () => {
 	updatePlaying();
 	setInterval(updatePlaying, 600000);
 	commandList.forEach( (cmd, name) => {
+		if(config.commands_allowlist) {
+			if(!config.commands_allowlist.includes(name)) {
+				log.info("Skipping registering " + name + " as it's not on the allow list");
+				return;
+			}
+		}
 		//Special case as sb needs to do some DB queries before it can be registered
 		if(name === "soundboard") {
 			(cmd as Soundboard).populateChoices(cmd as Soundboard).then( () => {
@@ -76,6 +85,7 @@ client.once("ready", () => {
 
 async function registerCommand(cmd: DeixBotCommand) {
 	try {
+		
 		if(cmd.globalCommand && !preventGlobalCommands) {
 			log.info("Registering global command " + cmd.commandData.name);
 			let registeredCmd = await client.application?.commands.create(cmd.commandData);
@@ -150,7 +160,7 @@ client.on("guildMemberAdd", (member) => {
 });
 
 // Generic catch-all error reporter
-client.on("error", log.error);
+client.on("error", (err) => { log.error(err) });
 
 //Open the minecraft chat in-pipe and regularly poll it for new messages
 var pipeChecker: NodeJS.Timeout;

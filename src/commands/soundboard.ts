@@ -122,7 +122,15 @@ export class Soundboard extends DeixBotCommand
 
     play(interaction: Discord.CommandInteraction): void 
     {
-
+        interaction.guild?.members.fetch({ user: interaction.member as Discord.GuildMember, force: true, cache: false })?.then( (member) => {
+            log.info(JSON.stringify(member.voice.channel));
+        });
+        let soundId = (interaction.options[0].options as Discord.CommandInteractionOption[])[0].value as number;
+        let sound = this.sounds.get(soundId);
+        let response = new Discord.MessageEmbed({ 
+            description: "Now playing " + sound?.alias,
+        });
+        interaction.followUp(response);
     }
 
      list(interaction: Discord.CommandInteraction)
