@@ -17,7 +17,6 @@ export class Soundboard extends DeixBotCommand
 {
     sounds = new Discord.Collection<number, Sound>();
     globalCommand = false;
-    guildAllowList = ["160355542601170944"];
     constructor()
     {
         super({
@@ -122,9 +121,6 @@ export class Soundboard extends DeixBotCommand
 
     async play(interaction: Discord.CommandInteraction)
     {
-        /*interaction.guild?.members.fetch({ user: interaction.member as Discord.GuildMember, force: true, cache: false })?.then( (member) => {
-            log.info(JSON.stringify(member.voice.channel));
-        });*/
         let userVoiceChannel = (interaction.member as Discord.GuildMember).voice.channel;
         let myGuildUser = await interaction.guild?.members.fetch(client.user as Discord.UserResolvable);
         let myVoiceChannel = myGuildUser?.voice.channel;
