@@ -2,7 +2,17 @@ import Discord from "discord.js";
 
 
 export default abstract class DeixBotCommand {
+    /** 
+     * Describes the slash command and required parameters to Discord.
+     * See https://discord.js.org/#/docs/main/master/typedef/ApplicationCommandData for details
+     */
     public commandData: Discord.ApplicationCommandData;
+
+    /**
+     * This is the function that is called when the slash command is run by a user.
+     * This function is only called for the correct command, so there is no need to check the name before responding
+     * @param interaction The Interaction object passed to us by Discord.
+     */
     public abstract response(interaction: Discord.CommandInteraction): void;
 
     /** 

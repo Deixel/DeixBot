@@ -26,10 +26,6 @@ if(config.commands_allowlist) {
 // First, sanity check the config file
 if( 
 	undefined === config.api_key				||
-	undefined === config.minecraft_chat_channel	||
-	undefined === config.minecraft_chat_in_pipe	||
-	undefined === config.minecraft_chat_out_pipe||
-	undefined === config.minecraft_guild_id 	||
 	undefined === config.owner_id 				)
 {
 	log.error("A required config option is missing! The following fields are required: api_key, owner_id, minecraft_guild_id, minecraft_chat_chat_channel, minecraft_chat_in_pipe, minecraft_chat_out_pipe");
@@ -135,29 +131,31 @@ client.on("message", (msg) => {
 	if(msg.author.id === (client.user as Discord.ClientUser).id) return;
 
 	// If we're not in the minecraft chat channel, see if there are any chat responses we need to give
-	if(msg.channel.id !== config.minecraft_chat_channel) {
+	if(config.minecraft && msg.channel.id !== config.minecraft.chat_channel) {
 		responses.forEach( (e) => {
 			if(e.check(msg)) return e.action(msg);
 		});
 	}
 	// If we are in the minecraft chat channel, mirror the chat over to minecraft
-	if(msg.channel.id === config.minecraft_chat_channel) {
+	if(config.minecraft && msg.channel.id === config.minecraft.chat_channel) {
 		var message = "[" + msg.author.username + "]" + " " + msg.cleanContent;
-		fs.writeFile(config.minecraft_chat_out_pipe, message, (err) => log.error);
+		fs.writeFile(config.minecraft.chat_out_pipe as string, message, (err) => log.error);
 	}
 });
 
 // Someone was added to the minecraft guild, send them the welcome message
-client.on("guildMemberAdd", (member) => {
-	if(member.guild.id === config.minecraft_guild_id) {
-		member.send(`Sal-u-tations, ${member.user.username}! Welcome to ${member.guild.name}!
+if(config.minecraft) {
+	client.on("guildMemberAdd", (member) => {
+		if(member.guild.id === config.minecraft?.guild_id) {
+			member.send(`Sal-u-tations, ${member.user.username}! Welcome to ${member.guild.name}!
 
-			Be sure to check out the rules and installation instructions in <#${config.minecraft_guild_rules_channel}}>.
-			I also have a number of useful abilities. Just say \`!help\` at any time to see those!
+				Be sure to check out the rules and installation instructions in <#${config.minecraft?.guild_rules_channel}}>.
+				I also have a number of useful abilities. Just say \`!help\` at any time to see those!
 
-			If you have any questions, just ask <@${config.owner_id}}>.`);
-	}
-});
+				If you have any questions, just ask <@${config.owner_id}}>.`);
+		}
+	});
+}
 
 // Generic catch-all error reporter
 client.on("error", (err) => { log.error(err) });
@@ -165,21 +163,23 @@ client.on("error", (err) => { log.error(err) });
 //Open the minecraft chat in-pipe and regularly poll it for new messages
 var pipeChecker: NodeJS.Timeout;
 var pipeCheckerFd: FileHandle | null;
-fsPromises.open(config.minecraft_chat_in_pipe, fs.constants.O_RDONLY | fs.constants.O_NONBLOCK, 0o644).then( (fd) => {
-	pipeCheckerFd = fd;
-	pipeChecker = setInterval( () => {
-		fd.read(Buffer.alloc(16384), 0, 16384, null).then( (result) => { 
-			let buffer = result.buffer;
-			let bytesRead = result.bytesRead;
-			if(bytesRead > 0) {
-				buffer = buffer.slice(0, bytesRead);
-				var message = buffer.toString();
-				var channel = client.channels.cache.get(config.minecraft_chat_channel) as Discord.TextChannel;
-				channel.send(message);
-			}
-		});
-	}, 1000);
-}).catch(log.error);
+if(config.minecraft){
+	fsPromises.open(config.minecraft.chat_in_pipe, fs.constants.O_RDONLY | fs.constants.O_NONBLOCK, 0o644).then( (fd) => {
+		pipeCheckerFd = fd;
+		pipeChecker = setInterval( () => {
+			fd.read(Buffer.alloc(16384), 0, 16384, null).then( (result) => { 
+				let buffer = result.buffer;
+				let bytesRead = result.bytesRead;
+				if(bytesRead > 0) {
+					buffer = buffer.slice(0, bytesRead);
+					var message = buffer.toString();
+					var channel = client.channels.cache.get(config.minecraft?.chat_channel as string) as Discord.TextChannel;
+					channel.send(message);
+				}
+			});
+		}, 1000);
+	}).catch(log.error);
+}
 
 // CTRL-C received, tidy up and shutdown
 process.on("SIGINT", () => {

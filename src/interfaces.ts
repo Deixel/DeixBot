@@ -51,23 +51,29 @@ export interface Config
     owner_id: string,
 	/** The Discord API token to use when logging in */
     api_key: string,
-	/** ID of the channel to mirror to the Minecraft Server */
-	minecraft_chat_channel: string,
-	/** Path to the FIFO pipe for incoming Minecraft messages */
-	minecraft_chat_in_pipe: string,
-	/** Path to the FIFO pipe for outgoing Minecraft messages */
-	minecraft_chat_out_pipe: string,
-	/** The ID of the guild monitor for new joiners, to send them a welcome message */
-	minecraft_guild_id: string,
-	/** The ID of the channel on the Minecraft guild to point new joiners at */
-	minecraft_guild_rules_channel: string,
+	/** Object containing configuration for interacting with DeixUtils */
+	minecraft?: MinecraftConfig,
 	/** If this is set to true, all commands will be forced to be guild-only */
 	prevent_global_commands?: boolean,
 	/** An array of command names to register. All others will be ignored */
 	commands_allowlist?: string[]
 }
-// ========== DATABASE TABLE ROWS ==========
 
+interface MinecraftConfig 
+{
+	/** ID of the channel to mirror to the Minecraft Server */
+	chat_channel: string,
+	/** Path to the FIFO pipe for incoming Minecraft messages */
+	chat_in_pipe: string,
+	/** Path to the FIFO pipe for outgoing Minecraft messages */
+	chat_out_pipe: string,
+	/** The ID of the guild monitor for new joiners, to send them a welcome message */
+	guild_id: string,
+	/** The ID of the channel on the Minecraft guild to point new joiners at */
+	guild_rules_channel: string,
+}
+
+// ========== DATABASE TABLE ROWS ==========
 
 export interface reminderRow
 {

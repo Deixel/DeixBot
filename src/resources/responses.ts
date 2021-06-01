@@ -111,7 +111,7 @@ export let responses = [
 		async msg => {
 			let rows = await client.db?.all<playingRow[]>("SELECT * FROM playing");
 			if(rows) {
-				let playingList = rows.map( p => p.playingID + " | " + p.playingString ).join("\n");
+				let playingList = rows.map( p => p.playingID + " | " + p.activityType + " | "  + p.playingString ).join("\n");
 				let response = new Discord.MessageEmbed({
 					title: "Playing Messages",
 					description: playingList,
@@ -122,5 +122,19 @@ export let responses = [
 				msg.channel.send("Sorry, I couldn't find any playing messages :disappointed:");
 			}
 		}	
+	),
+	new Response( 
+		(msg) => {
+			return amIMentioned(msg) && /ping/gi.test(msg.cleanContent);
+		},
+		(msg) => {
+			let time = Date.now();
+			let message = ":ping_pong: Pong"
+			msg.reply(message).then( (reply) => {
+				let newTime = Date.now();
+				let latency = newTime - time;
+				reply.edit(message + " in " + latency + "ms");
+			})
+		}
 	),
 ];
