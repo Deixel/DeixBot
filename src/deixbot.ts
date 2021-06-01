@@ -125,8 +125,8 @@ client.on("interaction", (interaction) => {
 
 // Used to randomly set the Playing status
 function updatePlaying() {
-	client.db?.get("SELECT playingString from playing ORDER BY RANDOM() LIMIT 1").then((game: Interface.playingRow) => {
-		(client.user as Discord.ClientUser).setActivity(game.playingString, {type: "PLAYING"});
+	client.db?.get("SELECT playingString, activityType from playing ORDER BY RANDOM() LIMIT 1").then((game: Interface.playingRow) => {
+		(client.user as Discord.ClientUser).setActivity({ name: game.playingString, type: game.activityType});
 	}).catch(log.error);
 }
 

@@ -81,7 +81,8 @@ export interface reminderRow
 export interface playingRow
 {
 	playingID: number,
-	playingString:  string
+	playingString:  string,
+	activityType: Discord.ActivityType,
 }
 
 export interface pickgameRow
