@@ -38,7 +38,7 @@ if(
 
 
 // The bot object itself, extends Discord.Client so we can attach a few extra properties to the object
-export const client = new DeixBot({ intents: ["GUILD_MESSAGES", "GUILD_MEMBERS", "DIRECT_MESSAGES", "GUILDS"] }); 
+export const client = new DeixBot({ intents: ["GUILD_MESSAGES", "GUILD_MEMBERS", "DIRECT_MESSAGES", "GUILDS", "GUILD_VOICE_STATES"] }); 
 
 // Open the config database, then login
 open({filename: path.join(__dirname,"deixbot.sqlite"), driver: sqlite3.Database}).then( (rdb) => {

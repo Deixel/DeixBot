@@ -120,20 +120,39 @@ export class Soundboard extends DeixBotCommand
         }
     }
 
-    play(interaction: Discord.CommandInteraction): void 
+    async play(interaction: Discord.CommandInteraction)
     {
-        interaction.guild?.members.fetch({ user: interaction.member as Discord.GuildMember, force: true, cache: false })?.then( (member) => {
+        /*interaction.guild?.members.fetch({ user: interaction.member as Discord.GuildMember, force: true, cache: false })?.then( (member) => {
             log.info(JSON.stringify(member.voice.channel));
-        });
+        });*/
+        let userVoiceChannel = (interaction.member as Discord.GuildMember).voice.channel;
+        let myGuildUser = await interaction.guild?.members.fetch(client.user as Discord.UserResolvable);
+        let myVoiceChannel = myGuildUser?.voice.channel;
+        if(userVoiceChannel === null) {
+            return interaction.followUp("*starts humming*");
+        }
+        if(!userVoiceChannel.joinable) {
+            return interaction.followUp("Sorry, I'm not allowed in <#" + userVoiceChannel.id + "> :disappointed:");
+        }
+        if(myVoiceChannel !== null) {
+            return interaction.followUp("Sorry, I'm already playing something in <#" + myVoiceChannel?.id + ">");
+        }
         let soundId = (interaction.options[0].options as Discord.CommandInteractionOption[])[0].value as number;
         let sound = this.sounds.get(soundId);
-        let response = new Discord.MessageEmbed({ 
-            description: "Now playing " + sound?.alias,
-        });
-        interaction.followUp(response);
+        let voiceConnection = await userVoiceChannel.join();
+        interaction.followUp(":speaker: Playing `" + sound?.alias + "` in <#"+voiceConnection.channel.id + ">");
+        this.playSound(voiceConnection, sound as Sound);
     }
 
-     list(interaction: Discord.CommandInteraction)
+    playSound(voiceConnection: Discord.VoiceConnection, sound: Sound)
+    {
+        let streamDispatch = voiceConnection.play("./resources/sounds/" + sound.path, { volume: 0.25, bitrate: "auto" });
+        streamDispatch.once("finish", () => {
+            return voiceConnection.channel.leave();
+        });
+    }
+
+    list(interaction: Discord.CommandInteraction)
     {
         if(this.sounds.size == 0) {
             interaction.followUp("Sorry, I couldn't find any sounds on the soundboard :disappointed:");
@@ -164,15 +183,13 @@ export class Soundboard extends DeixBotCommand
         interaction.guild?.members.fetch(client.user?.id as Discord.UserResolvable).then( (member) => {
             if(member?.voice.channel) {
                 member.voice.channel.leave();
-                interaction.followUp("Stopped", {ephemeral: true})
+                interaction.followUp(":mute: Stopped playing in <#" + member.voice.channel.id + ">", {ephemeral: true})
             }
             else {
                 interaction.followUp("*record scratch*", {ephemeral: true});
             }
         });
     }
-
-
 }
 
 export default new Soundboard();
