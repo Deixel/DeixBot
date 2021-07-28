@@ -56,7 +56,7 @@ export default class RemindManager {
                             this.deleteFromDatabase(row.reminderId);
                         }
                         else {
-                                let channel = await this.client.channels.fetch(row.channelId)
+                                let channel = await this.client.channels.fetch(row.channelId as Discord.Snowflake)
                                 if(channel) {
                                     let reminder: Reminder = {
                                         id: row.reminderId,

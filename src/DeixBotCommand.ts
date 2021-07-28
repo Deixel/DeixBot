@@ -26,7 +26,7 @@ export default abstract class DeixBotCommand {
      * Ignored if globalCommand is true
      */
     guildAllowList: string[] = [];
-
+    
     constructor(commandData: Discord.ApplicationCommandData) {
         this.commandData = commandData;
     }

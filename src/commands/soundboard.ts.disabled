@@ -102,8 +102,8 @@ export class Soundboard extends DeixBotCommand
     }
 
     response(interaction: Discord.CommandInteraction): void {
-        interaction.defer(true);
-        switch(interaction.options[0].name) {
+        interaction.defer({ephemeral:true});
+        switch(interaction.options.getSubCommand()) {
             case SubCmds.play:
                 this.play(interaction);
                 break;
@@ -114,8 +114,8 @@ export class Soundboard extends DeixBotCommand
                 this.stop(interaction);
                 break;
             default:
-                interaction.reply("Something went horribly wrong!", {ephemeral: true});
-                log.error("Managed to reach default in Sb switch with: " + interaction.options[0].name);
+                interaction.reply("Something went horribly wrong!");
+                log.error("Managed to reach default in Sb switch with: " + interaction.options.data[0].name);
         }
     }
 
@@ -133,7 +133,7 @@ export class Soundboard extends DeixBotCommand
         if(myVoiceChannel !== null) {
             return interaction.followUp("Sorry, I'm already playing something in <#" + myVoiceChannel?.id + ">");
         }
-        let soundId = (interaction.options[0].options as Discord.CommandInteractionOption[])[0].value as number;
+        let soundId = (interaction.options.data[0].options as Discord.CommandInteractionOption[])[0].value as number;
         let sound = this.sounds.get(soundId);
         let voiceConnection = await userVoiceChannel.join();
         interaction.followUp(":speaker: Playing `" + sound?.alias + "` in <#"+voiceConnection.channel.id + ">");

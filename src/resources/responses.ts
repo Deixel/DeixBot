@@ -54,7 +54,7 @@ export let responses = [
 			return msg.content.toLowerCase().includes("lewd") && amIMentioned(msg);
 		},
 		(msg) => {
-			return msg.channel.send("Stop it, that's lewd!", {
+			return msg.channel.send({ content: "Stop it, that's lewd!", 
 				files: [ {
 					attachment: "https://i.imgur.com/rlraAOV.png",
 					name: "lewd.png"
@@ -116,7 +116,7 @@ export let responses = [
 					title: "Playing Messages",
 					description: playingList,
 				});
-				msg.channel.send(response);
+				msg.channel.send({ embeds: [response] });
 			}
 			else {
 				msg.channel.send("Sorry, I couldn't find any playing messages :disappointed:");

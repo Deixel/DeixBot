@@ -2,6 +2,10 @@ import Discord from "discord.js";
 import DeixBotCommand from "../DeixBotCommand";
 import log from "../logger";
 
+enum params {
+	messageId = "message-id",
+}
+
 class Quote extends DeixBotCommand {
 	constructor()
 	{
@@ -9,7 +13,7 @@ class Quote extends DeixBotCommand {
 			name: "quote",
 			description: "Quote a message from this server",
 			options: [{
-				name: "message-id",
+				name: params.messageId,
 				type: "STRING",
 				description: "The ID of the message from this server that you want to quote",
 				required: true
@@ -20,8 +24,8 @@ class Quote extends DeixBotCommand {
 	async response(interaction: Discord.CommandInteraction): Promise<void> {
 		interaction.defer();
 		return new Promise<void>( async (resolve, reject) => {
-			let messageId = interaction.options[0].value as string;
-			let channels = interaction.guild?.channels.cache.array().filter( ch => ch.type === "text" );
+			let messageId = interaction.options.getString(params.messageId) as Discord.Snowflake;
+			let channels = interaction.guild?.channels.cache.array().filter( ch => ch.type === "GUILD_TEXT" );
 			channels?.unshift(interaction.channel as Discord.GuildChannel);
 			for(let channel of channels as Discord.GuildChannel[]) {
 				try {
@@ -30,32 +34,27 @@ class Quote extends DeixBotCommand {
 						timestamp: msg.createdAt,
 						description: msg.cleanContent,
 						footer: {
-							text: msg.author.username + (msg.channel.id !== interaction.channelID ? " in #" + (msg.channel as Discord.GuildChannel).name : ""),
+							text: msg.author.username + (msg.channel.id !== interaction.channelId ? " in #" + (msg.channel as Discord.GuildChannel).name : ""),
 							iconURL: (msg.author.avatarURL() || undefined)
 						}
 					})
-					interaction.followUp(response);
+					interaction.followUp({ embeds: [response] });
 					return resolve();
 				}
 				catch (err) {
-					if(err.message === "Unknown Message") {
+					if( (err as any).message === "Unknown Message") {
 						continue;
 					}
 					else {
-						interaction.followUp("Sorry, something went wrong!", {ephemeral: true});
+						interaction.followUp("Sorry, something went wrong!");
 						log.error(err);
 						return reject(err);
 					}
 				}
 
 			}
-			interaction.followUp("Sorry, I couldn't find that message!", {ephemeral: true})
+			interaction.followUp("Sorry, I couldn't find that message!")
 		});
-	}
-
-	findMessage(interaction: Discord.CommandInteraction)
-	{
-
 	}
 }
 

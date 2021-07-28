@@ -28,7 +28,7 @@ class PickGame extends DeixBotCommand {
 				{
 					name: SubCmds.list,
 					type: "SUB_COMMAND",
-					description: "Add a new game to the list",
+					description: "See the list of games to pick from",
 				},
 				{
 					name: SubCmds.add,
@@ -57,7 +57,8 @@ class PickGame extends DeixBotCommand {
 	}
 
 	response(interaction: Discord.CommandInteraction): void {
-		switch(interaction.options[0].name){
+		let subcommand = interaction.options.data[0].name;
+		switch(subcommand){
 			case SubCmds.please:
 				this.pick(interaction);
 				break;
@@ -71,8 +72,8 @@ class PickGame extends DeixBotCommand {
 				this.remove(interaction);
 				break;
 			default:
-				interaction.reply("Something went horribly wrong!", {ephemeral: true});
-				log.error("Managed to reach default in PickGame switch with: " + interaction.options[0].name);
+				interaction.reply("Something went horribly wrong!");
+				log.error("Managed to reach default in PickGame switch with: " + subcommand);
 		}
 	}
 
@@ -92,7 +93,7 @@ class PickGame extends DeixBotCommand {
 		}
 		catch (err) {
 			log.error(err);
-			interaction.followUp("Sorry, something went wrong!", {ephemeral: true});
+			interaction.followUp("Sorry, something went wrong!");
 		}
 	}
 
@@ -108,7 +109,7 @@ class PickGame extends DeixBotCommand {
 					title: "Games To Choose From",
 					description: gameList
 				});
-				interaction.followUp(response);
+				interaction.followUp({ embeds: [response] });
 			}		
 			else {
 				interaction.followUp("Sorry, I couldn't find any games in the list :disappointed:");
@@ -117,7 +118,7 @@ class PickGame extends DeixBotCommand {
 		}
 		catch (err) {
 			log.error(err);
-			interaction.followUp("Sorry, something went wrong!", {ephemeral: true});
+			interaction.followUp("Sorry, something went wrong!");
 		}
 	}
 
@@ -125,7 +126,7 @@ class PickGame extends DeixBotCommand {
 	{
 		try {
 			await interaction.defer();
-			let newGame = interaction.options[0].options?.[0].value;
+			let newGame = interaction.options.data[0].options?.[0].value;
 
 			let db = await open({filename: "./deixbot.sqlite", driver: sqlite3.Database});
 			await db.run("INSERT INTO pickgame ( gameName ) VALUES ( ? )", newGame);
@@ -135,7 +136,7 @@ class PickGame extends DeixBotCommand {
 		}
 		catch (err) {
 			log.error(err);
-			interaction.followUp("Sorry, something went wrong!", {ephemeral: true});
+			interaction.followUp("Sorry, something went wrong!");
 		}
 	}
 
@@ -143,7 +144,7 @@ class PickGame extends DeixBotCommand {
 	{
 		try {
 			await interaction.defer();
-			let oldGame = interaction.options[0].options?.[0].value;
+			let oldGame = interaction.options.data[0].options?.[0].value;
 
 			let db = await open({filename: "./deixbot.sqlite", driver: sqlite3.Database});
 			await db.run("DELETE FROM pickgame WHERE gameId = (SELECT gameId FROM pickgame WHERE gameName = ? LIMIT 1)", oldGame)
@@ -152,7 +153,7 @@ class PickGame extends DeixBotCommand {
 		}
 		catch (err) {
 			log.error(err);
-			interaction.followUp("Sorry, something went wrong!", {ephemeral: true});
+			interaction.followUp("Sorry, something went wrong!");
 		}
 
 		

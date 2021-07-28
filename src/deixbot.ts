@@ -11,7 +11,7 @@ import  commandList from "./CommandList"
 import * as Interface from "./interfaces";
 import {DeixBot} from "./interfaces";
 import DeixBotCommand from "./DeixBotCommand";
-import { Soundboard } from "./commands/soundboard";
+//import { Soundboard } from "./commands/soundboard.ts.disabled";
 const config: Interface.Config =  require("../config");
 let preventGlobalCommands = false;
 if(config.prevent_global_commands) {
@@ -68,6 +68,7 @@ client.once("ready", () => {
 			}
 		}
 		//Special case as sb needs to do some DB queries before it can be registered
+		/*
 		if(name === "soundboard") {
 			(cmd as Soundboard).populateChoices(cmd as Soundboard).then( () => {
 				registerCommand(cmd);
@@ -75,7 +76,8 @@ client.once("ready", () => {
 		}
 		else {
 			registerCommand(cmd);
-		}
+		}*/
+		registerCommand(cmd);
 	});
 });
 
@@ -113,7 +115,7 @@ async function registerCommand(cmd: DeixBotCommand) {
 }
 
 // Someone has sent a slash command, respond to it
-client.on("interaction", (interaction) => {
+client.on("interactionCreate", (interaction) => {
 	if(!interaction.isCommand()) return;
 	let name = interaction.commandName;
 	commandList.get(name)?.response(interaction);
@@ -126,20 +128,20 @@ function updatePlaying() {
 	}).catch(log.error);
 }
 
-client.on("message", (msg) => {
+client.on("messageCreate", (msg) => {
 	//Ignore anything we've sent ourselves, so we don't get stuck in an infinite loop
 	if(msg.author.id === (client.user as Discord.ClientUser).id) return;
 
-	// If we're not in the minecraft chat channel, see if there are any chat responses we need to give
-	if(config.minecraft && msg.channel.id !== config.minecraft.chat_channel) {
-		responses.forEach( (e) => {
-			if(e.check(msg)) return e.action(msg);
-		});
-	}
 	// If we are in the minecraft chat channel, mirror the chat over to minecraft
 	if(config.minecraft && msg.channel.id === config.minecraft.chat_channel) {
 		var message = "[" + msg.author.username + "]" + " " + msg.cleanContent;
 		fs.writeFile(config.minecraft.chat_out_pipe as string, message, (err) => log.error);
+	}
+	// We should only do responses outside the minecraft channel
+	else {
+		responses.forEach( (e) => {
+			if(e.check(msg)) return e.action(msg);
+		});
 	}
 });
 
@@ -173,7 +175,7 @@ if(config.minecraft){
 				if(bytesRead > 0) {
 					buffer = buffer.slice(0, bytesRead);
 					var message = buffer.toString();
-					var channel = client.channels.cache.get(config.minecraft?.chat_channel as string) as Discord.TextChannel;
+					var channel = client.channels.cache.get(config.minecraft?.chat_channel as Discord.Snowflake) as Discord.TextChannel;
 					channel.send(message);
 				}
 			});
@@ -203,7 +205,7 @@ async function finishExit()
 		for(let cmdIndex = 0; cmdIndex < guildCmds.length; cmdIndex++ ) {
 			let cmd = guildCmds[cmdIndex];
 			log.info("Deleting command " + cmd.name + " from guild " + guilds[guildIndex]);
-			await client.guilds.cache.get(guilds[guildIndex])?.commands.delete(cmd);
+			await client.guilds.cache.get(guilds[guildIndex] as Discord.Snowflake)?.commands.delete(cmd);
 		}
 	}
 	client.destroy();
