@@ -27,7 +27,7 @@ class Remind extends DeixBotCommand
             options: [
                 {
                     name: params.person,
-                    type: "MENTIONABLE",
+                    type: "USER",
                     description: "Who do you want to remind?",
                     required: true
                 },
@@ -70,10 +70,9 @@ class Remind extends DeixBotCommand
     async response(interaction: Discord.CommandInteraction)
     {
         try {
-            interaction.defer({ephemeral: true});
-            let mentionable = interaction.options.data[ReminderOptions.person]
-            let isPerson = (mentionable.role === undefined);
-            let person = "<@" + (isPerson ? "" : "&") + mentionable + ">";
+            interaction.deferReply({ephemeral: true});
+            let mentionable = interaction.options.getMember(params.person);
+            let person = "<@" + (mentionable as Discord.GuildMember).id + ">";
 
             let delayTime = interaction.options.getInteger(params.time) as number;
             let unit = interaction.options.getString(params.units);
@@ -104,14 +103,11 @@ class Remind extends DeixBotCommand
             });
             let name;
             let url;
-            if(isPerson) {
-                let member = mentionable.member as Discord.GuildMember;
-                name = member?.displayName;
-                url = member?.user.avatarURL();
-            }
-            else {
-                name = mentionable.role?.name as string;
-            }
+
+            let member = mentionable as Discord.GuildMember;
+            name = member?.displayName;
+            url = member?.user.avatarURL();
+
             response.setFooter(name, url || undefined);
             interaction.followUp({ embeds: [response] });
         } 

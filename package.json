@@ -7,7 +7,7 @@
     "@discordjs/opus": "latest",
     "@discordjs/voice": "^0.5.4",
     "@types/sqlite3": "^3.1.7",
-    "discord.js": "github:discordjs/discord.js#master",
+    "discord.js": "github:discordjs/discord.js#stable",
     "npm": "^7.20.0",
     "require-directory": "^2.1.1",
     "sql-template-strings": "latest",
@@ -16,7 +16,7 @@
     "winston": "latest"
   },
   "devDependencies": {
-    "@types/node": "^15.6.0",
+    "@types/node": "^15.14.7",
     "eslint": "latest"
   },
   "repository": {

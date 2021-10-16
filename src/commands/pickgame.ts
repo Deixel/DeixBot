@@ -80,7 +80,7 @@ class PickGame extends DeixBotCommand {
 	async pick(interaction: Discord.CommandInteraction)
 	{
 		try {
-			await interaction.defer();
+			await interaction.deferReply();
 			let db = await open({filename: "./deixbot.sqlite", driver: sqlite3.Database});
 			let game: pickgameRow | undefined = await db.get("SELECT gameName FROM pickgame ORDER BY RANDOM() LIMIT 1");
 			if(game) {
@@ -100,7 +100,7 @@ class PickGame extends DeixBotCommand {
 	async list(interaction: Discord.CommandInteraction)
 	{
 		try {
-			await interaction.defer();
+			await interaction.deferReply();
 			let db = await open({filename: "./deixbot.sqlite", driver: sqlite3.Database});
 			let games = await db.all("SELECT gameName FROM pickgame");
 			if(games.length != 0) {
@@ -125,7 +125,7 @@ class PickGame extends DeixBotCommand {
 	async add(interaction: Discord.CommandInteraction)
 	{
 		try {
-			await interaction.defer();
+			await interaction.deferReply();
 			let newGame = interaction.options.data[0].options?.[0].value;
 
 			let db = await open({filename: "./deixbot.sqlite", driver: sqlite3.Database});
@@ -143,7 +143,7 @@ class PickGame extends DeixBotCommand {
 	async remove(interaction:Discord.CommandInteraction)
 	{
 		try {
-			await interaction.defer();
+			await interaction.deferReply();
 			let oldGame = interaction.options.data[0].options?.[0].value;
 
 			let db = await open({filename: "./deixbot.sqlite", driver: sqlite3.Database});

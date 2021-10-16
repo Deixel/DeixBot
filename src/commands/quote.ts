@@ -22,12 +22,13 @@ class Quote extends DeixBotCommand {
 	}
 
 	async response(interaction: Discord.CommandInteraction): Promise<void> {
-		interaction.defer();
+		interaction.deferReply();
 		return new Promise<void>( async (resolve, reject) => {
 			let messageId = interaction.options.getString(params.messageId) as Discord.Snowflake;
-			let channels = interaction.guild?.channels.cache.array().filter( ch => ch.type === "GUILD_TEXT" );
-			channels?.unshift(interaction.channel as Discord.GuildChannel);
-			for(let channel of channels as Discord.GuildChannel[]) {
+			let guildChannels = interaction.guild?.channels.cache.filter( ch => ch.type === "GUILD_TEXT" )
+			let channelsToSearch: Discord.Channel[] = [interaction.channel as Discord.GuildChannel];
+			guildChannels?.forEach( (channel) => { channelsToSearch.push(channel) } );
+			for(let channel of channelsToSearch) {
 				try {
 					let msg = await (channel as Discord.TextChannel).messages.fetch(messageId);
 					let response = new Discord.MessageEmbed({

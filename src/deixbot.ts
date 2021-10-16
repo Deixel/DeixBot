@@ -93,8 +93,8 @@ async function registerCommand(cmd: DeixBotCommand) {
 			client.registeredCommands.get("GLOBAL")?.push(registeredCmd as Discord.ApplicationCommand);
 		}
 		else {
-			let guilds = client.guilds.cache.array();
-			for(let guild of guilds) {
+			let guilds = client.guilds.cache;
+			for(let [, guild] of guilds) {
 				let guildId = guild.id;
 				if(cmd.guildAllowList.length > 0 && !cmd.guildAllowList.includes(guildId)) {
 					log.info("Skipping " + cmd.commandData.name + " on guild " + guildId);
@@ -199,13 +199,11 @@ process.on("SIGINT", () => {
 
 async function finishExit()
 {
-	let guilds = client.registeredCommands.keyArray();
-	for(let guildIndex = 0; guildIndex < guilds.length; guildIndex++) {
-		let guildCmds = client.registeredCommands.array()[guildIndex];
+	for(let [guildId, guildCmds] of client.registeredCommands) {
 		for(let cmdIndex = 0; cmdIndex < guildCmds.length; cmdIndex++ ) {
 			let cmd = guildCmds[cmdIndex];
-			log.info("Deleting command " + cmd.name + " from guild " + guilds[guildIndex]);
-			await client.guilds.cache.get(guilds[guildIndex] as Discord.Snowflake)?.commands.delete(cmd);
+			log.info("Deleting command " + cmd.name + " from guild " + guildId);
+			await client.guilds.cache.get(guildId as Discord.Snowflake)?.commands.delete(cmd);
 		}
 	}
 	client.destroy();
